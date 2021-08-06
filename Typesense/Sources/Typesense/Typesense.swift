@@ -1,3 +1,5 @@
+import Foundation
+
 struct Typesense {
-    var text = "Hello, World!"
+    
 }
