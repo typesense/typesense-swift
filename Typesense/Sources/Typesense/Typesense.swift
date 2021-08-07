@@ -1,5 +1,5 @@
 import Foundation
 
-struct Typesense {
-    
+public struct Typesense {
+    var test: String = "Test"
 }

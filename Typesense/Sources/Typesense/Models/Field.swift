@@ -17,11 +17,11 @@ public struct Field: Codable {
         case int64 = "int64"
         case float = "float"
         case bool = "bool"
-        case string[] = "string[]"
-        case int32[] = "int32[]"
-        case int64[] = "int64[]"
-        case float[] = "float[]"
-        case bool[] = "bool[]"
+        case stringarr = "string[]"
+        case int32arr = "int32[]"
+        case int64arr = "int64[]"
+        case floatarr = "float[]"
+        case boolarr = "bool[]"
     }
     public var name: String
     public var type: ModelType
