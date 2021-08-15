@@ -9,11 +9,11 @@ import XCTest
 @testable import Typesense
 
 final class ApiCallTests: XCTestCase {
-    func testGetRequestDemo() {
+    func testHealth() {
         var apiCall = ApiCall(config: Configuration(nodes: [Node(host: "localhost", port: "8108", nodeProtocol: "http")], apiKey: "xyz"))
         
-        let result: String = apiCall.performRequest(requestType: RequestType.get, endpoint: "/collections")
-        
-        XCTAssertEqual(result, "Request #0: Performing GET request: /collections")
+        apiCall.performRequest(requestType: RequestType.get, endpoint: "health") { result in
+            XCTAssertEqual(result, "{\"ok\":true}")
+        }
     }
 }

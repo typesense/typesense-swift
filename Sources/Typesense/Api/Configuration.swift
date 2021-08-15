@@ -29,12 +29,6 @@ struct Configuration {
         self.apiKey = apiKey
     }
     
-    init(nodes: [Node], apiKey: String, connectionTimeoutSeconds: Int = 10) {
-        self.nodes = nodes
-        self.apiKey = apiKey
-        self.connectionTimeoutSeconds = connectionTimeoutSeconds
-    }
-    
     init(nodes: [Node], apiKey: String, connectionTimeoutSeconds: Int = 10, nearestNode: Node?) {
         self.nodes = nodes
         self.apiKey = apiKey

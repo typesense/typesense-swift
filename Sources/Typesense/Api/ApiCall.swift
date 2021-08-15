@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  ApiCall.swift
 //  
 //
 //  Created by Sabesh Bharathi on 07/08/21.
@@ -7,6 +7,8 @@
 
 import Foundation
 
+
+let APIKEYHEADERNAME = "X-TYPESENSE-API-KEY"
 
 struct ApiCall {
     var nodes: [Node]
@@ -31,30 +33,34 @@ struct ApiCall {
     }
     
     
-    mutating func performRequest(requestType: RequestType, endpoint: String) -> String {
+    mutating func performRequest(requestType: RequestType, endpoint: String, bodyAsAString: String? = nil, completionHandler: @escaping (String) -> ()) {
         let requestNumber = Date().millisecondsSince1970
-        print("Request #\(requestNumber): Performing \(requestType.rawValue.uppercased()) request: \(endpoint)")
-        
+        print("Request #\(requestNumber): Performing \(requestType.rawValue) request: /\(endpoint)")
         
         for numTry in 1...self.numRetries + 1 {
             let selectedNode = self.getNextNode(requestNumber: requestNumber)
-            print("Request \(requestNumber): Attempting \(requestType.rawValue.uppercased()) request: Try \(numTry) to Node \(selectedNode)")
-     
-//          URLSession needs to be made with given parameters and endpoint.
+            print("Request \(requestNumber): Attempting \(requestType.rawValue) request: Try \(numTry) to \(selectedNode)/\(endpoint)")
             
-//            let session = URLSession.shared
-//            let urlString = uriFor(endpoint: endpoint, node: selectedNode)
-//            let url = URL(string: urlString)
-//            _ = session.dataTask(with: url!) { data, response, url in
-//                print(data)
-//                print(response)
-//                print(error)
-//            }
+            let urlString = uriFor(endpoint: endpoint, node: selectedNode)
+            let url = URL(string: urlString)
             
+            let requestHeaders: [String : String] = [APIKEYHEADERNAME: self.apiKey]
+            
+            var request = URLRequest(url: url!)
+            request.allHTTPHeaderFields = requestHeaders
+            request.httpMethod = requestType.rawValue
+            
+            if let httpBody = bodyAsAString {
+                request.httpBody = httpBody.data(using: String.Encoding.utf8)
+            }
+            
+            URLSession.shared.dataTask(with: request) { data, response, error in
+                if error == nil {
+                    completionHandler(String(decoding: data!, as: UTF8.self))
+                }
+            }.resume()
             
         }
-        
-        return "Request #0: Performing \(requestType.rawValue.uppercased()) request: \(endpoint)"
     }
     
     
@@ -64,20 +70,22 @@ struct ApiCall {
     
     mutating func getNextNode(requestNumber: Int64 = 0) -> Node {
         if let existingNearestNode = nearestNode {
-            print("Nearest Node exists. Updating current node to node \(existingNearestNode)")
+            print("Nearest Node exists. Updating current node to \(existingNearestNode)")
             return self.nearestNode!
         }
+        
+        var candidateNode = nodes[0]
         
         print("Nearest Node not found, falling back to nodes")
         
         for _ in 0...nodes.count {
             currentNodeIndex = (currentNodeIndex + 1) % nodes.count
-            let candidateNode = self.nodes[currentNodeIndex]
+            candidateNode = self.nodes[currentNodeIndex]
             print("Falling back to node \(candidateNode)")
             return candidateNode
         }
         
-        return nodes[0]
+        return candidateNode
     }
     
 }
