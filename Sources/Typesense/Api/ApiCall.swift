@@ -33,6 +33,26 @@ struct ApiCall {
     }
     
     
+    mutating func get(endPoint: String, completionHandler: @escaping (String) -> ()) {
+        self.performRequest(requestType: RequestType.get, endpoint: endPoint, completionHandler: completionHandler)
+    }
+    
+    mutating func delete(endPoint: String, completionHandler: @escaping (String) -> ()) {
+        self.performRequest(requestType: RequestType.delete, endpoint: endPoint, completionHandler: completionHandler)
+    }
+    
+    mutating func post(endPoint: String, body: String, completionHandler: @escaping (String) -> ()) {
+        self.performRequest(requestType: RequestType.post, endpoint: endPoint, bodyAsAString: body, completionHandler: completionHandler)
+    }
+    
+    mutating func put(endPoint: String, body: String, completionHandler: @escaping (String) -> ()) {
+        self.performRequest(requestType: RequestType.put, endpoint: endPoint, bodyAsAString: body, completionHandler: completionHandler)
+    }
+    
+    mutating func patch(endPoint: String, body: String, completionHandler: @escaping (String) -> ()) {
+        self.performRequest(requestType: RequestType.patch, endpoint: endPoint, bodyAsAString: body, completionHandler: completionHandler)
+    }
+    
     mutating func performRequest(requestType: RequestType, endpoint: String, bodyAsAString: String? = nil, completionHandler: @escaping (String) -> ()) {
         let requestNumber = Date().millisecondsSince1970
         print("Request #\(requestNumber): Performing \(requestType.rawValue) request: /\(endpoint)")
