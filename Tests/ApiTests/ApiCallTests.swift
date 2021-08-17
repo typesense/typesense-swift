@@ -1,10 +1,3 @@
-//
-//  ApiCallTests.swift
-//  
-//
-//  Created by Sabesh Bharathi on 08/08/21.
-//
-
 import XCTest
 @testable import Typesense
 

@@ -1,10 +1,3 @@
-//
-//  ApiCall.swift
-//  
-//
-//  Created by Sabesh Bharathi on 07/08/21.
-//
-
 import Foundation
 
 
@@ -101,7 +94,7 @@ struct ApiCall {
         for _ in 0...nodes.count {
             currentNodeIndex = (currentNodeIndex + 1) % nodes.count
             candidateNode = self.nodes[currentNodeIndex]
-            print("Falling back to node \(candidateNode)")
+            print("Falling back to \(candidateNode)")
             return candidateNode
         }
         

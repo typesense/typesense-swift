@@ -1,10 +1,3 @@
-//
-//  RequestTypes.swift
-//  
-//
-//  Created by Sabesh Bharathi on 08/08/21.
-//
-
 import Foundation
 
 enum RequestType: String {

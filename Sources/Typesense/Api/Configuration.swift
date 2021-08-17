@@ -1,10 +1,3 @@
-//
-//  Configuration.swift
-//  
-//
-//  Created by Sabesh Bharathi on 07/08/21.
-//
-
 import Foundation
 
 struct Configuration {

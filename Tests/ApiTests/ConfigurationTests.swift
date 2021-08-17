@@ -1,10 +1,3 @@
-//
-//  ConfigurationTests.swift
-//  
-//
-//  Created by Sabesh Bharathi on 07/08/21.
-//
-
 import XCTest
 @testable import Typesense
 
