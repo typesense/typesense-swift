@@ -9,12 +9,8 @@ struct Collections {
         apiCall = ApiCall(config: config)
     }
     
-    mutating func create(schema: CollectionSchema, completionHandler: @escaping (String) -> ()){
-//        let jsonData = try! JSONEncoder().encode(schema)
-//        let jsonString = String(data: jsonData, encoding: .utf8)
-//        apiCall.post(endPoint: RESOURCEPATH, body: jsonData) { result in
-//            completionHandler(result)
-//        }
+    func create() -> String {
+        return "Create"
     }
     
     func retrieve() -> String {

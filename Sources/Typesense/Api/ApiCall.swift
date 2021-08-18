@@ -26,27 +26,27 @@ struct ApiCall {
     }
     
     
-    mutating func get(endPoint: String, completionHandler: @escaping (String) -> ()) {
+    mutating func get(endPoint: String, completionHandler: @escaping (Data?) -> ()) {
         self.performRequest(requestType: RequestType.get, endpoint: endPoint, completionHandler: completionHandler)
     }
     
-    mutating func delete(endPoint: String, completionHandler: @escaping (String) -> ()) {
+    mutating func delete(endPoint: String, completionHandler: @escaping (Data?) -> ()) {
         self.performRequest(requestType: RequestType.delete, endpoint: endPoint, completionHandler: completionHandler)
     }
     
-    mutating func post(endPoint: String, body: String, completionHandler: @escaping (String) -> ()) {
+    mutating func post(endPoint: String, body: String, completionHandler: @escaping (Data?) -> ()) {
         self.performRequest(requestType: RequestType.post, endpoint: endPoint, bodyAsAString: body, completionHandler: completionHandler)
     }
     
-    mutating func put(endPoint: String, body: String, completionHandler: @escaping (String) -> ()) {
+    mutating func put(endPoint: String, body: String, completionHandler: @escaping (Data?) -> ()) {
         self.performRequest(requestType: RequestType.put, endpoint: endPoint, bodyAsAString: body, completionHandler: completionHandler)
     }
     
-    mutating func patch(endPoint: String, body: String, completionHandler: @escaping (String) -> ()) {
+    mutating func patch(endPoint: String, body: String, completionHandler: @escaping (Data?) -> ()) {
         self.performRequest(requestType: RequestType.patch, endpoint: endPoint, bodyAsAString: body, completionHandler: completionHandler)
     }
     
-    mutating func performRequest(requestType: RequestType, endpoint: String, bodyAsAString: String? = nil, completionHandler: @escaping (String) -> ()) {
+    mutating func performRequest(requestType: RequestType, endpoint: String, bodyAsAString: String? = nil, completionHandler: @escaping (Data?) -> ()) {
         let requestNumber = Date().millisecondsSince1970
         print("Request #\(requestNumber): Performing \(requestType.rawValue) request: /\(endpoint)")
         
@@ -69,7 +69,7 @@ struct ApiCall {
             
             URLSession.shared.dataTask(with: request) { data, response, error in
                 if error == nil {
-                    completionHandler(String(decoding: data!, as: UTF8.self))
+                    completionHandler(data)
                 }
             }.resume()
             
