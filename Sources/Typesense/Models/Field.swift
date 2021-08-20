@@ -22,17 +22,19 @@ public struct Field: Codable {
         case int64arr = "int64[]"
         case floatarr = "float[]"
         case boolarr = "bool[]"
+        case auto = "auto"
     }
+    
     public var name: String
     public var type: ModelType
-    public var _optional: Bool
-    public var facet: Bool
+    public var fieldOptional: Bool?
+    public var facet: Bool?
     public var index: Bool?
 
-    public init(name: String, type: ModelType, _optional: Bool, facet: Bool, index: Bool? = nil) {
+    public init(name: String, type: ModelType, fieldOptional: Bool? = false, facet: Bool? = false, index: Bool? = nil) {
         self.name = name
         self.type = type
-        self._optional = _optional
+        self.fieldOptional = fieldOptional
         self.facet = facet
         self.index = index
     }
@@ -40,7 +42,7 @@ public struct Field: Codable {
     public enum CodingKeys: String, CodingKey { 
         case name
         case type
-        case _optional = "optional"
+        case fieldOptional = "fieldOptional"
         case facet
         case index
     }

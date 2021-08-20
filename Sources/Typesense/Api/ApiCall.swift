@@ -34,19 +34,19 @@ struct ApiCall {
         self.performRequest(requestType: RequestType.delete, endpoint: endPoint, completionHandler: completionHandler)
     }
     
-    mutating func post(endPoint: String, body: String, completionHandler: @escaping (Data?) -> ()) {
-        self.performRequest(requestType: RequestType.post, endpoint: endPoint, bodyAsAString: body, completionHandler: completionHandler)
+    mutating func post(endPoint: String, body: Data, completionHandler: @escaping (Data?) -> ()) {
+        self.performRequest(requestType: RequestType.post, endpoint: endPoint, body: body, completionHandler: completionHandler)
     }
     
-    mutating func put(endPoint: String, body: String, completionHandler: @escaping (Data?) -> ()) {
-        self.performRequest(requestType: RequestType.put, endpoint: endPoint, bodyAsAString: body, completionHandler: completionHandler)
+    mutating func put(endPoint: String, body: Data, completionHandler: @escaping (Data?) -> ()) {
+        self.performRequest(requestType: RequestType.put, endpoint: endPoint, body: body, completionHandler: completionHandler)
     }
     
-    mutating func patch(endPoint: String, body: String, completionHandler: @escaping (Data?) -> ()) {
-        self.performRequest(requestType: RequestType.patch, endpoint: endPoint, bodyAsAString: body, completionHandler: completionHandler)
+    mutating func patch(endPoint: String, body: Data, completionHandler: @escaping (Data?) -> ()) {
+        self.performRequest(requestType: RequestType.patch, endpoint: endPoint, body: body, completionHandler: completionHandler)
     }
     
-    mutating func performRequest(requestType: RequestType, endpoint: String, bodyAsAString: String? = nil, completionHandler: @escaping (Data?) -> ()) {
+    mutating func performRequest(requestType: RequestType, endpoint: String, body: Data? = nil, completionHandler: @escaping (Data?) -> ()) {
         let requestNumber = Date().millisecondsSince1970
         print("Request #\(requestNumber): Performing \(requestType.rawValue) request: /\(endpoint)")
         
@@ -62,16 +62,20 @@ struct ApiCall {
             var request = URLRequest(url: url!)
             request.allHTTPHeaderFields = requestHeaders
             request.httpMethod = requestType.rawValue
-            
-            if let httpBody = bodyAsAString {
-                request.httpBody = httpBody.data(using: String.Encoding.utf8)
+
+            if let httpBody = body {
+                request.setValue("application/json", forHTTPHeaderField: "Accept") 
+                request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+                request.httpBody = httpBody
             }
-            
             URLSession.shared.dataTask(with: request) { data, response, error in
+
                 if error == nil {
                     completionHandler(data)
                 }
             }.resume()
+            
+            break
             
         }
     }
