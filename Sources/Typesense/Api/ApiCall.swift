@@ -30,32 +30,32 @@ struct ApiCall {
     }
     
     
-    mutating func get(endPoint: String, completionHandler: @escaping (Data?) -> ()) {
+    mutating func get(endPoint: String, completionHandler: @escaping (Data?, URLResponse?, Error?) -> ()) {
         self.performRequest(requestType: RequestType.get, endpoint: endPoint, completionHandler: completionHandler)
     }
     
-    mutating func delete(endPoint: String, completionHandler: @escaping (Data?) -> ()) {
+    mutating func delete(endPoint: String, completionHandler: @escaping (Data?, URLResponse?, Error?) -> ()) {
         self.performRequest(requestType: RequestType.delete, endpoint: endPoint, completionHandler: completionHandler)
     }
     
-    mutating func post(endPoint: String, body: Data, completionHandler: @escaping (Data?) -> ()) {
+    mutating func post(endPoint: String, body: Data, completionHandler: @escaping (Data?, URLResponse?, Error?) -> ()) {
         self.performRequest(requestType: RequestType.post, endpoint: endPoint, body: body, completionHandler: completionHandler)
     }
     
-    mutating func put(endPoint: String, body: Data, completionHandler: @escaping (Data?) -> ()) {
+    mutating func put(endPoint: String, body: Data, completionHandler: @escaping (Data?, URLResponse?, Error?) -> ()) {
         self.performRequest(requestType: RequestType.put, endpoint: endPoint, body: body, completionHandler: completionHandler)
     }
     
-    mutating func patch(endPoint: String, body: Data, completionHandler: @escaping (Data?) -> ()) {
+    mutating func patch(endPoint: String, body: Data, completionHandler: @escaping (Data?, URLResponse?, Error?) -> ()) {
         self.performRequest(requestType: RequestType.patch, endpoint: endPoint, body: body, completionHandler: completionHandler)
     }
     
-    mutating func performRequest(requestType: RequestType, endpoint: String, body: Data? = nil, completionHandler: @escaping (Data?) -> ()) {
+    mutating func performRequest(requestType: RequestType, endpoint: String, body: Data? = nil, completionHandler: @escaping (Data?, URLResponse?, Error?) -> ()) {
         let requestNumber = Date().millisecondsSince1970
         print("Request #\(requestNumber): Performing \(requestType.rawValue) request: /\(endpoint)")
         
         for numTry in 1...self.numRetries + 1 {
-            let selectedNode = self.getNextNode(requestNumber: requestNumber)
+            var selectedNode = self.getNextNode(requestNumber: requestNumber)
             print("Request #\(requestNumber): Attempting \(requestType.rawValue) request: Try \(numTry) to \(selectedNode)/\(endpoint)")
             
             let urlString = uriFor(endpoint: endpoint, node: selectedNode)
@@ -74,8 +74,32 @@ struct ApiCall {
             }
             
             URLSession.shared.dataTask(with: request) { data, response, error in
-                if error == nil {
-                    completionHandler(data)
+                if let res = response as? HTTPURLResponse {
+                    if (res.statusCode >= 1 && res.statusCode <= 499) {
+                        // Treat any status code > 0 and < 500 to be an indication that node is healthy
+                        // We exclude 0 since some clients return 0 when request fails
+                        selectedNode.isHealthy = HEALTHY
+                        selectedNode.lastAccessTimeStamp = Date().millisecondsSince1970
+                    }
+                    
+                    if (res.statusCode >= 200 && res.statusCode <= 300) {
+                        //Pass the data and response to completion handler for a 2xx response
+                        completionHandler(data, response, nil)
+                    } else if (res.statusCode < 500) {
+                        //For any response but 500, trigger the completion handler for a static error
+                        completionHandler(data, response, nil)
+                    } else {
+                        //Need to throw error here for anything beyond 500 and retry
+                        selectedNode.isHealthy = UNHEALTHY
+                        selectedNode.lastAccessTimeStamp = Date().millisecondsSince1970
+                    }
+                    
+                    print("Request \(requestNumber): Request to \(urlString) was made. Response Code was \(res.statusCode)")
+                }
+                
+                if error != nil {
+                    print(error!.localizedDescription)
+                    completionHandler(nil, nil, error)
                 }
             }.resume()
             
