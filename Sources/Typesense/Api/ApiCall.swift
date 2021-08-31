@@ -88,17 +88,16 @@ struct ApiCall {
                     } else if (res.statusCode < 500) {
                         //For any response but 500, trigger the completion handler for a static error
                         completionHandler(data, response, nil)
-                    } else {
-                        //Need to throw error here for anything beyond 500 and retry
-                        selectedNode.isHealthy = UNHEALTHY
-                        selectedNode.lastAccessTimeStamp = Date().millisecondsSince1970
                     }
                     
                     print("Request \(requestNumber): Request to \(urlString) was made. Response Code was \(res.statusCode)")
                 }
                 
-                if error != nil {
-                    print(error!.localizedDescription)
+                if let existingError = error {
+                    //An error is thrown if there is no response, and sequence is retried.
+                    selectedNode.isHealthy = UNHEALTHY
+                    selectedNode.lastAccessTimeStamp = Date().millisecondsSince1970
+                    print("Request \(requestNumber): Request to \(urlString) failed due to error: \(existingError.localizedDescription)")
                     completionHandler(nil, nil, error)
                 }
             }.resume()
