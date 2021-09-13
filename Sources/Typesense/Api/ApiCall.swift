@@ -30,6 +30,7 @@ struct ApiCall {
     }
     
     
+
     mutating func get(endPoint: String, completionHandler: @escaping (Data?, URLResponse?, Error?) -> ()) {
         self.performRequest(requestType: RequestType.get, endpoint: endPoint, completionHandler: completionHandler)
     }
@@ -72,7 +73,6 @@ struct ApiCall {
                 request.setValue("application/json", forHTTPHeaderField: "Content-Type")
                 request.httpBody = httpBody
             }
-            
             URLSession.shared.dataTask(with: request) { data, response, error in
                 if let res = response as? HTTPURLResponse {
                     if (res.statusCode >= 1 && res.statusCode <= 499) {
@@ -101,6 +101,8 @@ struct ApiCall {
                     completionHandler(nil, nil, error)
                 }
             }.resume()
+            
+            break
             
         }
     }
