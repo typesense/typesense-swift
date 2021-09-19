@@ -150,9 +150,22 @@ final class ApiCallTests: XCTestCase {
         var schemaData: Data? = nil
         do {
             schemaData = try encoder.encode(schema)
-            apiCall.post(endPoint: "collections", body: schemaData!) { result in
-                expectation?.fulfill()
-                expectation = nil
+            apiCall.post(endPoint: "collections", body: schemaData!) { result, response, error in
+                XCTAssertNil(error)
+                if let res = response as? HTTPURLResponse {
+                    //Check creation code 201 -> If collection does not exist previously
+                    if(res.statusCode == 201) {
+                        XCTAssertEqual(res.statusCode, 201)
+                        expectation?.fulfill()
+                        expectation = nil
+                    }
+                    //Check duplicate code 409 -> If collection exists already (POST works nevertheless)
+                    if(res.statusCode == 409) {
+                        XCTAssertEqual(res.statusCode, 409)
+                        expectation?.fulfill()
+                        expectation = nil
+                    }
+                }
             }
         } catch {
             print("ERROR: Unable to resolve JSON from schema")
