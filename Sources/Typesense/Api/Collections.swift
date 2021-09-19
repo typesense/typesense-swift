@@ -1,7 +1,5 @@
 import Foundation
 
-let RESOURCEPATH = "/collections"
-
 struct Collections {
     var apiCall: ApiCall
     
@@ -37,6 +35,18 @@ struct Collections {
     mutating func delete(name: String, completionHandler: @escaping (Data?, URLResponse?, Error?) -> ()) {
         apiCall.delete(endPoint: "collections/\(name)") { result, response, error in
             completionHandler(result, response, error)
+        }
+    }
+    
+    mutating func retrieve(name: String, completionHandler: @escaping (Collection?, URLResponse?, Error?) -> ()) {
+        apiCall.get(endPoint: "collections/\(name)") { result, response, error in
+            do {
+                let fetchedCollection = try decoder.decode(Collection.self, from: result!)
+                completionHandler(fetchedCollection, response, error)
+            } catch {
+                print("ERROR: Unable to resolve retrieved collection")
+                completionHandler(nil, response, error)
+            }
         }
     }
     

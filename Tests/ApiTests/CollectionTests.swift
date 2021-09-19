@@ -62,4 +62,30 @@ final class CollectionTests: XCTestCase {
 
         waitForExpectations(timeout: 5, handler: nil)
     }
+    
+    func testRetrieveCollection() {
+        var expectation:XCTestExpectation? = expectation(description: "Check retrieval of a specific Collection")
+        let newConfig = Configuration(nodes: [Node(host: "localhost", port: "8108", nodeProtocol: "http")], apiKey: "xyz")
+        var myClient = Client(config: newConfig)
+        
+        let schema = CollectionSchema(name: "retrieveSample", fields: [Field(name: ".*", type: Field.ModelType.auto, fieldOptional: true, facet: false, index: true)])
+        
+        myClient.collections.create(schema: schema) { result, response, error in
+                XCTAssertNil(error)
+            myClient.collections.retrieve(name: "retrieveSample") { retResult, retResponse, retError in
+                XCTAssertNil(retError)
+                XCTAssertNotNil(retResult)
+                if let res = retResponse as? HTTPURLResponse {
+                    //Succesfull retrieval of a Collection
+                    if(res.statusCode == 200) {
+                        XCTAssertEqual(res.statusCode, 200)
+                        expectation?.fulfill()
+                        expectation = nil
+                    }
+                }
+            }
+        }
+
+        waitForExpectations(timeout: 5, handler: nil)
+    }
 }
