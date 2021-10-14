@@ -141,23 +141,30 @@ final class ApiCallTests: XCTestCase {
         waitForExpectations(timeout: 5, handler: nil)
     }
     
-    func testPostRequest() {
-        var apiCall = ApiCall(config: Configuration(nodes: [Node(host: "localhost", port: "8108", nodeProtocol: "http")], apiKey: "xyz"))
-        var expectation:XCTestExpectation? = expectation(description: "Check POST request")
+    func testRetries() {
+        var apiCall = ApiCall(config: Configuration(nodes: [
+            Node(host: "localhost", port: "8108", nodeProtocol: "http"),
+            Node(host: "localhost", port: "8109", nodeProtocol: "http"),
+            Node(host: "localhost", port: "8110", nodeProtocol: "http")], apiKey: "xyz"))
+        var expectation:XCTestExpectation? = expectation(description: "Check retries")
         
-        let schema = CollectionSchema(name: "sample", fields: [Field(name: ".*", type: Field.ModelType.auto, fieldOptional: true, facet: false, index: true)])
-        
-        var schemaData: Data? = nil
-        do {
-            schemaData = try encoder.encode(schema)
-            apiCall.post(endPoint: "collections", body: schemaData!) { result in
-                expectation?.fulfill()
-                expectation = nil
+        apiCall.get(endPoint: "health") { result, response, error in
+            do {
+                if let healthRes = result {
+                    let jsonRes = try decoder.decode(HealthStatus.self, from: healthRes)
+                    XCTAssertTrue(jsonRes.ok)
+                    expectation?.fulfill()
+                    expectation = nil
+                } else {
+                    print("Response data was nil")
+                }
+            } catch {
+                print("Could not resolve health status from response")
             }
-        } catch {
-            print("ERROR: Unable to resolve JSON from schema")
+            
         }
         
         waitForExpectations(timeout: 5, handler: nil)
     }
+    
 }
