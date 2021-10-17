@@ -5,6 +5,7 @@ let APIKEYHEADERNAME = "X-TYPESENSE-API-KEY"
 let HEALTHY = true
 let UNHEALTHY = false
 
+@available(macOS 12.0.0, *)
 struct ApiCall {
     var nodes: [Node]
     var apiKey: String
@@ -29,36 +30,40 @@ struct ApiCall {
         self.initializeMetadataForNodes()
     }
     
-    
+    //Various request types' implementation
 
-    mutating func get(endPoint: String, completionHandler: @escaping (Data?, URLResponse?, Error?) -> ()) {
-        self.performRequest(requestType: RequestType.get, endpoint: endPoint, completionHandler: completionHandler)
+    mutating func get(endPoint: String) async throws {
+        try await self.performRequest(requestType: RequestType.get, endpoint: endPoint)
     }
     
-    mutating func delete(endPoint: String, completionHandler: @escaping (Data?, URLResponse?, Error?) -> ()) {
-        self.performRequest(requestType: RequestType.delete, endpoint: endPoint, completionHandler: completionHandler)
+    mutating func delete(endPoint: String) async throws {
+        try await self.performRequest(requestType: RequestType.delete, endpoint: endPoint)
     }
     
-    mutating func post(endPoint: String, body: Data, completionHandler: @escaping (Data?, URLResponse?, Error?) -> ()) {
-        self.performRequest(requestType: RequestType.post, endpoint: endPoint, body: body, completionHandler: completionHandler)
+    mutating func post(endPoint: String, body: Data) async throws {
+        try await self.performRequest(requestType: RequestType.post, endpoint: endPoint, body: body)
     }
     
-    mutating func put(endPoint: String, body: Data, completionHandler: @escaping (Data?, URLResponse?, Error?) -> ()) {
-        self.performRequest(requestType: RequestType.put, endpoint: endPoint, body: body, completionHandler: completionHandler)
+    mutating func put(endPoint: String, body: Data) async throws {
+        try await self.performRequest(requestType: RequestType.put, endpoint: endPoint, body: body)
     }
     
-    mutating func patch(endPoint: String, body: Data, completionHandler: @escaping (Data?, URLResponse?, Error?) -> ()) {
-        self.performRequest(requestType: RequestType.patch, endpoint: endPoint, body: body, completionHandler: completionHandler)
+    mutating func patch(endPoint: String, body: Data) async throws {
+        try await self.performRequest(requestType: RequestType.patch, endpoint: endPoint, body: body)
     }
     
-    mutating func performRequest(requestType: RequestType, endpoint: String, body: Data? = nil, completionHandler: @escaping (Data?, URLResponse?, Error?) -> ()) {
+    
+    //Hero function
+    mutating func performRequest(requestType: RequestType, endpoint: String, body: Data? = nil) async throws -> (Data, Int) {
         let requestNumber = Date().millisecondsSince1970
         print("Request #\(requestNumber): Performing \(requestType.rawValue) request: /\(endpoint)")
         
         for numTry in 1...self.numRetries + 1 {
+            //Get next healthy node
             var selectedNode = self.getNextNode(requestNumber: requestNumber)
             print("Request #\(requestNumber): Attempting \(requestType.rawValue) request: Try \(numTry) to \(selectedNode)/\(endpoint)")
             
+            //Configure the request with URL and Headers
             let urlString = uriFor(endpoint: endpoint, node: selectedNode)
             let url = URL(string: urlString)
             
@@ -73,45 +78,39 @@ struct ApiCall {
                 request.setValue("application/json", forHTTPHeaderField: "Content-Type")
                 request.httpBody = httpBody
             }
-            URLSession.shared.dataTask(with: request) { data, response, error in
-                if let res = response as? HTTPURLResponse {
-                    if (res.statusCode >= 1 && res.statusCode <= 499) {
-                        // Treat any status code > 0 and < 500 to be an indication that node is healthy
-                        // We exclude 0 since some clients return 0 when request fails
-                        selectedNode.isHealthy = HEALTHY
-                        selectedNode.lastAccessTimeStamp = Date().millisecondsSince1970
-                    }
-                    
-                    if (res.statusCode >= 200 && res.statusCode <= 300) {
-                        //Pass the data and response to completion handler for a 2xx response
-                        completionHandler(data, response, nil)
-                    } else if (res.statusCode < 500) {
-                        //For any response but 500, trigger the completion handler for a static error
-                        completionHandler(data, response, nil)
-                    }
-                    
-                    print("Request \(requestNumber): Request to \(urlString) was made. Response Code was \(res.statusCode)")
+             
+            let (data, response) = URLSession.shared.data(for: request)
+        
+            if let res = response as? HTTPURLResponse {
+                if (res.statusCode >= 1 && res.statusCode <= 499) {
+                    // Treat any status code > 0 and < 500 to be an indication that node is healthy
+                    // We exclude 0 since some clients return 0 when request fails
+                    selectedNode.isHealthy = HEALTHY
+                    selectedNode.lastAccessTimeStamp = Date().millisecondsSince1970
                 }
                 
-                if let existingError = error {
-                    //An error is thrown if there is no response, and sequence is retried.
-                    selectedNode.isHealthy = UNHEALTHY
-                    selectedNode.lastAccessTimeStamp = Date().millisecondsSince1970
-                    print("Request \(requestNumber): Request to \(urlString) failed due to error: \(existingError.localizedDescription)")
-                    completionHandler(nil, nil, error)
+                if (res.statusCode >= 200 && res.statusCode <= 300) {
+                    //Return the data and status code for a 2xx response
+                    return (data, res.statusCode)
+                } else if (res.statusCode < 500) {
+                    //For any response under code 500, throw the corresponding HTTP error
+                    throw HTTPError.serverError(code: res.statusCode, desc: res.localizedString(for: res.statusCode))
+                } else {
+                    //For all other response codes (>500) throw custom error
+                    throw HTTPError.serverError(code: res.statusCode, desc: "Server error!")
                 }
-            }.resume()
-            
-            break
-            
+                
+                print("Request \(requestNumber): Request to \(urlString) was made. Response Code was \(res.statusCode)")
+            }
         }
     }
     
-    
+    //Get URL for a node combined with it's end point
     func uriFor(endpoint: String, node: Node) -> String {
         return "\(node.nodeProtocol)://\(node.host):\(node.port)/\(endpoint)"
     }
     
+    //Get the next healthy node from the given nodes
     mutating func getNextNode(requestNumber: Int64 = 0) -> Node {
         
         //Check if nearest node exists and is healthy
@@ -156,6 +155,7 @@ struct ApiCall {
         return isDueForHealthCheck
     }
     
+    //Set's Node's health status
     func setNodeHealthCheck(node: Node, isHealthy: Bool) -> Node {
         var thisNode = node
         thisNode.isHealthy = isHealthy
@@ -163,6 +163,7 @@ struct ApiCall {
         return thisNode
     }
     
+    //Initializes a node's health status and last access time
     mutating func initializeMetadataForNodes() {
         if let existingNearestNode = self.nearestNode {
             self.nearestNode = self.setNodeHealthCheck(node: existingNearestNode, isHealthy: HEALTHY)
