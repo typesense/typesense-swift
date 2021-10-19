@@ -5,7 +5,6 @@ let APIKEYHEADERNAME = "X-TYPESENSE-API-KEY"
 let HEALTHY = true
 let UNHEALTHY = false
 
-@available(macOS 12.0.0, *)
 struct ApiCall {
     var nodes: [Node]
     var apiKey: String
@@ -32,29 +31,33 @@ struct ApiCall {
     
     //Various request types' implementation
 
-    mutating func get(endPoint: String) async throws {
-        try await self.performRequest(requestType: RequestType.get, endpoint: endPoint)
+    mutating func get(endPoint: String) async throws -> (Data?, Int?) {
+        let (data, statusCode) = try await self.performRequest(requestType: RequestType.get, endpoint: endPoint)
+        return (data, statusCode)
     }
     
-    mutating func delete(endPoint: String) async throws {
-        try await self.performRequest(requestType: RequestType.delete, endpoint: endPoint)
+    mutating func delete(endPoint: String) async throws -> (Data?, Int?) {
+        let (data, statusCode) = try await self.performRequest(requestType: RequestType.delete, endpoint: endPoint)
+        return (data, statusCode)
     }
     
-    mutating func post(endPoint: String, body: Data) async throws {
-        try await self.performRequest(requestType: RequestType.post, endpoint: endPoint, body: body)
+    mutating func post(endPoint: String, body: Data) async throws -> (Data?, Int?) {
+        let (data, statusCode) = try await self.performRequest(requestType: RequestType.post, endpoint: endPoint, body: body)
+        return (data, statusCode)
     }
     
-    mutating func put(endPoint: String, body: Data) async throws {
-        try await self.performRequest(requestType: RequestType.put, endpoint: endPoint, body: body)
+    mutating func put(endPoint: String, body: Data) async throws -> (Data?, Int?) {
+        let (data, statusCode) = try await self.performRequest(requestType: RequestType.put, endpoint: endPoint, body: body)
+        return (data, statusCode)
     }
     
-    mutating func patch(endPoint: String, body: Data) async throws {
-        try await self.performRequest(requestType: RequestType.patch, endpoint: endPoint, body: body)
+    mutating func patch(endPoint: String, body: Data) async throws -> (Data?, Int?) {
+        let (data, statusCode) = try await self.performRequest(requestType: RequestType.patch, endpoint: endPoint, body: body)
+        return (data, statusCode)
     }
-    
     
     //Hero function
-    mutating func performRequest(requestType: RequestType, endpoint: String, body: Data? = nil) async throws -> (Data, Int) {
+    mutating func performRequest(requestType: RequestType, endpoint: String, body: Data? = nil) async throws -> (Data?, Int?) {
         let requestNumber = Date().millisecondsSince1970
         print("Request #\(requestNumber): Performing \(requestType.rawValue) request: /\(endpoint)")
         
@@ -79,7 +82,7 @@ struct ApiCall {
                 request.httpBody = httpBody
             }
              
-            let (data, response) = URLSession.shared.data(for: request)
+            let (data, response) = try await URLSession.shared.data(for: request)
         
             if let res = response as? HTTPURLResponse {
                 if (res.statusCode >= 1 && res.statusCode <= 499) {
@@ -89,20 +92,24 @@ struct ApiCall {
                     selectedNode.lastAccessTimeStamp = Date().millisecondsSince1970
                 }
                 
+                print("Request \(requestNumber): Request to \(urlString) was made. Response Code was \(res.statusCode)")
+                
                 if (res.statusCode >= 200 && res.statusCode <= 300) {
                     //Return the data and status code for a 2xx response
                     return (data, res.statusCode)
                 } else if (res.statusCode < 500) {
                     //For any response under code 500, throw the corresponding HTTP error
-                    throw HTTPError.serverError(code: res.statusCode, desc: res.localizedString(for: res.statusCode))
+                    throw HTTPError.serverError(code: res.statusCode, desc: "error")
                 } else {
                     //For all other response codes (>500) throw custom error
                     throw HTTPError.serverError(code: res.statusCode, desc: "Server error!")
                 }
                 
-                print("Request \(requestNumber): Request to \(urlString) was made. Response Code was \(res.statusCode)")
+                
             }
         }
+        
+        return (nil,nil)
     }
     
     //Get URL for a node combined with it's end point

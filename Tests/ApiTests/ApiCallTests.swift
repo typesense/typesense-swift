@@ -2,169 +2,72 @@ import XCTest
 @testable import Typesense
 
 final class ApiCallTests: XCTestCase {
-    func testHealth() {
-            var apiCall = ApiCall(config: Configuration(nodes: [Node(host: "localhost", port: "8108", nodeProtocol: "http")], apiKey: "xyz"))
-            var expectation:XCTestExpectation? = expectation(description: "Check health of system")
-            
-            apiCall.get(endPoint: "health") { result, response, error in
-                do {
-                    if let healthRes = result {
-                        let jsonRes = try decoder.decode(HealthStatus.self, from: healthRes)
-                        XCTAssertTrue(jsonRes.ok)
-                        expectation?.fulfill()
-                        expectation = nil
-                    } else {
-                        print("Response data was nil")
-                    }
-                } catch {
-                    print("Could not resolve health status from response")
-                }
-                
-            }
-            
-            waitForExpectations(timeout: 5, handler: nil)
-        }
     
-    func testHTTP200() {
-        var apiCall = ApiCall(config: Configuration(nodes: [Node(host: "localhost", port: "8108", nodeProtocol: "http")], apiKey: "xyz"))
-        var expectation:XCTestExpectation? = expectation(description: "Check HTTP 200 Status")
+    func testDefaultConfiguration() {
+        let apiCall = ApiCall(config: Configuration(nodes: [Node(host: "localhost", port: "8108", nodeProtocol: "http")], apiKey: "xyz"))
         
-        //Test health - should return 200 if healthy
-        apiCall.get(endPoint: "health") { result, response, error in
-            do {
-                if let healthRes = result {
-                    let jsonRes = try decoder.decode(HealthStatus.self, from: healthRes)
-                    XCTAssertTrue(jsonRes.ok)
-                    XCTAssertNil(error)
-                    
-                    if let res = response as? HTTPURLResponse {
-                        //Check 200 ok
-                        XCTAssertEqual(res.statusCode, 200)
-                    }
-                    expectation?.fulfill()
-                    expectation = nil
-                } else {
-                    print("Response data was nil")
-                }
-                
-            } catch {
-                print("Could not resolve health status from response")
-            }
-            
-        }
-        
-        waitForExpectations(timeout: 5, handler: nil)
+        XCTAssertNotNil(apiCall)
+        XCTAssertNotNil(apiCall.nodes)
+        XCTAssertEqual(apiCall.apiKey, "xyz")
+        XCTAssertNil(apiCall.nearestNode)
+        XCTAssertEqual(apiCall.connectionTimeoutSeconds, 10)
+        XCTAssertEqual(apiCall.healthcheckIntervalSeconds, 15)
+        XCTAssertEqual(apiCall.numRetries, 3)
+        XCTAssertEqual(apiCall.retryIntervalSeconds, 0.1)
+        XCTAssertEqual(apiCall.sendApiKeyAsQueryParam, false)
     }
     
-    func testHTTP404() {
-        var apiCall = ApiCall(config: Configuration(nodes: [Node(host: "localhost", port: "8108", nodeProtocol: "http")], apiKey: "xyz"))
-        var expectation:XCTestExpectation? = expectation(description: "Check HTTP 404 Status")
+    func testCustomConfiguration() {
+        let apiCall = ApiCall(config: Configuration(
+            nodes:
+                [Node(host: "localhost", port: "8108", nodeProtocol: "http"),
+                 Node(host: "localhost", port: "8109", nodeProtocol: "http")
+                ],
+            apiKey: "abc",
+            connectionTimeoutSeconds: 100,
+            nearestNode: Node(host: "localhost", port: "8000", nodeProtocol: "http"),
+            healthcheckIntervalSeconds: 150,
+            numRetries: 6,
+            retryIntervalSeconds: 0.2,
+            sendApiKeyAsQueryParam: true)
+        )
         
-        //Test for a random url - /randomURL that doesn't exist
-        apiCall.get(endPoint: "randomURL") { result, response, error in
-            do {
-                if let notFoundRes = result {
-                    let jsonRes = try decoder.decode(ApiResponse.self, from: notFoundRes)
-                    XCTAssertEqual(jsonRes.message, "Not Found")
-                    XCTAssertNil(error)
-                    
-                    if let res = response as? HTTPURLResponse {
-                        //Check 404 not found
-                        XCTAssertEqual(res.statusCode, 404)
-                    }
-                    expectation?.fulfill()
-                    expectation = nil
-                } else {
-                    print("Response data was nil")
-                }
-                
-            } catch {
-                print("Could not resolve APIResponse type from given response")
-            }
-            
-        }
-        
-        waitForExpectations(timeout: 5, handler: nil)
+        XCTAssertNotNil(apiCall)
+        XCTAssertNotNil(apiCall.nodes)
+        XCTAssertNotNil(apiCall.nearestNode)
+        XCTAssertEqual(apiCall.nodes.count, 2)
+        XCTAssertEqual(apiCall.apiKey, "abc")
+        XCTAssertNotNil(apiCall.nearestNode)
+        XCTAssertEqual(apiCall.connectionTimeoutSeconds, 100)
+        XCTAssertEqual(apiCall.healthcheckIntervalSeconds, 150)
+        XCTAssertEqual(apiCall.numRetries, 6)
+        XCTAssertEqual(apiCall.retryIntervalSeconds, 0.2)
+        XCTAssertEqual(apiCall.sendApiKeyAsQueryParam, true)
     }
     
-    func testHTTP401() {
-        //Initialize with a bad api key
-        var apiCall = ApiCall(config: Configuration(nodes: [Node(host: "localhost", port: "8108", nodeProtocol: "http")], apiKey: "abc"))
-        var expectation:XCTestExpectation? = expectation(description: "Check HTTP 401 Status")
-        
-        apiCall.get(endPoint: "collections") { result, response, error in
-            do {
-                if let notAuthRes = result {
-                    let jsonRes = try decoder.decode(ApiResponse.self, from: notAuthRes)
-                    //Check if bad api key fails while trying to access /collections
-                    XCTAssertEqual(jsonRes.message, "Forbidden - a valid `x-typesense-api-key` header must be sent.")
-                    XCTAssertNil(error)
-                    
-                    if let res = response as? HTTPURLResponse {
-                        //Check 401 unauthorized
-                        XCTAssertEqual(res.statusCode, 401)
-                    }
-                    expectation?.fulfill()
-                    expectation = nil
-                } else {
-                    print("Response data was nil")
-                }
-            } catch {
-                print("Could not resolve APIResponse type from given response")
-            }
-            
-        }
-        
-        waitForExpectations(timeout: 5, handler: nil)
-    }
     
-    func testServerNotFound() {
-        //Initialize unknown node (port 8000)
-        var apiCall = ApiCall(config: Configuration(nodes: [Node(host: "localhost", port: "8000", nodeProtocol: "http")], apiKey: "xyz"))
-        var expectation:XCTestExpectation? = expectation(description: "Check if Server could be found")
-        
-        apiCall.get(endPoint: "health") { result, response, error in
-            
-            if let existingErr = error {
-                let errorMessage = existingErr.localizedDescription
-                //There's no response, just an error message
-                XCTAssertEqual(errorMessage, "Could not connect to the server.")
-                XCTAssertNil(result)
-                XCTAssertNil(response)
-                expectation?.fulfill()
-                expectation = nil
-            } else {
-                print("No Error triggered")
-            }
-        }
-        
-        waitForExpectations(timeout: 5, handler: nil)
-    }
     
-    func testRetries() {
-        var apiCall = ApiCall(config: Configuration(nodes: [
-            Node(host: "localhost", port: "8108", nodeProtocol: "http"),
-            Node(host: "localhost", port: "8109", nodeProtocol: "http"),
-            Node(host: "localhost", port: "8110", nodeProtocol: "http")], apiKey: "xyz"))
-        var expectation:XCTestExpectation? = expectation(description: "Check retries")
+    func testNodes() {
+        let apiCall = ApiCall(config: Configuration(nodes: [Node(host: "localhost", port: "8108", nodeProtocol: "http")], apiKey: "xyz"))
         
-        apiCall.get(endPoint: "health") { result, response, error in
-            do {
-                if let healthRes = result {
-                    let jsonRes = try decoder.decode(HealthStatus.self, from: healthRes)
-                    XCTAssertTrue(jsonRes.ok)
-                    expectation?.fulfill()
-                    expectation = nil
-                } else {
-                    print("Response data was nil")
-                }
-            } catch {
-                print("Could not resolve health status from response")
-            }
-            
+        XCTAssertNotNil(apiCall)
+        XCTAssertNotNil(apiCall.nodes)
+        XCTAssertNotEqual(0, apiCall.nodes.count)
+        XCTAssertEqual(apiCall.nodes[0].host, "localhost")
+        XCTAssertEqual(apiCall.nodes[0].port, "8108")
+        XCTAssertEqual(apiCall.nodes[0].nodeProtocol, "http")
+        
         }
-        
-        waitForExpectations(timeout: 5, handler: nil)
-    }
     
+    func testNearestNode() {
+        let apiCall = ApiCall(config: Configuration(nodes: [Node(host: "localhost", port: "8108", nodeProtocol: "http")], apiKey: "xyz", nearestNode: Node(host: "nearest.host", port: "8109", nodeProtocol: "https")))
+        
+        XCTAssertNotNil(apiCall)
+        XCTAssertNotNil(apiCall.nodes)
+        XCTAssertNotNil(apiCall.nearestNode)
+        XCTAssertEqual(apiCall.nearestNode?.host, "nearest.host")
+        XCTAssertEqual(apiCall.nearestNode?.port, "8109")
+        XCTAssertEqual(apiCall.nearestNode?.nodeProtocol, "https")
+        
+        }
 }
