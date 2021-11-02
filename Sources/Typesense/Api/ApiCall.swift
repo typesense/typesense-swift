@@ -58,7 +58,7 @@ struct ApiCall {
         return (data, statusCode)
     }
     
-    //Hero function
+    //Actual API Call
     mutating func performRequest(requestType: RequestType, endpoint: String, body: Data? = nil) async throws -> (Data?, Int?) {
         let requestNumber = Date().millisecondsSince1970
         logger.log("Request #\(requestNumber): Performing \(requestType.rawValue) request: /\(endpoint)")
@@ -111,6 +111,30 @@ struct ApiCall {
         }
         
         return (nil,nil)
+    }
+    
+    //Bundles a URL Request
+    func prepareRequest(requestType: RequestType, endpoint: String, body: Data? = nil, selectedNode: Node) -> URLRequest {
+        
+        let urlString = uriFor(endpoint: endpoint, node: selectedNode)
+        let url = URL(string: urlString)
+        
+        var request = URLRequest(url: url!)
+        request.httpMethod = requestType.rawValue
+        
+        //Set the ApiKey Header
+        request.setValue(self.apiKey, forHTTPHeaderField: APIKEYHEADERNAME)
+
+        if let httpBody = body {
+            //Set the following headers if a body is present
+            request.setValue("application/json", forHTTPHeaderField: "Accept")
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            
+            //Set the body of the request
+            request.httpBody = httpBody
+        }
+        
+        return request
     }
     
     //Get URL for a node combined with it's end point
