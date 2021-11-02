@@ -15,6 +15,7 @@ struct Configuration {
     var sendApiKeyAsQueryParam: Bool = false
     var cacheSearchResultsForSeconds: Int = 0
     var useServerSideSearchCache: Bool = false
+    var logger: Logger = Logger(debugMode: false)
     
     //Quick configurations
     init(nodes: [Node], apiKey: String) {
@@ -30,7 +31,7 @@ struct Configuration {
     }
     
     //Advanced configurations
-    init(nodes: [Node], apiKey: String, connectionTimeoutSeconds: Int = 10, nearestNode: Node? = nil, healthcheckIntervalSeconds: Int = 15, numRetries: Int = 3, retryIntervalSeconds: Float = 0.1, sendApiKeyAsQueryParam: Bool = false, cacheSearchResultsForSeconds: Int = 0, useServerSideSearchCache: Bool = false) {
+    init(nodes: [Node], apiKey: String, connectionTimeoutSeconds: Int = 10, nearestNode: Node? = nil, healthcheckIntervalSeconds: Int = 15, numRetries: Int = 3, retryIntervalSeconds: Float = 0.1, sendApiKeyAsQueryParam: Bool = false, cacheSearchResultsForSeconds: Int = 0, useServerSideSearchCache: Bool = false, logger: Logger = Logger(debugMode: false)) {
         self.nodes = nodes
         self.apiKey = apiKey
         self.connectionTimeoutSeconds = connectionTimeoutSeconds
@@ -41,6 +42,7 @@ struct Configuration {
         self.sendApiKeyAsQueryParam = sendApiKeyAsQueryParam
         self.cacheSearchResultsForSeconds = cacheSearchResultsForSeconds
         self.useServerSideSearchCache = useServerSideSearchCache
+        self.logger = logger
     }
  
 }

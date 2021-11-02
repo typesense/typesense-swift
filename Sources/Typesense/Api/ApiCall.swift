@@ -15,6 +15,7 @@ struct ApiCall {
     var retryIntervalSeconds: Float = 0.1
     var sendApiKeyAsQueryParam: Bool = false
     var currentNodeIndex = -1
+    var logger: Logger
     
     init(config: Configuration) {
         self.apiKey = config.apiKey
@@ -25,6 +26,7 @@ struct ApiCall {
         self.numRetries = config.numRetries
         self.retryIntervalSeconds = config.retryIntervalSeconds
         self.sendApiKeyAsQueryParam = config.sendApiKeyAsQueryParam
+        self.logger = config.logger
         
         self.initializeMetadataForNodes()
     }
@@ -59,13 +61,13 @@ struct ApiCall {
     //Hero function
     mutating func performRequest(requestType: RequestType, endpoint: String, body: Data? = nil) async throws -> (Data?, Int?) {
         let requestNumber = Date().millisecondsSince1970
-        print("Request #\(requestNumber): Performing \(requestType.rawValue) request: /\(endpoint)")
+        logger.log("Request #\(requestNumber): Performing \(requestType.rawValue) request: /\(endpoint)")
         
         for numTry in 1...self.numRetries + 1 {
             //Get next healthy node
             var selectedNode = self.getNextNode(requestNumber: requestNumber)
-            print("Request #\(requestNumber): Attempting \(requestType.rawValue) request: Try \(numTry) to \(selectedNode)/\(endpoint)")
-            
+            logger.log("Request #\(requestNumber): Attempting \(requestType.rawValue) request: Try \(numTry) to \(selectedNode)/\(endpoint)")
+        
             //Configure the request with URL and Headers
             let urlString = uriFor(endpoint: endpoint, node: selectedNode)
             let url = URL(string: urlString)
@@ -88,20 +90,19 @@ struct ApiCall {
                 if (res.statusCode >= 1 && res.statusCode <= 499) {
                     // Treat any status code > 0 and < 500 to be an indication that node is healthy
                     // We exclude 0 since some clients return 0 when request fails
-                    selectedNode.isHealthy = HEALTHY
-                    selectedNode.lastAccessTimeStamp = Date().millisecondsSince1970
+                    selectedNode = setNodeHealthCheck(node: selectedNode, isHealthy: HEALTHY)
                 }
                 
-                print("Request \(requestNumber): Request to \(urlString) was made. Response Code was \(res.statusCode)")
+                logger.log("Request \(requestNumber): Request to \(urlString) was made. Response Code was \(res.statusCode)")
                 
-                if (res.statusCode >= 200 && res.statusCode <= 300) {
+                if (res.statusCode >= 200 && res.statusCode < 300) {
                     //Return the data and status code for a 2xx response
                     return (data, res.statusCode)
                 } else if (res.statusCode < 500) {
                     //For any response under code 500, throw the corresponding HTTP error
                     throw HTTPError.serverError(code: res.statusCode, desc: "error")
                 } else {
-                    //For all other response codes (>500) throw custom error
+                    //For all other response codes (>=500) throw custom error
                     throw HTTPError.serverError(code: res.statusCode, desc: "Server error!")
                 }
                 
@@ -122,20 +123,20 @@ struct ApiCall {
         
         //Check if nearest node exists and is healthy
         if let existingNearestNode = nearestNode {
-            print("Request #\(requestNumber): Nearest Node has health \(existingNearestNode.healthStatus)")
+            logger.log("Request #\(requestNumber): Nearest Node has health \(existingNearestNode.healthStatus)")
             
             if(existingNearestNode.isHealthy || self.nodeDueForHealthCheck(node: existingNearestNode, requestNumber: requestNumber)) {
-                print("Request #\(requestNumber): Updated current node to \(existingNearestNode)")
+                logger.log("Request #\(requestNumber): Updated current node to \(existingNearestNode)")
                 return existingNearestNode
             }
             
-            print("Request #\(requestNumber): Falling back to individual nodes")
+            logger.log("Request #\(requestNumber): Falling back to individual nodes")
         }
         
         //Fallback to nodes as usual
-        print("Request #\(requestNumber): Listing health of nodes")
+        logger.log("Request #\(requestNumber): Listing health of nodes")
         let _ = self.nodes.map { node in
-            print("Health of \(node) is \(node.healthStatus)")
+            logger.log("Health of \(node) is \(node.healthStatus)")
         }
         
         var candidateNode = nodes[0]
@@ -145,18 +146,18 @@ struct ApiCall {
             candidateNode = self.nodes[currentNodeIndex]
             
             if(candidateNode.isHealthy || self.nodeDueForHealthCheck(node: candidateNode, requestNumber: requestNumber)) {
-                print("Request #\(requestNumber): Updated current node to \(candidateNode)")
+                logger.log("Request #\(requestNumber): Updated current node to \(candidateNode)")
                 return candidateNode
             }
         }
         
-        return candidateNode
+        return self.nodes[currentNodeIndex]
     }
     
     func nodeDueForHealthCheck(node: Node, requestNumber: Int64 = 0) -> Bool {
         let isDueForHealthCheck = Date().millisecondsSince1970 - node.lastAccessTimeStamp > (self.healthcheckIntervalSeconds * 1000)
         if (isDueForHealthCheck) {
-            print("Request #\(requestNumber): \(node) has exceeded healtcheckIntervalSeconds of \(self.healthcheckIntervalSeconds). Adding it back into rotation.")
+            logger.log("Request #\(requestNumber): \(node) has exceeded healtcheckIntervalSeconds of \(self.healthcheckIntervalSeconds). Adding it back into rotation.")
         }
         
         return isDueForHealthCheck
