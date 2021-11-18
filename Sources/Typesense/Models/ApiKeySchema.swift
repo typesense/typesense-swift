@@ -14,9 +14,9 @@ public struct ApiKeySchema: Codable {
     public var _description: String
     public var actions: [String]
     public var collections: [String]
-    public var expiresAt: Int64
+    public var expiresAt: Int64?
 
-    public init(_description: String, actions: [String], collections: [String], expiresAt: Int64) {
+    public init(_description: String, actions: [String], collections: [String], expiresAt: Int64? = nil) {
         self._description = _description
         self.actions = actions
         self.collections = collections

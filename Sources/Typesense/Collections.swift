@@ -2,10 +2,10 @@ import Foundation
 
 let RESOURCEPATH = "/collections"
 
-struct Collections {
+public struct Collections {
     var apiCall: ApiCall
     
-    init(config: Configuration) {
+    public init(config: Configuration) {
         apiCall = ApiCall(config: config)
     }
     

@@ -16,12 +16,25 @@ public struct SearchOverrideSchema: Codable {
     public var includes: [SearchOverrideInclude]
     /** List of document &#x60;id&#x60;s that should be excluded from the search results. */
     public var excludes: [SearchOverrideExclude]
+    /** A filter by clause that is applied to any search query that matches the override rule.  */
+    public var filterBy: String?
+    /** Indicates whether search query tokens that exist in the override&#x27;s rule should be removed from the search query.  */
+    public var removeMatchedTokens: Bool?
 
-    public init(rule: SearchOverrideRule, includes: [SearchOverrideInclude], excludes: [SearchOverrideExclude]) {
+    public init(rule: SearchOverrideRule, includes: [SearchOverrideInclude], excludes: [SearchOverrideExclude], filterBy: String? = nil, removeMatchedTokens: Bool? = nil) {
         self.rule = rule
         self.includes = includes
         self.excludes = excludes
+        self.filterBy = filterBy
+        self.removeMatchedTokens = removeMatchedTokens
     }
 
+    public enum CodingKeys: String, CodingKey { 
+        case rule
+        case includes
+        case excludes
+        case filterBy = "filter_by"
+        case removeMatchedTokens = "remove_matched_tokens"
+    }
 
 }

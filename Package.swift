@@ -27,8 +27,5 @@ let package = Package(
         .testTarget(
             name: "TypesenseTests",
             dependencies: ["Typesense"]),
-        .testTarget(
-            name: "ApiTests",
-            dependencies: ["Typesense"])
     ]
 )

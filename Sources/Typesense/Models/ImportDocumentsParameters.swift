@@ -11,17 +11,26 @@ import Foundation
 
 public struct ImportDocumentsParameters: Codable {
 
+    public enum DirtyValues: String, Codable { 
+        case coerceOrReject = "coerce_or_reject"
+        case coerceOrDrop = "coerce_or_drop"
+        case drop = "drop"
+        case reject = "reject"
+    }
     public var action: String?
     public var batchSize: Int?
+    public var dirtyValues: DirtyValues?
 
-    public init(action: String? = nil, batchSize: Int? = nil) {
+    public init(action: String? = nil, batchSize: Int? = nil, dirtyValues: DirtyValues? = nil) {
         self.action = action
         self.batchSize = batchSize
+        self.dirtyValues = dirtyValues
     }
 
     public enum CodingKeys: String, CodingKey { 
         case action
         case batchSize = "batch_size"
+        case dirtyValues = "dirty_values"
     }
 
 }

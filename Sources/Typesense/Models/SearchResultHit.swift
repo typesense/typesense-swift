@@ -14,9 +14,9 @@ public struct SearchResultHit: Codable {
     /** Contains highlighted portions of the search fields */
     public var highlights: [SearchHighlight]
     /** Can be any key-value pair */
-    public var document: String
+    public var document: [String:Data]
 
-    public init(highlights: [SearchHighlight], document: String) {
+    public init(highlights: [SearchHighlight], document: [String:Data]) {
         self.highlights = highlights
         self.document = document
     }

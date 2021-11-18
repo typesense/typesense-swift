@@ -14,12 +14,12 @@ public struct ApiKey: Codable {
     public var _description: String
     public var actions: [String]
     public var collections: [String]
-    public var expiresAt: Int64
+    public var expiresAt: Int64?
     public var _id: Int64
     public var value: String
     public var valuePrefix: String
 
-    public init(_description: String, actions: [String], collections: [String], expiresAt: Int64, _id: Int64, value: String, valuePrefix: String) {
+    public init(_description: String, actions: [String], collections: [String], expiresAt: Int64? = nil, _id: Int64, value: String, valuePrefix: String) {
         self._description = _description
         self.actions = actions
         self.collections = collections

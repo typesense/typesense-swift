@@ -1,12 +1,12 @@
 import Foundation
 
-struct Client {
+public struct Client {
     
     var configuration: Configuration
     var apiCall: ApiCall
-    var collections: Collections
+    public var collections: Collections
     
-    init(config: Configuration) {
+    public init(config: Configuration) {
         self.configuration = config
         self.apiCall = ApiCall(config: config)
         self.collections = Collections(config: config)

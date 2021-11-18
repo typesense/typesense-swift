@@ -1,6 +1,5 @@
 import Foundation
 
-
 let APIKEYHEADERNAME = "X-TYPESENSE-API-KEY"
 let HEALTHY = true
 let UNHEALTHY = false

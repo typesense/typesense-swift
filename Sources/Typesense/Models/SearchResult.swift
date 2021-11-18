@@ -15,29 +15,32 @@ public struct SearchResult: Codable {
     /** The number of documents found */
     public var found: Int
     /** The number of milliseconds the search took */
-    public var tookMs: Int
+    public var searchTimeMs: Int
     /** The search result page number */
     public var page: Int
     public var groupedHits: [SearchGroupedHit]
     /** The documents that matched the search query */
     public var hits: [SearchResultHit]
+    public var requestParams: SearchResultRequestParams
 
-    public init(facetCounts: [Int], found: Int, tookMs: Int, page: Int, groupedHits: [SearchGroupedHit], hits: [SearchResultHit]) {
+    public init(facetCounts: [Int], found: Int, searchTimeMs: Int, page: Int, groupedHits: [SearchGroupedHit], hits: [SearchResultHit], requestParams: SearchResultRequestParams) {
         self.facetCounts = facetCounts
         self.found = found
-        self.tookMs = tookMs
+        self.searchTimeMs = searchTimeMs
         self.page = page
         self.groupedHits = groupedHits
         self.hits = hits
+        self.requestParams = requestParams
     }
 
     public enum CodingKeys: String, CodingKey { 
         case facetCounts = "facet_counts"
         case found
-        case tookMs = "took_ms"
+        case searchTimeMs = "search_time_ms"
         case page
         case groupedHits = "grouped_hits"
         case hits
+        case requestParams = "request_params"
     }
 
 }

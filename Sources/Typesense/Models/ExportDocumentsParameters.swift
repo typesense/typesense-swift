@@ -14,11 +14,11 @@ public struct ExportDocumentsParameters: Codable {
     /** Filter conditions for refining your search results. Separate multiple conditions with &amp;&amp;. */
     public var filterBy: String?
     /** List of fields from the document to include in the search result */
-    public var includeFields: [String]?
+    public var includeFields: [String]
     /** List of fields from the document to exclude in the search result */
-    public var excludeFields: [String]?
+    public var excludeFields: [String]
 
-    public init(filterBy: String? = nil, includeFields: [String]? = nil, excludeFields: [String]? = nil) {
+    public init(filterBy: String? = nil, includeFields: [String], excludeFields: [String]) {
         self.filterBy = filterBy
         self.includeFields = includeFields
         self.excludeFields = excludeFields

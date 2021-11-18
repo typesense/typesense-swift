@@ -1,6 +1,6 @@
 import Foundation
 
-struct Configuration {
+public struct Configuration {
     
     //Required Config
     var nodes: [Node]
@@ -18,12 +18,12 @@ struct Configuration {
     var logger: Logger = Logger(debugMode: false)
     
     //Quick configurations
-    init(nodes: [Node], apiKey: String) {
+    public init(nodes: [Node], apiKey: String) {
         self.nodes = nodes
         self.apiKey = apiKey
     }
     
-    init(nodes: [Node], apiKey: String, connectionTimeoutSeconds: Int = 10, nearestNode: Node?) {
+    public init(nodes: [Node], apiKey: String, connectionTimeoutSeconds: Int = 10, nearestNode: Node?) {
         self.nodes = nodes
         self.apiKey = apiKey
         self.connectionTimeoutSeconds = connectionTimeoutSeconds
@@ -31,7 +31,7 @@ struct Configuration {
     }
     
     //Advanced configurations
-    init(nodes: [Node], apiKey: String, connectionTimeoutSeconds: Int = 10, nearestNode: Node? = nil, healthcheckIntervalSeconds: Int = 15, numRetries: Int = 3, retryIntervalSeconds: Float = 0.1, sendApiKeyAsQueryParam: Bool = false, cacheSearchResultsForSeconds: Int = 0, useServerSideSearchCache: Bool = false, logger: Logger = Logger(debugMode: false)) {
+    public init(nodes: [Node], apiKey: String, connectionTimeoutSeconds: Int = 10, nearestNode: Node? = nil, healthcheckIntervalSeconds: Int = 15, numRetries: Int = 3, retryIntervalSeconds: Float = 0.1, sendApiKeyAsQueryParam: Bool = false, cacheSearchResultsForSeconds: Int = 0, useServerSideSearchCache: Bool = false, logger: Logger = Logger(debugMode: false)) {
         self.nodes = nodes
         self.apiKey = apiKey
         self.connectionTimeoutSeconds = connectionTimeoutSeconds
