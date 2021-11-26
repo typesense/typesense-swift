@@ -1,21 +1,26 @@
 import Foundation
 
-public struct Collections {
+public struct Document {
     var apiCall: ApiCall
-    let RESOURCEPATH = "collections"
+    var collectionName: String?
+    let RESOURCEPATH = "documents"
     
-    public init(config: Configuration) {
+    public init(config: Configuration, collectionName: String? = nil) {
         apiCall = ApiCall(config: config)
+        self.collectionName = collectionName
     }
     
-    mutating func create(schema: CollectionSchema) async throws -> (Data?, Int?) {
+    mutating func create(schema: CollectionSchema) async -> (Data?, Int?) {
         var schemaData: Data? = nil
-    
-        schemaData = try encoder.encode(schema)
+        do {
+            schemaData = try encoder.encode(schema)
             
-        if let validSchema = schemaData {
-            let (data, statusCode) = try await apiCall.post(endPoint: RESOURCEPATH, body: validSchema)
-            return (data, statusCode)
+            if let validSchema = schemaData {
+                let (data, statusCode) = try await apiCall.post(endPoint: RESOURCEPATH, body: validSchema)
+                return (data, statusCode)
+            }
+        } catch (let error) {
+            print(error.localizedDescription)
         }
         return (nil, nil)
     }

@@ -32,33 +32,33 @@ struct ApiCall {
     
     //Various request types' implementation
 
-    mutating func get(endPoint: String) async throws -> (Data?, Int?) {
+    mutating func get(endPoint: String, queryParameters: [URLQueryItem]? = nil) async throws -> (Data?, Int?) {
         let (data, statusCode) = try await self.performRequest(requestType: RequestType.get, endpoint: endPoint)
         return (data, statusCode)
     }
     
-    mutating func delete(endPoint: String) async throws -> (Data?, Int?) {
+    mutating func delete(endPoint: String, queryParameters: [URLQueryItem]? = nil) async throws -> (Data?, Int?) {
         let (data, statusCode) = try await self.performRequest(requestType: RequestType.delete, endpoint: endPoint)
         return (data, statusCode)
     }
     
-    mutating func post(endPoint: String, body: Data) async throws -> (Data?, Int?) {
+    mutating func post(endPoint: String, body: Data, queryParameters: [URLQueryItem]? = nil) async throws -> (Data?, Int?) {
         let (data, statusCode) = try await self.performRequest(requestType: RequestType.post, endpoint: endPoint, body: body)
         return (data, statusCode)
     }
     
-    mutating func put(endPoint: String, body: Data) async throws -> (Data?, Int?) {
+    mutating func put(endPoint: String, body: Data, queryParameters: [URLQueryItem]? = nil) async throws -> (Data?, Int?) {
         let (data, statusCode) = try await self.performRequest(requestType: RequestType.put, endpoint: endPoint, body: body)
         return (data, statusCode)
     }
     
-    mutating func patch(endPoint: String, body: Data) async throws -> (Data?, Int?) {
+    mutating func patch(endPoint: String, body: Data, queryParameters: [URLQueryItem]? = nil) async throws -> (Data?, Int?) {
         let (data, statusCode) = try await self.performRequest(requestType: RequestType.patch, endpoint: endPoint, body: body)
         return (data, statusCode)
     }
     
     //Actual API Call
-    mutating func performRequest(requestType: RequestType, endpoint: String, body: Data? = nil) async throws -> (Data?, Int?) {
+    mutating func performRequest(requestType: RequestType, endpoint: String, body: Data? = nil, queryParameters: [URLQueryItem]? = nil) async throws -> (Data?, Int?) {
         let requestNumber = Date().millisecondsSince1970
         logger.log("Request #\(requestNumber): Performing \(requestType.rawValue) request: /\(endpoint)")
         
@@ -67,21 +67,8 @@ struct ApiCall {
             var selectedNode = self.getNextNode(requestNumber: requestNumber)
             logger.log("Request #\(requestNumber): Attempting \(requestType.rawValue) request: Try \(numTry) to \(selectedNode)/\(endpoint)")
         
-            //Configure the request with URL and Headers
-            let urlString = uriFor(endpoint: endpoint, node: selectedNode)
-            let url = URL(string: urlString)
-            
-            let requestHeaders: [String : String] = [APIKEYHEADERNAME: self.apiKey]
-            
-            var request = URLRequest(url: url!)
-            request.allHTTPHeaderFields = requestHeaders
-            request.httpMethod = requestType.rawValue
-
-            if let httpBody = body {
-                request.setValue("application/json", forHTTPHeaderField: "Accept")
-                request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-                request.httpBody = httpBody
-            }
+            //Prepare a Request
+            let request = try prepareRequest(requestType: requestType, endpoint: endpoint, body: body, queryParameters: queryParameters, selectedNode: selectedNode)
              
             let (data, response) = try await URLSession.shared.data(for: request)
         
@@ -92,7 +79,7 @@ struct ApiCall {
                     selectedNode = setNodeHealthCheck(node: selectedNode, isHealthy: HEALTHY)
                 }
                 
-                logger.log("Request \(requestNumber): Request to \(urlString) was made. Response Code was \(res.statusCode)")
+                logger.log("Request \(requestNumber): Request to \(uriFor(endpoint: endpoint, node: selectedNode)) was made. Response Code was \(res.statusCode)")
                 
                 if (res.statusCode >= 200 && res.statusCode < 300) {
                     //Return the data and status code for a 2xx response
@@ -113,22 +100,37 @@ struct ApiCall {
     }
     
     //Bundles a URL Request
-    func prepareRequest(requestType: RequestType, endpoint: String, body: Data? = nil, selectedNode: Node) -> URLRequest {
+    func prepareRequest(requestType: RequestType, endpoint: String, body: Data? = nil, queryParameters: [URLQueryItem]? = nil, selectedNode: Node) throws -> URLRequest {
         
         let urlString = uriFor(endpoint: endpoint, node: selectedNode)
         let url = URL(string: urlString)
         
-        var request = URLRequest(url: url!)
+        guard let validURL = url else {
+            throw URLError.invalidURL
+        }
+        
+        var components = URLComponents(url: validURL, resolvingAgainstBaseURL: true)
+        components?.queryItems = queryParameters
+        
+        guard let absoluteString = components?.string else {
+            throw URLError.invalidURL
+        }
+        
+        let urlWithComponents = URL(string: absoluteString)
+        
+        guard let validURLWithComponents = urlWithComponents else {
+            throw URLError.invalidURL
+        }
+        
+        var request = URLRequest(url: validURLWithComponents)
         request.httpMethod = requestType.rawValue
         
         //Set the ApiKey Header
         request.setValue(self.apiKey, forHTTPHeaderField: APIKEYHEADERNAME)
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
         if let httpBody = body {
-            //Set the following headers if a body is present
-            request.setValue("application/json", forHTTPHeaderField: "Accept")
-            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-            
             //Set the body of the request
             request.httpBody = httpBody
         }

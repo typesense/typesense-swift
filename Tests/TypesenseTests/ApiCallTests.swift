@@ -75,13 +75,17 @@ final class ApiCallTests: XCTestCase {
     func testRequest() {
         let apiCall = ApiCall(config: Configuration(nodes: [Node(host: "localhost", port: "8108", nodeProtocol: "http")], apiKey: "xyz"))
         
-        let request = apiCall.prepareRequest(requestType: RequestType.get, endpoint: "health", body: nil, selectedNode: apiCall.nodes[0])
-        
-        XCTAssertEqual(request.httpMethod, "GET")
-        XCTAssertEqual(request.url?.absoluteString, "http://localhost:8108/health")
-        XCTAssertNil(request.httpBody)
-        XCTAssertTrue(request.allHTTPHeaderFields?.isEmpty != nil)
-        XCTAssertEqual(request.allHTTPHeaderFields?[APIKEYHEADERNAME], apiCall.apiKey)
+        do {
+            let request = try apiCall.prepareRequest(requestType: RequestType.get, endpoint: "health", body: nil, selectedNode: apiCall.nodes[0])
+            
+            XCTAssertEqual(request.httpMethod, "GET")
+            XCTAssertEqual(request.url?.absoluteString, "http://localhost:8108/health")
+            XCTAssertNil(request.httpBody)
+            XCTAssertTrue(request.allHTTPHeaderFields?.isEmpty != nil)
+            XCTAssertEqual(request.allHTTPHeaderFields?[APIKEYHEADERNAME], apiCall.apiKey)
+        } catch (let error) {
+            print(error.localizedDescription)
+        }
         
     }
     
