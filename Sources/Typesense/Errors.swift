@@ -7,3 +7,7 @@ enum HTTPError: Error {
 enum URLError: Error {
     case invalidURL
 }
+
+enum DataError: Error {
+    case unableToParse
+}

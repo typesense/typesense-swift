@@ -86,12 +86,12 @@ struct ApiCall {
                     return (data, res.statusCode)
                 } else if (res.statusCode < 500) {
                     //For any response under code 500, throw the corresponding HTTP error
-                    throw HTTPError.serverError(code: res.statusCode, desc: "error")
+                    let errResponse = try decoder.decode(ApiResponse.self, from: data)
+                    throw HTTPError.serverError(code: res.statusCode, desc: errResponse.message)
                 } else {
                     //For all other response codes (>=500) throw custom error
-                    throw HTTPError.serverError(code: res.statusCode, desc: "Server error!")
+                    throw HTTPError.serverError(code: res.statusCode, desc: "Could not connect to the typesensex server, try again!")
                 }
-                
                 
             }
         }
