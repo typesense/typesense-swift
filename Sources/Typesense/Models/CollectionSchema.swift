@@ -18,11 +18,11 @@ public struct CollectionSchema: Codable {
     /** The name of an int32 / float field that determines the order in which the search results are ranked when a sort_by clause is not provided during searching. This field must indicate some kind of popularity. */
     public var defaultSortingField: String?
     /** List of symbols or special characters to be used for  splitting the text into individual words in addition to space and new-line characters.  */
-    public var tokenSeparators: [String]
+    public var tokenSeparators: [String]?
     /** List of symbols or special characters to be indexed.  */
-    public var symbolsToIndex: [String]
+    public var symbolsToIndex: [String]?
 
-    public init(name: String, fields: [Field], defaultSortingField: String? = nil, tokenSeparators: [String], symbolsToIndex: [String]) {
+    public init(name: String, fields: [Field], defaultSortingField: String? = nil, tokenSeparators: [String]? = nil, symbolsToIndex: [String]? = nil) {
         self.name = name
         self.fields = fields
         self.defaultSortingField = defaultSortingField

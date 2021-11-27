@@ -106,7 +106,7 @@ final class ApiCallTests: XCTestCase {
     }
     
     func testGetNextNode() {
-        var apiCall = ApiCall(config: Configuration(nodes: [
+        let apiCall = ApiCall(config: Configuration(nodes: [
             Node(host: "localhost", port: "8108", nodeProtocol: "http"),
             Node(host: "localhost", port: "8109", nodeProtocol: "http"),
         ], apiKey: "xyz"))

@@ -3,6 +3,7 @@ import Foundation
 let APIKEYHEADERNAME = "X-TYPESENSE-API-KEY"
 let HEALTHY = true
 let UNHEALTHY = false
+private var currentNodeIndex = -1
 
 struct ApiCall {
     var nodes: [Node]
@@ -13,7 +14,6 @@ struct ApiCall {
     var numRetries: Int = 3
     var retryIntervalSeconds: Float = 0.1
     var sendApiKeyAsQueryParam: Bool = false
-    var currentNodeIndex = -1
     var logger: Logger
     
     init(config: Configuration) {
@@ -32,33 +32,33 @@ struct ApiCall {
     
     //Various request types' implementation
 
-    mutating func get(endPoint: String, queryParameters: [URLQueryItem]? = nil) async throws -> (Data?, Int?) {
+    func get(endPoint: String, queryParameters: [URLQueryItem]? = nil) async throws -> (Data?, Int?) {
         let (data, statusCode) = try await self.performRequest(requestType: RequestType.get, endpoint: endPoint)
         return (data, statusCode)
     }
     
-    mutating func delete(endPoint: String, queryParameters: [URLQueryItem]? = nil) async throws -> (Data?, Int?) {
+    func delete(endPoint: String, queryParameters: [URLQueryItem]? = nil) async throws -> (Data?, Int?) {
         let (data, statusCode) = try await self.performRequest(requestType: RequestType.delete, endpoint: endPoint)
         return (data, statusCode)
     }
     
-    mutating func post(endPoint: String, body: Data, queryParameters: [URLQueryItem]? = nil) async throws -> (Data?, Int?) {
+    func post(endPoint: String, body: Data, queryParameters: [URLQueryItem]? = nil) async throws -> (Data?, Int?) {
         let (data, statusCode) = try await self.performRequest(requestType: RequestType.post, endpoint: endPoint, body: body)
         return (data, statusCode)
     }
     
-    mutating func put(endPoint: String, body: Data, queryParameters: [URLQueryItem]? = nil) async throws -> (Data?, Int?) {
+    func put(endPoint: String, body: Data, queryParameters: [URLQueryItem]? = nil) async throws -> (Data?, Int?) {
         let (data, statusCode) = try await self.performRequest(requestType: RequestType.put, endpoint: endPoint, body: body)
         return (data, statusCode)
     }
     
-    mutating func patch(endPoint: String, body: Data, queryParameters: [URLQueryItem]? = nil) async throws -> (Data?, Int?) {
+    func patch(endPoint: String, body: Data, queryParameters: [URLQueryItem]? = nil) async throws -> (Data?, Int?) {
         let (data, statusCode) = try await self.performRequest(requestType: RequestType.patch, endpoint: endPoint, body: body)
         return (data, statusCode)
     }
     
     //Actual API Call
-    mutating func performRequest(requestType: RequestType, endpoint: String, body: Data? = nil, queryParameters: [URLQueryItem]? = nil) async throws -> (Data?, Int?) {
+    func performRequest(requestType: RequestType, endpoint: String, body: Data? = nil, queryParameters: [URLQueryItem]? = nil) async throws -> (Data?, Int?) {
         let requestNumber = Date().millisecondsSince1970
         logger.log("Request #\(requestNumber): Performing \(requestType.rawValue) request: /\(endpoint)")
         
@@ -144,7 +144,8 @@ struct ApiCall {
     }
     
     //Get the next healthy node from the given nodes
-    mutating func getNextNode(requestNumber: Int64 = 0) -> Node {
+    func getNextNode(requestNumber: Int64 = 0) -> Node {
+        
         
         //Check if nearest node exists and is healthy
         if let existingNearestNode = nearestNode {

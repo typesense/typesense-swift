@@ -3,14 +3,18 @@ import Foundation
 public struct Collection {
     var apiCall: ApiCall
     let RESOURCEPATH = "collections"
-    var documents: Documents
+    var config: Configuration
     
     var collectionName: String
     
     public init(config: Configuration, collectionName: String) {
         apiCall = ApiCall(config: config)
-        documents = Documents(config: config, collectionName: collectionName)
+        self.config = config
         self.collectionName = collectionName
+    }
+    
+    public func documents() -> Documents {
+        return Documents(config: self.config, collectionName: self.collectionName)
     }
     
     mutating func delete() async -> (Data?, Int?) {
