@@ -33,27 +33,27 @@ struct ApiCall {
     //Various request types' implementation
 
     func get(endPoint: String, queryParameters: [URLQueryItem]? = nil) async throws -> (Data?, Int?) {
-        let (data, statusCode) = try await self.performRequest(requestType: RequestType.get, endpoint: endPoint)
+        let (data, statusCode) = try await self.performRequest(requestType: RequestType.get, endpoint: endPoint, queryParameters: queryParameters)
         return (data, statusCode)
     }
     
     func delete(endPoint: String, queryParameters: [URLQueryItem]? = nil) async throws -> (Data?, Int?) {
-        let (data, statusCode) = try await self.performRequest(requestType: RequestType.delete, endpoint: endPoint)
+        let (data, statusCode) = try await self.performRequest(requestType: RequestType.delete, endpoint: endPoint, queryParameters: queryParameters)
         return (data, statusCode)
     }
     
     func post(endPoint: String, body: Data, queryParameters: [URLQueryItem]? = nil) async throws -> (Data?, Int?) {
-        let (data, statusCode) = try await self.performRequest(requestType: RequestType.post, endpoint: endPoint, body: body)
+        let (data, statusCode) = try await self.performRequest(requestType: RequestType.post, endpoint: endPoint, body: body, queryParameters: queryParameters)
         return (data, statusCode)
     }
     
     func put(endPoint: String, body: Data, queryParameters: [URLQueryItem]? = nil) async throws -> (Data?, Int?) {
-        let (data, statusCode) = try await self.performRequest(requestType: RequestType.put, endpoint: endPoint, body: body)
+        let (data, statusCode) = try await self.performRequest(requestType: RequestType.put, endpoint: endPoint, body: body, queryParameters: queryParameters)
         return (data, statusCode)
     }
     
     func patch(endPoint: String, body: Data, queryParameters: [URLQueryItem]? = nil) async throws -> (Data?, Int?) {
-        let (data, statusCode) = try await self.performRequest(requestType: RequestType.patch, endpoint: endPoint, body: body)
+        let (data, statusCode) = try await self.performRequest(requestType: RequestType.patch, endpoint: endPoint, body: body, queryParameters: queryParameters)
         return (data, statusCode)
     }
     
@@ -61,7 +61,6 @@ struct ApiCall {
     func performRequest(requestType: RequestType, endpoint: String, body: Data? = nil, queryParameters: [URLQueryItem]? = nil) async throws -> (Data?, Int?) {
         let requestNumber = Date().millisecondsSince1970
         logger.log("Request #\(requestNumber): Performing \(requestType.rawValue) request: /\(endpoint)")
-        
         for numTry in 1...self.numRetries + 1 {
             //Get next healthy node
             var selectedNode = self.getNextNode(requestNumber: requestNumber)
@@ -79,7 +78,7 @@ struct ApiCall {
                     selectedNode = setNodeHealthCheck(node: selectedNode, isHealthy: HEALTHY)
                 }
                 
-                logger.log("Request \(requestNumber): Request to \(uriFor(endpoint: endpoint, node: selectedNode)) was made. Response Code was \(res.statusCode)")
+                logger.log("Request \(requestNumber): Request to \(request.url!) was made. Response Code was \(res.statusCode)")
                 
                 if (res.statusCode >= 200 && res.statusCode < 300) {
                     //Return the data and status code for a 2xx response
@@ -115,7 +114,7 @@ struct ApiCall {
         guard let absoluteString = components?.string else {
             throw URLError.invalidURL
         }
-        
+
         let urlWithComponents = URL(string: absoluteString)
         
         guard let validURLWithComponents = urlWithComponents else {

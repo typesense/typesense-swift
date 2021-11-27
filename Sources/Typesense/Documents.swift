@@ -21,4 +21,14 @@ public struct Documents {
         let (data, statusCode) = try await apiCall.post(endPoint: RESOURCEPATH, body: document, queryParameters: [upsertAction])
         return (data, statusCode)
     }
+    
+    func delete(id: String) async throws -> (Data?, Int?) {
+        let (data, statusCode) = try await apiCall.delete(endPoint: "\(RESOURCEPATH)/\(id)")
+        return (data, statusCode)
+    }
+    
+    func retrieve(id: String) async throws -> (Data?, Int?) {
+        let (data, statusCode) = try await apiCall.get(endPoint: "\(RESOURCEPATH)/\(id)")
+        return (data, statusCode)
+    }
 }
