@@ -12,7 +12,7 @@ final class CollectionTests: XCTestCase {
         do {
             let (collResp, _) = try await client.collections.create(schema: schema)
             guard let validData = collResp else {
-                throw DataError.unableToParse
+                throw DataError.dataNotFound
             }
             print(validData)
         } catch HTTPError.serverError(let code, let desc) {
@@ -31,7 +31,7 @@ final class CollectionTests: XCTestCase {
         do {
             let (collResp, _) = try await client.collections.delete(name: "companies")
             guard let validData = collResp else {
-                throw DataError.unableToParse
+                throw DataError.dataNotFound
             }
             print(validData)
         } catch HTTPError.serverError(let code, let desc) {
@@ -50,7 +50,7 @@ final class CollectionTests: XCTestCase {
         do {
             let (collResp, _) = try await client.collections.retrieveAll()
             guard let validData = collResp else {
-                throw DataError.unableToParse
+                throw DataError.dataNotFound
             }
             print(validData)
         } catch HTTPError.serverError(let code, let desc) {
@@ -69,7 +69,7 @@ final class CollectionTests: XCTestCase {
         do {
             let (collResp, _) = try await client.collections.retrieve(name: "companies")
             guard let validData = collResp else {
-                throw DataError.unableToParse
+                throw DataError.dataNotFound
             }
             print(validData)
         } catch HTTPError.serverError(let code, let desc) {

@@ -10,4 +10,5 @@ enum URLError: Error {
 
 enum DataError: Error {
     case unableToParse
+    case dataNotFound
 }

@@ -16,18 +16,24 @@ public struct SearchResult: Codable {
     public var found: Int
     /** The number of milliseconds the search took */
     public var searchTimeMs: Int
+    /** Indicates whether the seach has been cutoff or not */
+    public var searchCutoff: Bool?
     /** The search result page number */
     public var page: Int
-    public var groupedHits: [SearchGroupedHit]
+    /** The total number of pages searched */
+    public var outOf: Int?
+    public var groupedHits: [SearchGroupedHit]?
     /** The documents that matched the search query */
     public var hits: [SearchResultHit]
     public var requestParams: SearchResultRequestParams
 
-    public init(facetCounts: [Int], found: Int, searchTimeMs: Int, page: Int, groupedHits: [SearchGroupedHit], hits: [SearchResultHit], requestParams: SearchResultRequestParams) {
+    public init(facetCounts: [Int], found: Int, searchTimeMs: Int, searchCutoff: Bool? = nil, page: Int, outOf: Int? = nil, groupedHits: [SearchGroupedHit]? = nil, hits: [SearchResultHit], requestParams: SearchResultRequestParams) {
         self.facetCounts = facetCounts
         self.found = found
         self.searchTimeMs = searchTimeMs
+        self.searchCutoff = searchCutoff
         self.page = page
+        self.outOf = outOf
         self.groupedHits = groupedHits
         self.hits = hits
         self.requestParams = requestParams
@@ -37,7 +43,9 @@ public struct SearchResult: Codable {
         case facetCounts = "facet_counts"
         case found
         case searchTimeMs = "search_time_ms"
+        case searchCutoff = "search_cutoff"
         case page
+        case outOf = "out_of"
         case groupedHits = "grouped_hits"
         case hits
         case requestParams = "request_params"

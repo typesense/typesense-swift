@@ -15,12 +15,12 @@ public struct SearchHighlight: Codable {
     /** Present only for (non-array) string fields */
     public var snippet: String
     /** Present only for (array) string[] fields */
-    public var snippets: [String]
+    public var snippets: [String]?
     /** The indices property will be present only for string[] fields and will contain the corresponding indices of the snippets in the search field */
-    public var indices: [Int]
+    public var indices: [Int]?
     public var matchedTokens: [Data]
 
-    public init(field: String, snippet: String, snippets: [String], indices: [Int], matchedTokens: [Data]) {
+    public init(field: String, snippet: String, snippets: [String]? = nil, indices: [Int]? = nil, matchedTokens: [Data]) {
         self.field = field
         self.snippet = snippet
         self.snippets = snippets
