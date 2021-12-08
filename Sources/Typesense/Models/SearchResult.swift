@@ -9,7 +9,7 @@ import Foundation
 
 
 
-public struct SearchResult: Codable {
+public struct SearchResult<T: Codable>: Codable {
 
     public var facetCounts: [Int]
     /** The number of documents found */
@@ -22,12 +22,12 @@ public struct SearchResult: Codable {
     public var page: Int
     /** The total number of pages searched */
     public var outOf: Int?
-    public var groupedHits: [SearchGroupedHit]?
+    public var groupedHits: [SearchGroupedHit<T>]?
     /** The documents that matched the search query */
-    public var hits: [SearchResultHit]
+    public var hits: [SearchResultHit<T>]
     public var requestParams: SearchResultRequestParams
 
-    public init(facetCounts: [Int], found: Int, searchTimeMs: Int, searchCutoff: Bool? = nil, page: Int, outOf: Int? = nil, groupedHits: [SearchGroupedHit]? = nil, hits: [SearchResultHit], requestParams: SearchResultRequestParams) {
+    public init(facetCounts: [Int], found: Int, searchTimeMs: Int, searchCutoff: Bool? = nil, page: Int, outOf: Int? = nil, groupedHits: [SearchGroupedHit<T>]? = nil, hits: [SearchResultHit<T>], requestParams: SearchResultRequestParams) {
         self.facetCounts = facetCounts
         self.found = found
         self.searchTimeMs = searchTimeMs

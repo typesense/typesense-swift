@@ -18,9 +18,9 @@ public struct SearchHighlight: Codable {
     public var snippets: [String]?
     /** The indices property will be present only for string[] fields and will contain the corresponding indices of the snippets in the search field */
     public var indices: [Int]?
-    public var matchedTokens: [Data]
+    public var matchedTokens: StringQuantum
 
-    public init(field: String, snippet: String, snippets: [String]? = nil, indices: [Int]? = nil, matchedTokens: [Data]) {
+    public init(field: String, snippet: String, snippets: [String]? = nil, indices: [Int]? = nil, matchedTokens: StringQuantum) {
         self.field = field
         self.snippet = snippet
         self.snippets = snippets

@@ -9,13 +9,13 @@ import Foundation
 
 
 
-public struct SearchGroupedHit: Codable {
+public struct SearchGroupedHit<T: Codable>: Codable {
 
     public var groupKey: [String]
     /** The documents that matched the search query */
-    public var hits: [SearchResultHit]
+    public var hits: [SearchResultHit<T>]
 
-    public init(groupKey: [String], hits: [SearchResultHit]) {
+    public init(groupKey: [String], hits: [SearchResultHit<T>]) {
         self.groupKey = groupKey
         self.hits = hits
     }

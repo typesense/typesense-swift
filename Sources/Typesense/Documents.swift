@@ -32,7 +32,7 @@ public struct Documents {
         return (data, statusCode)
     }
     
-    func search(_ searchParameters: SearchParameters) async throws -> (SearchResult?, Int?) {
+    func search<T>(_ searchParameters: SearchParameters, for: T.Type) async throws -> (SearchResult<T>?, Int?) {
         var searchQueryParams: [URLQueryItem] =
         [
             URLQueryItem(name: "q", value: searchParameters.q),
@@ -185,7 +185,7 @@ public struct Documents {
         let (data, statusCode) = try await apiCall.get(endPoint: "\(RESOURCEPATH)/search", queryParameters: searchQueryParams)
 
         if let validData = data {
-            let searchRes = try decoder.decode(SearchResult.self, from: validData)
+            let searchRes = try decoder.decode(SearchResult<T>.self, from: validData)
             return (searchRes, statusCode)
         }
 

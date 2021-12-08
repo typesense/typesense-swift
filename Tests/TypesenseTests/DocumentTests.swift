@@ -104,10 +104,10 @@ final class DocumentTests: XCTestCase {
         
         let client = Client(config: config)
         
-        let searchParams = SearchParameters(q: "stark", queryBy: ["company_name","country"], queryByWeights: ["2","1"], maxHits: "all", _prefix: [true,false], filterBy: "num_employees:>100", sortBy: ["num_employees:desc"], facetBy: ["country"], maxFacetValues: 5, facetQuery: "country:India", numTypos: 1, page: 1, perPage: 8, groupBy: ["country"], groupLimit: 3, includeFields: ["company_name","num_employees","country"], highlightFullFields: ["num_employees"])
+        let searchParams = SearchParameters(q: "stark", queryBy: ["company_name"], filterBy: "num_employees:>100", sortBy: ["num_employees:desc"])
         
         do {
-            let (data, _) = try await client.collection(name: "companies").documents().search(searchParams)
+            let (data, _) = try await client.collection(name: "companies").documents().search(searchParams, for: Company.self)
             guard let validResp = data else {
                 throw DataError.dataNotFound
             }

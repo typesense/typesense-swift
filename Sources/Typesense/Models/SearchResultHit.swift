@@ -7,17 +7,15 @@
 
 import Foundation
 
-
-
-public struct SearchResultHit: Codable {
+public struct SearchResultHit<T: Codable>: Codable {
 
     /** Contains highlighted portions of the search fields */
     public var highlights: [SearchHighlight]
     /** Can be any key-value pair */
-    public var document: [String:Data]
+    public var document: T
     public var textMatch: Int64
 
-    public init(highlights: [SearchHighlight], document: [String:Data], textMatch: Int64) {
+    public init(highlights: [SearchHighlight], document: T, textMatch: Int64) {
         self.highlights = highlights
         self.document = document
         self.textMatch = textMatch

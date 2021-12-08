@@ -9,11 +9,11 @@ import Foundation
 
 
 
-public struct MultiSearchResponse: Codable {
+public struct MultiSearchResponse<T: Codable>: Codable {
 
-    public var results: [SearchResult]?
+    public var results: [SearchResult<T>]?
 
-    public init(results: [SearchResult]? = nil) {
+    public init(results: [SearchResult<T>]? = nil) {
         self.results = results
     }
 
