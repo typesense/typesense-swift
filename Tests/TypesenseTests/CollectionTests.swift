@@ -5,7 +5,7 @@ final class CollectionTests: XCTestCase {
     func testCollectionCreate() async {
         let config = Configuration(nodes: [Node(host: "localhost", port: "8108", nodeProtocol: "http")], apiKey: "xyz")
         
-        var client = Client(config: config)
+        let client = Client(config: config)
         
         let schema = CollectionSchema(name: "companies", fields: [Field(name: "company_name", type: "string"), Field(name: "num_employees", type: "int32"), Field(name: "country", type: "string", facet: true)], defaultSortingField: "num_employees")
         
@@ -26,10 +26,10 @@ final class CollectionTests: XCTestCase {
     func testCollectionDelete() async {
         let config = Configuration(nodes: [Node(host: "localhost", port: "8108", nodeProtocol: "http")], apiKey: "xyz")
         
-        var client = Client(config: config)
+        let client = Client(config: config)
         
         do {
-            let (collResp, _) = try await client.collections.delete(name: "companies")
+            let (collResp, _) = try await client.collection(name: "companies").delete()
             guard let validData = collResp else {
                 throw DataError.dataNotFound
             }
@@ -45,7 +45,7 @@ final class CollectionTests: XCTestCase {
     func testCollectionRetrieveAll() async {
         let config = Configuration(nodes: [Node(host: "localhost", port: "8108", nodeProtocol: "http")], apiKey: "xyz")
         
-        var client = Client(config: config)
+        let client = Client(config: config)
         
         do {
             let (collResp, _) = try await client.collections.retrieveAll()
@@ -64,10 +64,10 @@ final class CollectionTests: XCTestCase {
     func testCollectionRetrieveOne() async {
         let config = Configuration(nodes: [Node(host: "localhost", port: "8108", nodeProtocol: "http")], apiKey: "xyz")
         
-        var client = Client(config: config)
+        let client = Client(config: config)
         
         do {
-            let (collResp, _) = try await client.collections.retrieve(name: "companies")
+            let (collResp, _) = try await client.collection(name: "companies").retrieve()
             guard let validData = collResp else {
                 throw DataError.dataNotFound
             }

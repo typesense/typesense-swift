@@ -17,27 +17,21 @@ public struct Collection {
         return Documents(config: self.config, collectionName: self.collectionName)
     }
     
-    mutating func delete() async -> (Data?, Int?) {
-        do {
-            let (data, statusCode) = try await apiCall.delete(endPoint: "\(RESOURCEPATH)/\(collectionName)")
-            return (data, statusCode)
-        } catch (let error) {
-            print(error.localizedDescription)
+    func delete() async throws -> (CollectionResponse?, Int?) {
+        let (data, statusCode) = try await apiCall.delete(endPoint: "\(RESOURCEPATH)/\(collectionName)")
+        if let result = data {
+            let fetchedCollection = try decoder.decode(CollectionResponse.self, from: result)
+            return (fetchedCollection, statusCode)
         }
-        return (nil, nil)
+        return (nil, statusCode)
     }
     
-    mutating func retrieve() async -> (CollectionResponse?, Int?) {
-        do {
-            let (data, statusCode) = try await apiCall.get(endPoint: "\(RESOURCEPATH)/\(collectionName)")
-            if let result = data {
-                let fetchedCollection = try decoder.decode(CollectionResponse.self, from: result)
-                return (fetchedCollection, statusCode)
-            }
-            return (nil, statusCode)
-        } catch (let error) {
-            print(error.localizedDescription)
+    func retrieve() async throws -> (CollectionResponse?, Int?) {
+        let (data, statusCode) = try await apiCall.get(endPoint: "\(RESOURCEPATH)/\(collectionName)")
+        if let result = data {
+            let fetchedCollection = try decoder.decode(CollectionResponse.self, from: result)
+            return (fetchedCollection, statusCode)
         }
-        return (nil, nil)
+        return (nil, statusCode)
     }
 }
