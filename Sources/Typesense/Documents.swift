@@ -22,16 +22,6 @@ public struct Documents {
         return (data, statusCode)
     }
     
-    func delete(id: String) async throws -> (Data?, Int?) {
-        let (data, statusCode) = try await apiCall.delete(endPoint: "\(RESOURCEPATH)/\(id)")
-        return (data, statusCode)
-    }
-    
-    func retrieve(id: String) async throws -> (Data?, Int?) {
-        let (data, statusCode) = try await apiCall.get(endPoint: "\(RESOURCEPATH)/\(id)")
-        return (data, statusCode)
-    }
-    
     func search<T>(_ searchParameters: SearchParameters, for: T.Type) async throws -> (SearchResult<T>?, Int?) {
         var searchQueryParams: [URLQueryItem] =
         [

@@ -65,7 +65,7 @@ final class DocumentTests: XCTestCase {
         let client = Client(config: config)
         
         do {
-            let (data, _) = try await client.collection(name: "companies").documents().delete(id: "125")
+            let (data, _) = try await client.collection(name: "companies").document(id: "125").delete()
             guard let validResp = data else {
                 throw DataError.dataNotFound
             }
@@ -85,7 +85,7 @@ final class DocumentTests: XCTestCase {
         let client = Client(config: config)
         
         do {
-            let (data, _) = try await client.collection(name: "companies").documents().retrieve(id: "125")
+            let (data, _) = try await client.collection(name: "companies").document(id: "125").retrieve()
             guard let validResp = data else {
                 throw DataError.dataNotFound
             }

@@ -17,6 +17,10 @@ public struct Collection {
         return Documents(config: self.config, collectionName: self.collectionName)
     }
     
+    public func document(id: String) -> Document {
+        return Document(config: self.config, collectionName: self.collectionName, id: id)
+    }
+    
     func delete() async throws -> (CollectionResponse?, Int?) {
         let (data, statusCode) = try await apiCall.delete(endPoint: "\(RESOURCEPATH)/\(collectionName)")
         if let result = data {
