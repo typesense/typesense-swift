@@ -11,6 +11,14 @@ final class DocumentTests: XCTestCase {
         var country: String
     }
     
+    //Partial data format to be used in update() method
+    struct PartialCompany: Codable {
+        var id: String?
+        var company_name: String?
+        var num_employees: Int?
+        var country: String?
+    }
+    
     func testDocumentCreate() async {
         let config = Configuration(nodes: [Node(host: "localhost", port: "8108", nodeProtocol: "http")], apiKey: "xyz", logger: Logger(debugMode: true))
         
@@ -20,7 +28,6 @@ final class DocumentTests: XCTestCase {
 
         do {
             let docuData = try encoder.encode(document)
-            print(String(data: docuData, encoding: .utf8)!)
             let (data, _) = try await client.collection(name: "companies").documents().create(document: docuData)
             guard let validResp = data else {
                 throw DataError.dataNotFound
@@ -91,6 +98,29 @@ final class DocumentTests: XCTestCase {
             }
             let docuResp = try decoder.decode(Company.self, from: validResp)
             print(docuResp) 
+        } catch HTTPError.serverError(let code, let desc) {
+            print(desc)
+            print("The response status code is \(code)")
+        } catch (let error) {
+            print(error.localizedDescription)
+        }
+    }
+    
+    func testDocumentUpdate() async {
+        let config = Configuration(nodes: [Node(host: "localhost", port: "8108", nodeProtocol: "http")], apiKey: "xyz", logger: Logger(debugMode: true))
+        
+        let client = Client(config: config)
+        
+        let newDoc = PartialCompany(company_name: "Stark Industries", num_employees: 5500)
+        
+        do {
+            let docuData = try encoder.encode(newDoc)
+            let (data, _) = try await client.collection(name: "companies").document(id: "125").update(newDocument: docuData)
+            guard let validResp = data else {
+                throw DataError.dataNotFound
+            }
+            let docuResp = try decoder.decode(Company.self, from: validResp)
+            print(docuResp)
         } catch HTTPError.serverError(let code, let desc) {
             print(desc)
             print("The response status code is \(code)")
