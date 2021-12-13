@@ -182,4 +182,12 @@ public struct Documents {
         return (nil, statusCode)
     }
 
+    func importBatch(_ documents: Data, action: ActionModes? = ActionModes.create) async throws -> (Data?, Int?) {
+        var importAction = URLQueryItem(name: "action", value: "create")
+        if let specifiedAction = action {
+            importAction.value = specifiedAction.rawValue
+        }
+        let (data, statusCode) = try await apiCall.post(endPoint: "\(RESOURCEPATH)/import", body: documents, queryParameters: [importAction])
+        return (data, statusCode)
+    }
 }

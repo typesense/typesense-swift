@@ -151,4 +151,40 @@ final class DocumentTests: XCTestCase {
         
     }
     
+    func testDocumentImport() async {
+        let config = Configuration(nodes: [Node(host: "localhost", port: "8108", nodeProtocol: "http")], apiKey: "xyz", logger: Logger(debugMode: true))
+        
+        let client = Client(config: config)
+        
+        let documents = [
+            Company(id: "124", company_name: "Stark Industries", num_employees: 5125, country: "USA"),
+            Company(id: "125", company_name: "Acme Corp", num_employees: 2133, country: "CA")
+        ]
+        
+        do {
+            
+            var jsonLStrings:[String] = []
+            for doc in documents {
+                let data = try encoder.encode(doc)
+                let str = String(data: data, encoding: .utf8)!
+                jsonLStrings.append(str)
+            }
+
+            let jsonLString = jsonLStrings.joined(separator: "\n")
+            print(jsonLString)
+            let jsonL = Data(jsonLString.utf8)
+        
+            let (data, _) = try await client.collection(name: "companies").documents().importBatch(jsonL)
+            guard let validResp = data else {
+                throw DataError.dataNotFound
+            }
+            print(String(data: validResp, encoding: .utf8)!)
+        } catch HTTPError.serverError(let code, let desc) {
+            print(desc)
+            print("The response status code is \(code)")
+        } catch (let error) {
+            print(error.localizedDescription)
+        }
+    }
+    
 }

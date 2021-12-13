@@ -25,3 +25,9 @@ public enum StringQuantum: Codable {
         case missingValue
     }
 }
+
+public enum ActionModes: String {
+    case create = "create"
+    case upsert = "upsert"
+    case update = "update"
+}
