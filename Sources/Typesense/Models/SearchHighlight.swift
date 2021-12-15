@@ -11,16 +11,16 @@ import Foundation
 
 public struct SearchHighlight: Codable {
 
-    public var field: String
+    public var field: String?
     /** Present only for (non-array) string fields */
-    public var snippet: String
+    public var snippet: String?
     /** Present only for (array) string[] fields */
     public var snippets: [String]?
     /** The indices property will be present only for string[] fields and will contain the corresponding indices of the snippets in the search field */
     public var indices: [Int]?
-    public var matchedTokens: StringQuantum
+    public var matchedTokens: StringQuantum?
 
-    public init(field: String, snippet: String, snippets: [String]? = nil, indices: [Int]? = nil, matchedTokens: StringQuantum) {
+    public init(field: String? = nil, snippet: String? = nil, snippets: [String]? = nil, indices: [Int]? = nil, matchedTokens: StringQuantum? = nil) {
         self.field = field
         self.snippet = snippet
         self.snippets = snippets

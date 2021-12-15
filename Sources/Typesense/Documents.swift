@@ -26,11 +26,11 @@ public struct Documents {
         var searchQueryParams: [URLQueryItem] =
         [
             URLQueryItem(name: "q", value: searchParameters.q),
-            URLQueryItem(name: "query_by", value: searchParameters.queryBy.joined(separator: ",")),
+            URLQueryItem(name: "query_by", value: searchParameters.queryBy),
         ]
         
         if let queryByWeights = searchParameters.queryByWeights {
-            searchQueryParams.append(URLQueryItem(name: "query_by_weights", value: queryByWeights.joined(separator: ",")))
+            searchQueryParams.append(URLQueryItem(name: "query_by_weights", value: queryByWeights))
         }
         
         if let maxHits = searchParameters.maxHits {
@@ -52,11 +52,11 @@ public struct Documents {
         }
         
         if let sortBy = searchParameters.sortBy {
-            searchQueryParams.append(URLQueryItem(name: "sort_by", value: sortBy.joined(separator: ",")))
+            searchQueryParams.append(URLQueryItem(name: "sort_by", value: sortBy))
         }
         
         if let facetBy = searchParameters.facetBy {
-            searchQueryParams.append(URLQueryItem(name: "facet_by", value: facetBy.joined(separator: ",")))
+            searchQueryParams.append(URLQueryItem(name: "facet_by", value: facetBy))
         }
         
         if let maxFacetValues = searchParameters.maxFacetValues {
@@ -80,7 +80,7 @@ public struct Documents {
         }
         
         if let groupBy = searchParameters.groupBy {
-            searchQueryParams.append(URLQueryItem(name: "group_by", value: groupBy.joined(separator: ",")))
+            searchQueryParams.append(URLQueryItem(name: "group_by", value: groupBy))
         }
         
         if let groupLimit = searchParameters.groupLimit {
@@ -88,15 +88,15 @@ public struct Documents {
         }
         
         if let includeFields = searchParameters.includeFields {
-            searchQueryParams.append(URLQueryItem(name: "include_fields", value: includeFields.joined(separator: ",")))
+            searchQueryParams.append(URLQueryItem(name: "include_fields", value: includeFields))
         }
         
         if let excludeFields = searchParameters.excludeFields {
-            searchQueryParams.append(URLQueryItem(name: "exclude_fields", value: excludeFields.joined(separator: ",")))
+            searchQueryParams.append(URLQueryItem(name: "exclude_fields", value: excludeFields))
         }
         
         if let highlightFullFields = searchParameters.highlightFullFields {
-            searchQueryParams.append(URLQueryItem(name: "highlight_full_fields", value: highlightFullFields.joined(separator: ",")))
+            searchQueryParams.append(URLQueryItem(name: "highlight_full_fields", value: highlightFullFields))
         }
         
         if let highlightAffixNumTokens = searchParameters.highlightAffixNumTokens {
@@ -124,15 +124,15 @@ public struct Documents {
         }
         
         if let pinnedHits = searchParameters.pinnedHits {
-            searchQueryParams.append(URLQueryItem(name: "pinned_hits", value: pinnedHits.joined(separator: ",")))
+            searchQueryParams.append(URLQueryItem(name: "pinned_hits", value: pinnedHits))
         }
         
         if let hiddenHits = searchParameters.hiddenHits {
-            searchQueryParams.append(URLQueryItem(name: "hidden_hits", value: hiddenHits.joined(separator: ",")))
+            searchQueryParams.append(URLQueryItem(name: "hidden_hits", value: hiddenHits))
         }
         
         if let highlightFields = searchParameters.highlightFields {
-            searchQueryParams.append(URLQueryItem(name: "highlight_fields", value: highlightFields.joined(separator: ",")))
+            searchQueryParams.append(URLQueryItem(name: "highlight_fields", value: highlightFields))
         }
         
         if let preSegmentedQuery = searchParameters.preSegmentedQuery {

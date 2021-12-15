@@ -12,11 +12,11 @@ import Foundation
 public struct SearchSynonymSchema: Codable {
 
     /** For 1-way synonyms, indicates the root word that words in the &#x60;synonyms&#x60; parameter map to. */
-    public var root: String
+    public var root: String?
     /** Array of words that should be considered as synonyms. */
     public var synonyms: [String]
 
-    public init(root: String, synonyms: [String]) {
+    public init(root: String? = nil, synonyms: [String]) {
         self.root = root
         self.synonyms = synonyms
     }

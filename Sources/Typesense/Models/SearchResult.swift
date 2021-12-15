@@ -11,29 +11,29 @@ import Foundation
 
 public struct SearchResult<T: Codable>: Codable {
 
-    public var facetCounts: [Int]
+    public var facetCounts: [Int]?
     /** The number of documents found */
-    public var found: Int
+    public var found: Int?
     /** The number of milliseconds the search took */
-    public var searchTimeMs: Int
-    /** Indicates whether the seach has been cutoff or not */
+    public var searchTimeMs: Int?
+    /** The total number of pages */
+    public var outOf: Int?
+    /** Whether the search was cut off */
     public var searchCutoff: Bool?
     /** The search result page number */
-    public var page: Int
-    /** The total number of pages searched */
-    public var outOf: Int?
+    public var page: Int?
     public var groupedHits: [SearchGroupedHit<T>]?
     /** The documents that matched the search query */
-    public var hits: [SearchResultHit<T>]
-    public var requestParams: SearchResultRequestParams
+    public var hits: [SearchResultHit<T>]?
+    public var requestParams: SearchResultRequestParams?
 
-    public init(facetCounts: [Int], found: Int, searchTimeMs: Int, searchCutoff: Bool? = nil, page: Int, outOf: Int? = nil, groupedHits: [SearchGroupedHit<T>]? = nil, hits: [SearchResultHit<T>], requestParams: SearchResultRequestParams) {
+    public init(facetCounts: [Int]? = nil, found: Int? = nil, searchTimeMs: Int? = nil, outOf: Int? = nil, searchCutoff: Bool? = nil, page: Int? = nil, groupedHits: [SearchGroupedHit<T>]? = nil, hits: [SearchResultHit<T>]? = nil, requestParams: SearchResultRequestParams? = nil) {
         self.facetCounts = facetCounts
         self.found = found
         self.searchTimeMs = searchTimeMs
+        self.outOf = outOf
         self.searchCutoff = searchCutoff
         self.page = page
-        self.outOf = outOf
         self.groupedHits = groupedHits
         self.hits = hits
         self.requestParams = requestParams
@@ -43,9 +43,9 @@ public struct SearchResult<T: Codable>: Codable {
         case facetCounts = "facet_counts"
         case found
         case searchTimeMs = "search_time_ms"
+        case outOf = "out_of"
         case searchCutoff = "search_cutoff"
         case page
-        case outOf = "out_of"
         case groupedHits = "grouped_hits"
         case hits
         case requestParams = "request_params"
