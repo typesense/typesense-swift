@@ -7,11 +7,11 @@ A great new way to implement your searches on iOS using [Typesense](https://gith
 Add `Typesense Swift` Swift Package to your project. You can refer [Apple's Documentation](https://developer.apple.com/documentation/swift_packages/adding_package_dependencies_to_your_app) to add Typesense Swift as a dependency to your iOS Project. You can also import Typesense into your own Swift Package by adding this line to dependencies array of `Package.swift`:
 
 ```swift
-    ...
-    dependencies: [
-               .package(url: "https://github.com/typesense/typesense-swift", .upToNextMajor(from: "0.1.0"),
-    ],
-    ...
+...
+dependencies: [
+           .package(url: "https://github.com/typesense/typesense-swift", .upToNextMajor(from: "0.1.0"),
+],
+...
 ```
 
 ## Usage
@@ -21,27 +21,27 @@ Add `Typesense Swift` Swift Package to your project. You can refer [Apple's Docu
 Import Typesense onto your Swift Project:
 
 ```swift
-    import Typesense
+import Typesense
 ```
 
 Declare the Typesense nodes that are available as `Node` members:
 
 ```swift
-    let node1 = Node(host: "localhost", port: "8108", nodeProtocol: "http")
-    let node2 = Node(host: "super-awesome.search", port: "8080", nodeProtocol: "https") //and so on
+let node1 = Node(host: "localhost", port: "8108", nodeProtocol: "http")
+let node2 = Node(host: "super-awesome.search", port: "8080", nodeProtocol: "https") //and so on
 ```
 
 Create a configuration and hence a client with the Nodes mentioned:
 
 ```swift
-    let myConfig = Configuration(nodes: [node1, node2], apiKey: "coolstuff")
-    
-    let client = Client(config: myConfig)
+let myConfig = Configuration(nodes: [node1, node2], apiKey: "coolstuff")
+
+let client = Client(config: myConfig)
 ```
 You can use Typesense parameters like `nearestNode` and `connectionTimeoutSeconds` while creating the configuration. You can also pass in a `logger` parameter to debug the code like this:
 
 ```swift
-    let myConfig = Configuration(nodes: [node1, node2], apiKey: "coolstuff", logger: Logger(debugMode: true))
+let myConfig = Configuration(nodes: [node1, node2], apiKey: "coolstuff", logger: Logger(debugMode: true))
 ```
 
 ### Indexing documents
@@ -49,27 +49,26 @@ You can use Typesense parameters like `nearestNode` and `connectionTimeoutSecond
 You can create a collection by first defining a collection schema:
 
 ```swift
-    let myCoolSchema = CollectionSchema(name: "schools", fields: [Field(name: "school_name", type: "string"), Field(name: "num_students", type: "int32"), Field(name: "country", type: "string", facet: true)], defaultSortingField: "num_students")
+let myCoolSchema = CollectionSchema(name: "schools", fields: [Field(name: "school_name", type: "string"), Field(name: "num_students", type: "int32"), Field(name: "country", type: "string", facet: true)], defaultSortingField: "num_students")
     
-    let (data, response) = try await client.collections.create(schema: myCoolSchema)
+let (data, response) = try await client.collections.create(schema: myCoolSchema)
 ```
 
 Define the structure of your document as per your collection, and index it by inserting/upserting it to the collection:
 
 ```swift
-    struct School: Codable {
-        var id: String
-        var school_name: String
-        var num_students: Int
-        var country: String
-    }
-    
-    let document = School(id: "7", school_name: "Hogwarts", num_students: 600, country: "United Kingdom")
-    let documentData = try JSONEncoder().encode(document)
-    let (data, response) = try await client.collection(name: "schools").documents().create(document: documentData)
-    //or 
-    let (data, response) = try await client.collection(name: "schools").documents().upsert(document: documentData)
-    
+struct School: Codable {
+    var id: String
+    var school_name: String
+    var num_students: Int
+    var country: String
+}
+
+let document = School(id: "7", school_name: "Hogwarts", num_students: 600, country: "United Kingdom")
+let documentData = try JSONEncoder().encode(document)
+let (data, response) = try await client.collection(name: "schools").documents().create(document: documentData)
+//or 
+let (data, response) = try await client.collection(name: "schools").documents().upsert(document: documentData)
 ```
 You can perform CRUD actions to `Collections` and `Documents` that belong to a certain collection. You can also use `.importBatch()` on the `documents()` method to import and index a batch of documents (in .jsonl format).
 
@@ -78,9 +77,9 @@ You can perform CRUD actions to `Collections` and `Documents` that belong to a c
 Define your [search parameters](https://typesense.org/docs/0.22.1/api/documents.html#arguments) clearly and then perform the search operation by mentioning your Document Type:
 
 ```swift
-    let searchParameters = SearchParameters(q: "hog", queryBy: "school_name", filterBy: "num_students:>500", sortBy: "num_students:desc")
-    
-    let (data, response) = try await client.collection(name: "schools").documents().search(searchParameters, for: School.self)
+let searchParameters = SearchParameters(q: "hog", queryBy: "school_name", filterBy: "num_students:>500", sortBy: "num_students:desc")
+
+let (data, response) = try await client.collection(name: "schools").documents().search(searchParameters, for: School.self)
 ```
 This returns a `SearchResult` object as the data, which can be further parsed as desired.
 
@@ -89,7 +88,7 @@ This returns a `SearchResult` object as the data, which can be further parsed as
 Issues and pull requests are welcome on GitHub at [Typesense Swift](https://github.com/typesense/typesense-swift). Do note that the Models used in the Swift client are generated by [Swagger-Codegen](https://github.com/swagger-api/swagger-codegen) and are automated to be modified in order to prevent major errors. So please do use the shell script that is provided in the repo to generate the models:
 
 ```shell
-    sh get-models.sh
+sh get-models.sh
 ```
 
 The generated Models (inside the Models directory) are to be used inside the Models directory of the source code as well. Models need to be generated as and when the [Typesense-Api-Spec](https://github.com/typesense/typesense-api-spec) is updated.
