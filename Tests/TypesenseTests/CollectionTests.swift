@@ -11,15 +11,25 @@ final class CollectionTests: XCTestCase {
         
         do {
             let (collResp, _) = try await client.collections.create(schema: schema)
+            XCTAssertNotNil(collResp)
             guard let validData = collResp else {
                 throw DataError.dataNotFound
             }
             print(validData)
+            XCTAssertEqual(validData.name, "companies")
+            XCTAssertNotNil(validData.fields)
+            XCTAssertEqual(validData.fields.count, 3)
+            XCTAssertEqual(validData.defaultSortingField, "num_employees")
+        } catch ResponseError.collectionAlreadyExists(let desc) {
+            print(desc)
+            XCTAssertTrue(true)
         } catch HTTPError.serverError(let code, let desc) {
             print(desc)
             print("The response status code is \(code)")
-        } catch (let error) {
+            XCTAssertTrue(false)
+        }  catch (let error) {
             print(error.localizedDescription)
+            XCTAssertTrue(false) //To prevent this, check availability of Typesense Server and retry
         }
     }
     
@@ -30,15 +40,22 @@ final class CollectionTests: XCTestCase {
         
         do {
             let (collResp, _) = try await client.collection(name: "companies").delete()
+            XCTAssertNotNil(collResp)
             guard let validData = collResp else {
                 throw DataError.dataNotFound
             }
             print(validData)
+            XCTAssertEqual(validData.name, "companies")
+        } catch ResponseError.collectionDoesNotExist(let desc) {
+            print(desc)
+            XCTAssertTrue(true)
         } catch HTTPError.serverError(let code, let desc) {
             print(desc)
             print("The response status code is \(code)")
-        } catch (let error) {
+            XCTAssertTrue(false)
+        }  catch (let error) {
             print(error.localizedDescription)
+            XCTAssertTrue(false)
         }
     }
     
@@ -49,6 +66,7 @@ final class CollectionTests: XCTestCase {
         
         do {
             let (collResp, _) = try await client.collections.retrieveAll()
+            XCTAssertNotNil(collResp)
             guard let validData = collResp else {
                 throw DataError.dataNotFound
             }
@@ -56,8 +74,10 @@ final class CollectionTests: XCTestCase {
         } catch HTTPError.serverError(let code, let desc) {
             print(desc)
             print("The response status code is \(code)")
+            XCTAssertTrue(false)
         } catch (let error) {
             print(error.localizedDescription)
+            XCTAssertTrue(false)
         }
     }
     
@@ -68,15 +88,22 @@ final class CollectionTests: XCTestCase {
         
         do {
             let (collResp, _) = try await client.collection(name: "companies").retrieve()
+            XCTAssertNotNil(collResp)
             guard let validData = collResp else {
                 throw DataError.dataNotFound
             }
             print(validData)
+            XCTAssertEqual(validData.name, "companies")
+        } catch ResponseError.collectionDoesNotExist(let desc) {
+            print(desc)
+            XCTAssertTrue(true)
         } catch HTTPError.serverError(let code, let desc) {
             print(desc)
             print("The response status code is \(code)")
-        } catch (let error) {
+            XCTAssertTrue(false)
+        }  catch (let error) {
             print(error.localizedDescription)
+            XCTAssertTrue(false)
         }
     }
     

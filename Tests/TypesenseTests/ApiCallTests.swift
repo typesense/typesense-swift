@@ -121,4 +121,22 @@ final class ApiCallTests: XCTestCase {
         XCTAssertEqual(node.port, "8109")
     }
     
+    //Integration Test - Requires Typesense Server
+    func testServerHealth() async {
+        let apiCall = ApiCall(config: Configuration(nodes: [Node(host: "localhost", port: "8108", nodeProtocol: "http")], apiKey: "xyz", logger: Logger(debugMode: true)))
+        
+        do {
+            let (data, response) = try await apiCall.get(endPoint: "health")
+            XCTAssertNotNil(data)
+            XCTAssertNotNil(response)
+            guard let validData = data else {
+                throw DataError.dataNotFound
+            }
+            let health = try decoder.decode(HealthStatus.self, from: validData)
+            XCTAssertEqual(health.ok, true)
+        } catch (let error) {
+            print(error.localizedDescription)
+        }
+    }
+    
 }

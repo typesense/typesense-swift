@@ -32,33 +32,33 @@ struct ApiCall {
     
     //Various request types' implementation
 
-    func get(endPoint: String, queryParameters: [URLQueryItem]? = nil) async throws -> (Data?, Int?) {
-        let (data, statusCode) = try await self.performRequest(requestType: RequestType.get, endpoint: endPoint, queryParameters: queryParameters)
-        return (data, statusCode)
+    func get(endPoint: String, queryParameters: [URLQueryItem]? = nil) async throws -> (Data?, URLResponse?) {
+        let (data, response) = try await self.performRequest(requestType: RequestType.get, endpoint: endPoint, queryParameters: queryParameters)
+        return (data, response)
     }
     
-    func delete(endPoint: String, queryParameters: [URLQueryItem]? = nil) async throws -> (Data?, Int?) {
-        let (data, statusCode) = try await self.performRequest(requestType: RequestType.delete, endpoint: endPoint, queryParameters: queryParameters)
-        return (data, statusCode)
+    func delete(endPoint: String, queryParameters: [URLQueryItem]? = nil) async throws -> (Data?, URLResponse?) {
+        let (data, response) = try await self.performRequest(requestType: RequestType.delete, endpoint: endPoint, queryParameters: queryParameters)
+        return (data, response)
     }
     
-    func post(endPoint: String, body: Data, queryParameters: [URLQueryItem]? = nil) async throws -> (Data?, Int?) {
-        let (data, statusCode) = try await self.performRequest(requestType: RequestType.post, endpoint: endPoint, body: body, queryParameters: queryParameters)
-        return (data, statusCode)
+    func post(endPoint: String, body: Data, queryParameters: [URLQueryItem]? = nil) async throws -> (Data?, URLResponse?) {
+        let (data, response) = try await self.performRequest(requestType: RequestType.post, endpoint: endPoint, body: body, queryParameters: queryParameters)
+        return (data, response)
     }
     
-    func put(endPoint: String, body: Data, queryParameters: [URLQueryItem]? = nil) async throws -> (Data?, Int?) {
-        let (data, statusCode) = try await self.performRequest(requestType: RequestType.put, endpoint: endPoint, body: body, queryParameters: queryParameters)
-        return (data, statusCode)
+    func put(endPoint: String, body: Data, queryParameters: [URLQueryItem]? = nil) async throws -> (Data?, URLResponse?) {
+        let (data, response) = try await self.performRequest(requestType: RequestType.put, endpoint: endPoint, body: body, queryParameters: queryParameters)
+        return (data, response)
     }
     
-    func patch(endPoint: String, body: Data, queryParameters: [URLQueryItem]? = nil) async throws -> (Data?, Int?) {
-        let (data, statusCode) = try await self.performRequest(requestType: RequestType.patch, endpoint: endPoint, body: body, queryParameters: queryParameters)
-        return (data, statusCode)
+    func patch(endPoint: String, body: Data, queryParameters: [URLQueryItem]? = nil) async throws -> (Data?, URLResponse?) {
+        let (data, response) = try await self.performRequest(requestType: RequestType.patch, endpoint: endPoint, body: body, queryParameters: queryParameters)
+        return (data, response)
     }
     
     //Actual API Call
-    func performRequest(requestType: RequestType, endpoint: String, body: Data? = nil, queryParameters: [URLQueryItem]? = nil) async throws -> (Data?, Int?) {
+    func performRequest(requestType: RequestType, endpoint: String, body: Data? = nil, queryParameters: [URLQueryItem]? = nil) async throws -> (Data?, URLResponse?) {
         let requestNumber = Date().millisecondsSince1970
         logger.log("Request #\(requestNumber): Performing \(requestType.rawValue) request: /\(endpoint)")
         for numTry in 1...self.numRetries + 1 {
@@ -69,30 +69,35 @@ struct ApiCall {
             //Prepare a Request
             let request = try prepareRequest(requestType: requestType, endpoint: endpoint, body: body, queryParameters: queryParameters, selectedNode: selectedNode)
              
-            let (data, response) = try await URLSession.shared.data(for: request)
-        
-            if let res = response as? HTTPURLResponse {
-                if (res.statusCode >= 1 && res.statusCode <= 499) {
-                    // Treat any status code > 0 and < 500 to be an indication that node is healthy
-                    // We exclude 0 since some clients return 0 when request fails
-                    selectedNode = setNodeHealthCheck(node: selectedNode, isHealthy: HEALTHY)
+            do {
+                let (data, response) = try await URLSession.shared.data(for: request)
+                if let res = response as? HTTPURLResponse {
+                    if (res.statusCode >= 1 && res.statusCode <= 499) {
+                        // Treat any status code > 0 and < 500 to be an indication that node is healthy
+                        // We exclude 0 since some clients return 0 when request fails
+                        selectedNode = setNodeHealthCheck(node: selectedNode, isHealthy: HEALTHY)
+                    }
+                    
+                    logger.log("Request \(requestNumber): Request to \(request.url!) was made. Response Code was \(res.statusCode)")
+                    
+                    if (res.statusCode < 500) {
+                        //For any response under code 500, return the corresponding HTTP Response without retries
+                        return (data, response)
+                    } else {
+                        //For all other response codes (>=500) throw custom error
+                        throw HTTPError.serverError(code: res.statusCode, desc: res.debugDescription)
+                    }
+                    
                 }
+            } catch (let error) {
                 
-                logger.log("Request \(requestNumber): Request to \(request.url!) was made. Response Code was \(res.statusCode)")
-                
-                if (res.statusCode >= 200 && res.statusCode < 300) {
-                    //Return the data and status code for a 2xx response
-                    return (data, res.statusCode)
-                } else if (res.statusCode < 500) {
-                    //For any response under code 500, throw the corresponding HTTP error
-                    let errResponse = try decoder.decode(ApiResponse.self, from: data)
-                    throw HTTPError.serverError(code: res.statusCode, desc: errResponse.message)
-                } else {
-                    //For all other response codes (>=500) throw custom error
-                    throw HTTPError.serverError(code: res.statusCode, desc: "Could not connect to the typesensex server, try again!")
-                }
-                
+                selectedNode = setNodeHealthCheck(node: selectedNode, isHealthy: UNHEALTHY)
+                logger.log("Request \(requestNumber): Request to \(selectedNode)/\(endpoint) failed with error: \(error.localizedDescription)")
+                logger.log("Request \(requestNumber): Sleeping for \(retryIntervalSeconds) seconds and retrying")
+                let durationOfSleep = UInt64(retryIntervalSeconds * 1_000_000_000)
+                try await Task.sleep(nanoseconds: durationOfSleep)
             }
+           
         }
         
         return (nil,nil)

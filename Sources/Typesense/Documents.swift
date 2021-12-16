@@ -11,18 +11,18 @@ public struct Documents {
         self.RESOURCEPATH = "collections/\(collectionName)/documents"
     }
     
-    func create(document: Data) async throws -> (Data?, Int?) {
-        let (data, statusCode) = try await apiCall.post(endPoint: RESOURCEPATH, body: document)
-        return (data, statusCode)
+    func create(document: Data) async throws -> (Data?, URLResponse?) {
+        let (data, response) = try await apiCall.post(endPoint: RESOURCEPATH, body: document)
+        return (data, response)
     }
     
-    func upsert(document: Data) async throws -> (Data?, Int?) {
+    func upsert(document: Data) async throws -> (Data?, URLResponse?) {
         let upsertAction = URLQueryItem(name: "action", value: "upsert")
-        let (data, statusCode) = try await apiCall.post(endPoint: RESOURCEPATH, body: document, queryParameters: [upsertAction])
-        return (data, statusCode)
+        let (data, response) = try await apiCall.post(endPoint: RESOURCEPATH, body: document, queryParameters: [upsertAction])
+        return (data, response)
     }
     
-    func search<T>(_ searchParameters: SearchParameters, for: T.Type) async throws -> (SearchResult<T>?, Int?) {
+    func search<T>(_ searchParameters: SearchParameters, for: T.Type) async throws -> (SearchResult<T>?, URLResponse?) {
         var searchQueryParams: [URLQueryItem] =
         [
             URLQueryItem(name: "q", value: searchParameters.q),
@@ -172,22 +172,22 @@ public struct Documents {
         }
         
 
-        let (data, statusCode) = try await apiCall.get(endPoint: "\(RESOURCEPATH)/search", queryParameters: searchQueryParams)
+        let (data, response) = try await apiCall.get(endPoint: "\(RESOURCEPATH)/search", queryParameters: searchQueryParams)
 
         if let validData = data {
             let searchRes = try decoder.decode(SearchResult<T>.self, from: validData)
-            return (searchRes, statusCode)
+            return (searchRes, response)
         }
 
-        return (nil, statusCode)
+        return (nil, response)
     }
 
-    func importBatch(_ documents: Data, action: ActionModes? = ActionModes.create) async throws -> (Data?, Int?) {
+    func importBatch(_ documents: Data, action: ActionModes? = ActionModes.create) async throws -> (Data?, URLResponse?) {
         var importAction = URLQueryItem(name: "action", value: "create")
         if let specifiedAction = action {
             importAction.value = specifiedAction.rawValue
         }
-        let (data, statusCode) = try await apiCall.post(endPoint: "\(RESOURCEPATH)/import", body: documents, queryParameters: [importAction])
-        return (data, statusCode)
+        let (data, response) = try await apiCall.post(endPoint: "\(RESOURCEPATH)/import", body: documents, queryParameters: [importAction])
+        return (data, response)
     }
 }

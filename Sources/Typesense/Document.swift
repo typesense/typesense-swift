@@ -13,19 +13,19 @@ public struct Document {
         self.RESOURCEPATH = "collections/\(collectionName)/documents"
     }
     
-    func delete() async throws -> (Data?, Int?) {
-        let (data, statusCode) = try await apiCall.delete(endPoint: "\(RESOURCEPATH)/\(self.id)")
-        return (data, statusCode)
+    func delete() async throws -> (Data?, URLResponse?) {
+        let (data, response) = try await apiCall.delete(endPoint: "\(RESOURCEPATH)/\(self.id)")
+        return (data, response)
     }
     
-    func retrieve() async throws -> (Data?, Int?) {
-        let (data, statusCode) = try await apiCall.get(endPoint: "\(RESOURCEPATH)/\(self.id)")
-        return (data, statusCode)
+    func retrieve() async throws -> (Data?, URLResponse?) {
+        let (data, response) = try await apiCall.get(endPoint: "\(RESOURCEPATH)/\(self.id)")
+        return (data, response)
     }
     
-    func update(newDocument: Data) async throws -> (Data?, Int?) {
-        let (data, statusCode) = try await apiCall.patch(endPoint: "\(RESOURCEPATH)/\(self.id)", body: newDocument)
-        return (data, statusCode)
+    func update(newDocument: Data) async throws -> (Data?, URLResponse?) {
+        let (data, response) = try await apiCall.patch(endPoint: "\(RESOURCEPATH)/\(self.id)", body: newDocument)
+        return (data, response)
     }
     
 }

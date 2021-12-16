@@ -21,21 +21,27 @@ public struct Collection {
         return Document(config: self.config, collectionName: self.collectionName, id: id)
     }
     
-    func delete() async throws -> (CollectionResponse?, Int?) {
-        let (data, statusCode) = try await apiCall.delete(endPoint: "\(RESOURCEPATH)/\(collectionName)")
+    func delete() async throws -> (CollectionResponse?, URLResponse?) {
+        let (data, response) = try await apiCall.delete(endPoint: "\(RESOURCEPATH)/\(collectionName)")
         if let result = data {
+            if let notExists = try? decoder.decode(ApiResponse.self, from: result) {
+                throw ResponseError.collectionDoesNotExist(desc: notExists.message)
+            }
             let fetchedCollection = try decoder.decode(CollectionResponse.self, from: result)
-            return (fetchedCollection, statusCode)
+            return (fetchedCollection, response)
         }
-        return (nil, statusCode)
+        return (nil, response)
     }
     
-    func retrieve() async throws -> (CollectionResponse?, Int?) {
-        let (data, statusCode) = try await apiCall.get(endPoint: "\(RESOURCEPATH)/\(collectionName)")
+    func retrieve() async throws -> (CollectionResponse?, URLResponse?) {
+        let (data, response) = try await apiCall.get(endPoint: "\(RESOURCEPATH)/\(collectionName)")
         if let result = data {
+            if let notExists = try? decoder.decode(ApiResponse.self, from: result) {
+                throw ResponseError.collectionDoesNotExist(desc: notExists.message)
+            }
             let fetchedCollection = try decoder.decode(CollectionResponse.self, from: result)
-            return (fetchedCollection, statusCode)
+            return (fetchedCollection, response)
         }
-        return (nil, statusCode)
+        return (nil, response)
     }
 }

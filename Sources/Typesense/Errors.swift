@@ -12,3 +12,8 @@ enum DataError: Error {
     case unableToParse
     case dataNotFound
 }
+
+enum ResponseError: Error {
+    case collectionAlreadyExists(desc: String)
+    case collectionDoesNotExist(desc: String)
+}
