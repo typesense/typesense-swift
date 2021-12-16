@@ -11,18 +11,18 @@ public struct Documents {
         self.RESOURCEPATH = "collections/\(collectionName)/documents"
     }
     
-    func create(document: Data) async throws -> (Data?, URLResponse?) {
+    public func create(document: Data) async throws -> (Data?, URLResponse?) {
         let (data, response) = try await apiCall.post(endPoint: RESOURCEPATH, body: document)
         return (data, response)
     }
     
-    func upsert(document: Data) async throws -> (Data?, URLResponse?) {
+    public func upsert(document: Data) async throws -> (Data?, URLResponse?) {
         let upsertAction = URLQueryItem(name: "action", value: "upsert")
         let (data, response) = try await apiCall.post(endPoint: RESOURCEPATH, body: document, queryParameters: [upsertAction])
         return (data, response)
     }
     
-    func search<T>(_ searchParameters: SearchParameters, for: T.Type) async throws -> (SearchResult<T>?, URLResponse?) {
+    public func search<T>(_ searchParameters: SearchParameters, for: T.Type) async throws -> (SearchResult<T>?, URLResponse?) {
         var searchQueryParams: [URLQueryItem] =
         [
             URLQueryItem(name: "q", value: searchParameters.q),
@@ -182,7 +182,7 @@ public struct Documents {
         return (nil, response)
     }
 
-    func importBatch(_ documents: Data, action: ActionModes? = ActionModes.create) async throws -> (Data?, URLResponse?) {
+    public func importBatch(_ documents: Data, action: ActionModes? = ActionModes.create) async throws -> (Data?, URLResponse?) {
         var importAction = URLQueryItem(name: "action", value: "create")
         if let specifiedAction = action {
             importAction.value = specifiedAction.rawValue

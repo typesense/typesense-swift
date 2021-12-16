@@ -21,7 +21,7 @@ public struct Collection {
         return Document(config: self.config, collectionName: self.collectionName, id: id)
     }
     
-    func delete() async throws -> (CollectionResponse?, URLResponse?) {
+    public func delete() async throws -> (CollectionResponse?, URLResponse?) {
         let (data, response) = try await apiCall.delete(endPoint: "\(RESOURCEPATH)/\(collectionName)")
         if let result = data {
             if let notExists = try? decoder.decode(ApiResponse.self, from: result) {
@@ -33,7 +33,7 @@ public struct Collection {
         return (nil, response)
     }
     
-    func retrieve() async throws -> (CollectionResponse?, URLResponse?) {
+    public func retrieve() async throws -> (CollectionResponse?, URLResponse?) {
         let (data, response) = try await apiCall.get(endPoint: "\(RESOURCEPATH)/\(collectionName)")
         if let result = data {
             if let notExists = try? decoder.decode(ApiResponse.self, from: result) {

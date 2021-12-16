@@ -8,7 +8,7 @@ public struct Collections {
         apiCall = ApiCall(config: config)
     }
     
-    func create(schema: CollectionSchema) async throws -> (CollectionResponse?, URLResponse?) {
+    public func create(schema: CollectionSchema) async throws -> (CollectionResponse?, URLResponse?) {
         var schemaData: Data? = nil
     
         schemaData = try encoder.encode(schema)
@@ -26,7 +26,7 @@ public struct Collections {
         return (nil, nil)
     }
     
-    func retrieveAll() async throws -> ([CollectionResponse]?, URLResponse?) {
+    public func retrieveAll() async throws -> ([CollectionResponse]?, URLResponse?) {
         let (data, response) = try await apiCall.get(endPoint: RESOURCEPATH)
         
         if let result = data {

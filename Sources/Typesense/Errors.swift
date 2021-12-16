@@ -1,19 +1,19 @@
 import Foundation
 
-enum HTTPError: Error {
+public enum HTTPError: Error {
     case serverError(code: Int, desc: String)
 }
 
-enum URLError: Error {
+public enum URLError: Error {
     case invalidURL
 }
 
-enum DataError: Error {
+public enum DataError: Error {
     case unableToParse
     case dataNotFound
 }
 
-enum ResponseError: Error {
+public enum ResponseError: Error {
     case collectionAlreadyExists(desc: String)
     case collectionDoesNotExist(desc: String)
 }
