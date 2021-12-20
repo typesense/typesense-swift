@@ -33,17 +33,16 @@ final class DocumentTests: XCTestCase {
             guard let validResp = data else {
                 throw DataError.dataNotFound
             }
-            if let docuResp = try? decoder.decode(Company.self, from: validResp) {
-                XCTAssertEqual(docuResp.company_name, "Stark Industries")
-                XCTAssertEqual(docuResp.num_employees, 5215)
-                XCTAssertEqual(docuResp.id, "125")
-                XCTAssertEqual(docuResp.country, "USA")
-                print(docuResp)
-            }
-            if let docuResp = try? decoder.decode(ApiResponse.self, from: validResp) {
-                XCTAssertNotNil(docuResp.message)
-                print(docuResp.message)
-            }
+            let docuResp = try decoder.decode(Company.self, from: validResp)
+            XCTAssertEqual(docuResp.company_name, "Stark Industries")
+            XCTAssertEqual(docuResp.num_employees, 5215)
+            XCTAssertEqual(docuResp.id, "125")
+            XCTAssertEqual(docuResp.country, "USA")
+            print(docuResp)
+            
+        } catch ResponseError.documentAlreadyExists(let desc), ResponseError.invalidCollection(let desc) {
+            print(desc)
+            XCTAssertTrue(true)
         } catch HTTPError.serverError(let code, let desc) {
             print(desc)
             print("The response status code is \(code)")
@@ -69,17 +68,15 @@ final class DocumentTests: XCTestCase {
             guard let validResp = data else {
                 throw DataError.dataNotFound
             }
-            if let docuResp = try? decoder.decode(Company.self, from: validResp) {
-                XCTAssertEqual(docuResp.company_name, "Stark Industries")
-                XCTAssertEqual(docuResp.num_employees, 5215)
-                XCTAssertEqual(docuResp.id, "124")
-                XCTAssertEqual(docuResp.country, "USA")
-                print(docuResp)
-            }
-            if let docuResp = try? decoder.decode(ApiResponse.self, from: validResp) {
-                XCTAssertNotNil(docuResp.message)
-                print(docuResp.message)
-            }
+            let docuResp = try decoder.decode(Company.self, from: validResp)
+            XCTAssertEqual(docuResp.company_name, "Stark Industries")
+            XCTAssertEqual(docuResp.num_employees, 5215)
+            XCTAssertEqual(docuResp.id, "124")
+            XCTAssertEqual(docuResp.country, "USA")
+            print(docuResp)
+        } catch ResponseError.documentAlreadyExists(let desc), ResponseError.invalidCollection(let desc) {
+            print(desc)
+            XCTAssertTrue(true)
         } catch HTTPError.serverError(let code, let desc) {
             print(desc)
             print("The response status code is \(code)")
@@ -101,18 +98,18 @@ final class DocumentTests: XCTestCase {
             guard let validResp = data else {
                 throw DataError.dataNotFound
             }
-            if let docuResp = try? decoder.decode(Company.self, from: validResp) {
-                XCTAssertEqual(docuResp.company_name, "Stark Industries")
-                let emps = [5215, 5500]
-                XCTAssertTrue(emps.contains(docuResp.num_employees))
-                XCTAssertEqual(docuResp.id, "125")
-                XCTAssertEqual(docuResp.country, "USA")
-                print(docuResp)
-            }
-            if let docuResp = try? decoder.decode(ApiResponse.self, from: validResp) {
-                XCTAssertNotNil(docuResp.message)
-                print(docuResp.message)
-            }
+            
+            let docuResp = try decoder.decode(Company.self, from: validResp)
+            XCTAssertEqual(docuResp.company_name, "Stark Industries")
+            let emps = [5215, 5500]
+            XCTAssertTrue(emps.contains(docuResp.num_employees))
+            XCTAssertEqual(docuResp.id, "125")
+            XCTAssertEqual(docuResp.country, "USA")
+            print(docuResp)
+            
+        } catch ResponseError.documentDoesNotExist(let desc), ResponseError.invalidCollection(let desc) {
+            print(desc)
+            XCTAssertTrue(true)
         } catch HTTPError.serverError(let code, let desc) {
             print(desc)
             print("The response status code is \(code)")
@@ -134,18 +131,18 @@ final class DocumentTests: XCTestCase {
             guard let validResp = data else {
                 throw DataError.dataNotFound
             }
-            if let docuResp = try? decoder.decode(Company.self, from: validResp) {
-                XCTAssertEqual(docuResp.company_name, "Stark Industries")
-                let emps = [5215, 5500]
-                XCTAssertTrue(emps.contains(docuResp.num_employees))
-                XCTAssertEqual(docuResp.id, "125")
-                XCTAssertEqual(docuResp.country, "USA")
-                print(docuResp)
-            }
-            if let docuResp = try? decoder.decode(ApiResponse.self, from: validResp) {
-                XCTAssertNotNil(docuResp.message)
-                print(docuResp.message)
-            }
+            
+            let docuResp = try decoder.decode(Company.self, from: validResp)
+            XCTAssertEqual(docuResp.company_name, "Stark Industries")
+            let emps = [5215, 5500]
+            XCTAssertTrue(emps.contains(docuResp.num_employees))
+            XCTAssertEqual(docuResp.id, "125")
+            XCTAssertEqual(docuResp.country, "USA")
+            print(docuResp)
+            
+        } catch ResponseError.documentDoesNotExist(let desc), ResponseError.invalidCollection(let desc) {
+            print(desc)
+            XCTAssertTrue(true)
         } catch HTTPError.serverError(let code, let desc) {
             print(desc)
             print("The response status code is \(code)")
@@ -170,17 +167,17 @@ final class DocumentTests: XCTestCase {
             guard let validResp = data else {
                 throw DataError.dataNotFound
             }
-            if let docuResp = try? decoder.decode(Company.self, from: validResp) {
-                XCTAssertEqual(docuResp.company_name, "Stark Industries")
-                XCTAssertEqual(docuResp.num_employees, 5500)
-                XCTAssertEqual(docuResp.id, "125")
-                XCTAssertEqual(docuResp.country, "USA")
-                print(docuResp)
-            }
-            if let docuResp = try? decoder.decode(ApiResponse.self, from: validResp) {
-                XCTAssertNotNil(docuResp.message)
-                print(docuResp.message)
-            }
+            
+            let docuResp = try decoder.decode(Company.self, from: validResp)
+            XCTAssertEqual(docuResp.company_name, "Stark Industries")
+            XCTAssertEqual(docuResp.num_employees, 5500)
+            XCTAssertEqual(docuResp.id, "125")
+            XCTAssertEqual(docuResp.country, "USA")
+            print(docuResp)
+            
+        } catch ResponseError.documentDoesNotExist(let desc), ResponseError.invalidCollection(let desc) {
+            print(desc)
+            XCTAssertTrue(true)
         } catch HTTPError.serverError(let code, let desc) {
             print(desc)
             print("The response status code is \(code)")
@@ -204,12 +201,12 @@ final class DocumentTests: XCTestCase {
             guard let validResp = data else {
                 throw DataError.dataNotFound
             }
-            XCTAssertNotNil(validResp.hits)
-            XCTAssertNotNil(validResp.found)
-            if(!(validResp.hits?.isEmpty ?? false)) {
-                XCTAssertNotNil(validResp.hits?[0].textMatch)
-                XCTAssertNotNil(validResp.hits?[0].document)
-                XCTAssertNotNil(validResp.hits?[0].highlights?[0].matchedTokens)
+            if let gotSomeHits = validResp.hits {
+                XCTAssertNotNil(validResp.hits)
+                XCTAssertNotNil(validResp.found)
+                XCTAssertNotNil(gotSomeHits[0].textMatch)
+                XCTAssertNotNil(gotSomeHits[0].document)
+                XCTAssertNotNil(gotSomeHits[0].highlights?[0].matchedTokens)
             }
             print(validResp)
         } catch HTTPError.serverError(let code, let desc) {

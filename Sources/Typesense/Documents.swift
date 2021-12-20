@@ -2,7 +2,7 @@ import Foundation
 
 public struct Documents {
     var apiCall: ApiCall
-    var collectionName: String?
+    var collectionName: String
     let RESOURCEPATH: String
     
     public init(config: Configuration, collectionName: String) {
@@ -13,12 +13,28 @@ public struct Documents {
     
     public func create(document: Data) async throws -> (Data?, URLResponse?) {
         let (data, response) = try await apiCall.post(endPoint: RESOURCEPATH, body: document)
+        if let result = data {
+            if let responseErr = try? decoder.decode(ApiResponse.self, from: result) {
+                if (responseErr.message == "Not Found") {
+                    throw ResponseError.invalidCollection(desc: "Collection \(self.collectionName) \(responseErr.message)")
+                }
+                throw ResponseError.documentAlreadyExists(desc: responseErr.message)
+            }
+        }
         return (data, response)
     }
     
     public func upsert(document: Data) async throws -> (Data?, URLResponse?) {
         let upsertAction = URLQueryItem(name: "action", value: "upsert")
         let (data, response) = try await apiCall.post(endPoint: RESOURCEPATH, body: document, queryParameters: [upsertAction])
+        if let result = data {
+            if let responseErr = try? decoder.decode(ApiResponse.self, from: result) {
+                if (responseErr.message == "Not Found") {
+                    throw ResponseError.invalidCollection(desc: "Collection \(self.collectionName) \(responseErr.message)")
+                }
+                throw ResponseError.documentAlreadyExists(desc: responseErr.message)
+            }
+        }
         return (data, response)
     }
     
