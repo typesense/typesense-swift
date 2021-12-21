@@ -206,4 +206,9 @@ public struct Documents {
         let (data, response) = try await apiCall.post(endPoint: "\(RESOURCEPATH)/import", body: documents, queryParameters: [importAction])
         return (data, response)
     }
+    
+    public func export() async throws -> (Data?, URLResponse?) {
+        let (data, response) = try await apiCall.get(endPoint: "\(RESOURCEPATH)/export")
+        return (data, response)
+    }
 }

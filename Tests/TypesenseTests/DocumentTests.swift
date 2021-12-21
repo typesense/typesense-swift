@@ -259,4 +259,27 @@ final class DocumentTests: XCTestCase {
         }
     }
     
+    func testDocumentExport() async {
+        let config = Configuration(nodes: [Node(host: "localhost", port: "8108", nodeProtocol: "http")], apiKey: "xyz", logger: Logger(debugMode: true))
+        
+        let client = Client(config: config)
+        
+        do {
+            
+            let (data, _) = try await client.collection(name: "companies").documents().export()
+            XCTAssertNotNil(data)
+            guard let validResp = data else {
+                throw DataError.dataNotFound
+            }
+            print(String(data: validResp, encoding: .utf8) ?? "Unable to Parse JSONL")
+        } catch HTTPError.serverError(let code, let desc) {
+            print(desc)
+            print("The response status code is \(code)")
+            XCTAssertTrue(false)
+        } catch (let error) {
+            print(error.localizedDescription)
+            XCTAssertTrue(false)
+        }
+    }
+    
 }
