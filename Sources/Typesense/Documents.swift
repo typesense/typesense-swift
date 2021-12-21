@@ -38,6 +38,19 @@ public struct Documents {
         return (data, response)
     }
     
+    public func delete(filter: String, batchSize: Int? = nil) async throws -> (Data?, URLResponse?) {
+        var deleteQueryParams: [URLQueryItem] =
+        [
+            URLQueryItem(name: "filter_by", value: filter)
+        ]
+        if let givenBatchSize = batchSize {
+            deleteQueryParams.append(URLQueryItem(name: "batch_size", value: String(givenBatchSize)))
+        }
+        let (data, response) = try await apiCall.delete(endPoint: "\(RESOURCEPATH)", queryParameters: deleteQueryParams)
+        return (data, response)
+        
+    }
+    
     public func search<T>(_ searchParameters: SearchParameters, for: T.Type) async throws -> (SearchResult<T>?, URLResponse?) {
         var searchQueryParams: [URLQueryItem] =
         [

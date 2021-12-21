@@ -282,4 +282,28 @@ final class DocumentTests: XCTestCase {
         }
     }
     
+    func testDocumentDeleteByQuery() async {
+        let config = Configuration(nodes: [Node(host: "localhost", port: "8108", nodeProtocol: "http")], apiKey: "xyz", logger: Logger(debugMode: true))
+        
+        let client = Client(config: config)
+        
+        do {
+            
+            let (data, _) = try await client.collection(name: "companies").documents().delete(filter: "num_employees:>100", batchSize: 100)
+            XCTAssertNotNil(data)
+            guard let validResp = data else {
+                throw DataError.dataNotFound
+            }
+            print(String(data: validResp, encoding: .utf8) ?? "Unable to Parse JSON")
+        } catch HTTPError.serverError(let code, let desc) {
+            print(desc)
+            print("The response status code is \(code)")
+            XCTAssertTrue(false)
+        } catch (let error) {
+            print(error.localizedDescription)
+            XCTAssertTrue(false)
+        }
+    }
+    
+    
 }
