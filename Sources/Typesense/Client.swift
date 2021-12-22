@@ -15,4 +15,8 @@ public struct Client {
     public func collection(name: String) -> Collection {
         return Collection(config: self.configuration, collectionName: name)
     }
+    
+    public func keys() -> ApiKeys {
+        return ApiKeys(config: self.configuration)
+    }
 }
