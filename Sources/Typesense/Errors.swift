@@ -20,4 +20,5 @@ public enum ResponseError: Error {
     case documentDoesNotExist(desc: String)
     case invalidCollection(desc: String)
     case apiKeyNotFound(desc: String)
+    case aliasNotFound(desc: String)
 }

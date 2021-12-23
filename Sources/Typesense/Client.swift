@@ -19,4 +19,8 @@ public struct Client {
     public func keys() -> ApiKeys {
         return ApiKeys(config: self.configuration)
     }
+    
+    public func aliases() -> Alias {
+        return Alias(config: self.configuration)
+    }
 }
