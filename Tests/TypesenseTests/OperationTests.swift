@@ -1,73 +1,40 @@
 import XCTest
 @testable import Typesense
 
-final class CollectionAliasTests: XCTestCase {
-    func testAliasUpsert() async {
+final class OperationTests: XCTestCase {
+    func testGetHealth() async {
         let newConfig = Configuration(nodes: [Node(host: "localhost", port: "8108", nodeProtocol: "http")], apiKey: "xyz", logger: Logger(debugMode: true))
         let myClient = Client(config: newConfig)
-
+        
         do {
-
-            let aliasCollection = CollectionAliasSchema(collectionName: "companies_june")
-            let (data, _) = try await myClient.aliases().upsert(name: "companies", collection: aliasCollection)
+            let (data, _) = try await myClient.operations().getHealth()
             XCTAssertNotNil(data)
             guard let validData = data else {
                 throw DataError.dataNotFound
             }
             print(validData)
-            XCTAssertEqual(validData.name, "companies")
-            XCTAssertEqual(validData.collectionName, "companies_june")
+            XCTAssertEqual(validData.ok, true)
         } catch HTTPError.serverError(let code, let desc) {
             print(desc)
             print("The response status code is \(code)")
             XCTAssertTrue(false)
         }  catch (let error) {
             print(error.localizedDescription)
-            XCTAssertTrue(false)
+            XCTAssertTrue(false) //To prevent this, check availability of Typesense Server and retry
         }
     }
-
-    func testAliasRetrieve() async {
+    
+    func testGetStats() async {
         let newConfig = Configuration(nodes: [Node(host: "localhost", port: "8108", nodeProtocol: "http")], apiKey: "xyz", logger: Logger(debugMode: true))
         let myClient = Client(config: newConfig)
-
+        
         do {
-            let (data, _) = try await myClient.aliases().retrieve(name: "companies")
+            let (data, _) = try await myClient.operations().getStats()
             XCTAssertNotNil(data)
             guard let validData = data else {
                 throw DataError.dataNotFound
             }
-            print(validData)
-            XCTAssertEqual(validData.name, "companies")
-            XCTAssertEqual(validData.collectionName, "companies_june")
-        } catch ResponseError.aliasNotFound(let desc) {
-            print(desc)
-            XCTAssertTrue(true)
-        } catch HTTPError.serverError(let code, let desc) {
-            print(desc)
-            print("The response status code is \(code)")
-            XCTAssertTrue(false)
-        }  catch (let error) {
-            print(error.localizedDescription)
-            XCTAssertTrue(false)
-        }
-    }
-
-    func testAliasRetrieveAll() async {
-        let newConfig = Configuration(nodes: [Node(host: "localhost", port: "8108", nodeProtocol: "http")], apiKey: "xyz", logger: Logger(debugMode: true))
-        let myClient = Client(config: newConfig)
-
-        do {
-            let (data, _) = try await myClient.aliases().retrieve()
-            XCTAssertNotNil(data)
-            guard let validData = data else {
-                throw DataError.dataNotFound
-            }
-            print(validData)
-            if(validData.aliases.count > 0) {
-                XCTAssertEqual(validData.aliases[0].collectionName, "companies_june")
-                XCTAssertEqual(validData.aliases[0].name, "companies")
-            }
+            print(String(data: validData, encoding: .utf8)!)
         } catch HTTPError.serverError(let code, let desc) {
             print(desc)
             print("The response status code is \(code)")
@@ -78,22 +45,83 @@ final class CollectionAliasTests: XCTestCase {
         }
     }
     
-    func testAliasDelete() async {
+    func testGetMetrics() async {
         let newConfig = Configuration(nodes: [Node(host: "localhost", port: "8108", nodeProtocol: "http")], apiKey: "xyz", logger: Logger(debugMode: true))
         let myClient = Client(config: newConfig)
-
+        
         do {
-            let (data, _) = try await myClient.aliases().delete(name: "companies")
+            let (data, _) = try await myClient.operations().getMetrics()
+            XCTAssertNotNil(data)
+            guard let validData = data else {
+                throw DataError.dataNotFound
+            }
+            print(String(data: validData, encoding: .utf8)!)
+        } catch HTTPError.serverError(let code, let desc) {
+            print(desc)
+            print("The response status code is \(code)")
+            XCTAssertTrue(false)
+        }  catch (let error) {
+            print(error.localizedDescription)
+            XCTAssertTrue(false)
+        }
+    }
+    
+    func testVote() async {
+        let newConfig = Configuration(nodes: [Node(host: "localhost", port: "8108", nodeProtocol: "http")], apiKey: "xyz", logger: Logger(debugMode: true))
+        let myClient = Client(config: newConfig)
+        
+        do {
+            let (data, _) = try await myClient.operations().vote()
             XCTAssertNotNil(data)
             guard let validData = data else {
                 throw DataError.dataNotFound
             }
             print(validData)
-            XCTAssertEqual(validData.name, "companies")
-            XCTAssertEqual(validData.collectionName, "companies_june")
-        } catch ResponseError.aliasNotFound(let desc) {
+            XCTAssertNotNil(validData.success)
+        } catch HTTPError.serverError(let code, let desc) {
             print(desc)
-            XCTAssertTrue(true)
+            print("The response status code is \(code)")
+            XCTAssertTrue(false)
+        }  catch (let error) {
+            print(error.localizedDescription)
+            XCTAssertTrue(false)
+        }
+    }
+    
+    func testSnapshot() async {
+        let newConfig = Configuration(nodes: [Node(host: "localhost", port: "8108", nodeProtocol: "http")], apiKey: "xyz", logger: Logger(debugMode: true))
+        let myClient = Client(config: newConfig)
+        
+        do {
+            let (data, _) = try await myClient.operations().snapshot(path: "/tmp/typesense-data-snapshot")
+            XCTAssertNotNil(data)
+            guard let validData = data else {
+                throw DataError.dataNotFound
+            }
+            print(validData)
+            XCTAssertNotNil(validData.success)
+        } catch HTTPError.serverError(let code, let desc) {
+            print(desc)
+            print("The response status code is \(code)")
+            XCTAssertTrue(false)
+        }  catch (let error) {
+            print(error.localizedDescription)
+            XCTAssertTrue(false)
+        }
+    }
+    
+    func testSlowRequestLog() async {
+        let newConfig = Configuration(nodes: [Node(host: "localhost", port: "8108", nodeProtocol: "http")], apiKey: "xyz", logger: Logger(debugMode: true))
+        let myClient = Client(config: newConfig)
+        
+        do {
+            let (data, _) = try await myClient.operations().toggleSlowRequestLog(seconds: 2)
+            XCTAssertNotNil(data)
+            guard let validData = data else {
+                throw DataError.dataNotFound
+            }
+            print(validData)
+            XCTAssertNotNil(validData.success)
         } catch HTTPError.serverError(let code, let desc) {
             print(desc)
             print("The response status code is \(code)")

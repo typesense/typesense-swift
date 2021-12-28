@@ -31,3 +31,15 @@ public enum ActionModes: String {
     case upsert = "upsert"
     case update = "update"
 }
+
+public struct SlowRequest: Codable {
+    public var logSlowRequestsTimeMs: Float?
+
+    public init(_ timeInMS: Float? = nil) {
+        self.logSlowRequestsTimeMs = timeInMS
+    }
+    
+    public enum CodingKeys: String, CodingKey {
+        case logSlowRequestsTimeMs = "log-slow-requests-time-ms"
+    }
+}

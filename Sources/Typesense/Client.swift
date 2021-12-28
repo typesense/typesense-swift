@@ -23,4 +23,8 @@ public struct Client {
     public func aliases() -> Alias {
         return Alias(config: self.configuration)
     }
+    
+    public func operations() -> Operations {
+        return Operations(config: self.configuration)
+    }
 }
