@@ -15,4 +15,16 @@ public struct Client {
     public func collection(name: String) -> Collection {
         return Collection(config: self.configuration, collectionName: name)
     }
+    
+    public func keys() -> ApiKeys {
+        return ApiKeys(config: self.configuration)
+    }
+    
+    public func aliases() -> Alias {
+        return Alias(config: self.configuration)
+    }
+    
+    public func operations() -> Operations {
+        return Operations(config: self.configuration)
+    }
 }

@@ -44,4 +44,8 @@ public struct Collection {
         }
         return (nil, response)
     }
+    
+    public func synonyms() -> Synonyms {
+        return Synonyms(config: self.config, collectionName: self.collectionName)
+    }
 }

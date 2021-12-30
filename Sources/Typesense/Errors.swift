@@ -16,4 +16,9 @@ public enum DataError: Error {
 public enum ResponseError: Error {
     case collectionAlreadyExists(desc: String)
     case collectionDoesNotExist(desc: String)
+    case documentAlreadyExists(desc: String)
+    case documentDoesNotExist(desc: String)
+    case invalidCollection(desc: String)
+    case apiKeyNotFound(desc: String)
+    case aliasNotFound(desc: String)
 }

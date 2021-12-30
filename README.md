@@ -92,3 +92,16 @@ sh get-models.sh
 ```
 
 The generated Models (inside the Models directory) are to be used inside the Models directory of the source code as well. Models need to be generated as and when the [Typesense-Api-Spec](https://github.com/typesense/typesense-api-spec) is updated.
+
+## TODO: Features
+
+- Curation API
+- Multisearch
+- Dealing with Dirty Data
+- Scoped Search Key
+
+## TODO: Testing
+
+- Geosearch
+- Auto schema detection
+- Importing a .jsonl file
