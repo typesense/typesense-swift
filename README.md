@@ -99,9 +99,3 @@ The generated Models (inside the Models directory) are to be used inside the Mod
 - Multisearch
 - Dealing with Dirty Data
 - Scoped Search Key
-
-## TODO: Testing
-
-- Geosearch
-- Auto schema detection
-- Importing a .jsonl file
