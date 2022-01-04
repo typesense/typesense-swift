@@ -1,0 +1,16 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "Typesense",
+        "repositoryURL": "https://github.com/typesense/typesense-swift",
+        "state": {
+          "branch": "compatibility-patch",
+          "revision": "7199650faa5171ff2c50d1b05800de15eb546612",
+          "version": null
+        }
+      }
+    ]
+  },
+  "version": 1
+}
