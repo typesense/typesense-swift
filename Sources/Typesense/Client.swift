@@ -27,4 +27,8 @@ public struct Client {
     public func operations() -> Operations {
         return Operations(config: self.configuration)
     }
+    
+    public func multiSearch() -> MultiSearch {
+        return MultiSearch(config: self.configuration)
+    }
 }
