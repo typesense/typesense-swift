@@ -96,6 +96,5 @@ The generated Models (inside the Models directory) are to be used inside the Mod
 ## TODO: Features
 
 - Curation API
-- Multisearch
 - Dealing with Dirty Data
 - Scoped Search Key
