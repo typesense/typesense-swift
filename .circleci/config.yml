@@ -7,6 +7,15 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Install docker
+          command: |
+            curl -fsSL https://get.docker.com -o get-docker.sh
+            sh get-docker.sh
+      - run:
+          name: Docker hello-world
+          command: |
+            docker run hello-world
+      - run:
           # Build and Test the Typesense Package
           name: Run Tests
           command: swift test
