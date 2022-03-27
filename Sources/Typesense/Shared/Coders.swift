@@ -5,6 +5,16 @@ public let decoder = JSONDecoder()
 
 public enum StringQuantum: Codable {
     
+    public var arrStr : [String]? {
+        guard case .arrOfStrings(let arrOfStrings) = self else { return nil }
+        return arrOfStrings
+    }
+    
+    public var arrArrStr : [[String]]? {
+        guard case .arrOfArrOfStrings(let arrOfArrOfStrings) = self else { return nil }
+        return arrOfArrOfStrings
+    }
+
     case arrOfStrings([String]), arrOfArrOfStrings([[String]])
     
     public init(from decoder: Decoder) throws {
