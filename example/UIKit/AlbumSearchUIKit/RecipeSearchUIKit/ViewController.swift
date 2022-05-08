@@ -1,6 +1,6 @@
 //
 //  ViewController.swift
-//  AlbumSearchUIKit
+//  RecipeSearchUIKit
 //
 //  Created by Sabesh Bharathi on 04/01/22.
 //
@@ -12,7 +12,7 @@ class ViewController: UIViewController, UISearchResultsUpdating {
 
     @IBOutlet weak var hitsTableView: UITableView!
     
-    var hits:[SearchResultHit<Album>]
+    var hits:[SearchResultHit<Recipe>]
     
     class HitsViewController: UIViewController {
         override func viewDidLoad() {
@@ -24,7 +24,7 @@ class ViewController: UIViewController, UISearchResultsUpdating {
     let client: Client
     
     required init?(coder aDecoder: NSCoder) {
-        let config = Configuration(nodes: [Node(host: "wtvd81hcmy72zk93p-1.a1.typesense.net", port: "443", nodeProtocol: "https")], apiKey: "UWw2DFoNUNWDDEWZr0gixdSLZU5SGKIs", logger: Logger(debugMode: true))
+        let config = Configuration(nodes: [Node(host: "qtg5aekc2iosjh93p.a1.typesense.net", port: "443", nodeProtocol: "https")], apiKey: "8hLCPSQTYcBuK29zY5q6Xhin7ONxHy99")
         self.client = Client(config: config)
         self.hits = []
         super.init(coder: aDecoder)
@@ -32,11 +32,12 @@ class ViewController: UIViewController, UISearchResultsUpdating {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Search"
+        title = "Search Recipes 🥘"
         searchController.searchResultsUpdater = self
         navigationItem.searchController = searchController
         hitsTableView.delegate = self
         hitsTableView.dataSource = self
+        updateSearchResults(for: UISearchController())
     }
     
     func updateSearchResults(for searchController: UISearchController) {
@@ -44,12 +45,13 @@ class ViewController: UIViewController, UISearchResultsUpdating {
             return
         }
         
-        let searchParams = SearchParameters(q: text, queryBy: "name")
+        let collectionParams = MultiSearchCollectionParameters(q: text, collection: "r")
+        let searchParams = MultiSearchParameters(queryBy: "title", perPage: 25)
         
         Task {
             do {
-                let (data, _) = try await client.collection(name: "albums").documents().search(searchParams, for: Album.self)
-                self.hits = (data?.hits) ?? []
+                let (data, _) = try await client.multiSearch().perform(searchRequests: [collectionParams], commonParameters: searchParams, for: Recipe.self)
+                self.hits = (data?.results[0].hits) ?? []
                 self.hitsTableView.reloadData()
             } catch (let error) {
                 print(error.localizedDescription)
@@ -65,21 +67,16 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let album = hits[indexPath.row].document
+        let recipe = hits[indexPath.row].document
         var cell = hitsTableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        let artist = album?.artist
-        let genre = album?.genre
-        let releaseYear = album?.release_year
         if #available(iOS 14.0, *) {
             var content = cell.defaultContentConfiguration()
-            content.text = album?.name
-            content.secondaryText = "\(artist!) - \(genre!) - \(releaseYear!)"
+            content.text = recipe?.title
             cell.contentConfiguration = content
         } else {
             cell = UITableViewCell(style: UITableViewCell.CellStyle.subtitle,
                             reuseIdentifier: "cell")
-            cell.textLabel?.text = album?.name
-            cell.detailTextLabel?.text = "\(artist!) - \(genre!) - \(releaseYear!)"
+            cell.textLabel?.text = recipe?.title
         }
         
         return cell

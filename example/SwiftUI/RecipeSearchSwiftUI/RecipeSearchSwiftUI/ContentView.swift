@@ -76,7 +76,6 @@ struct ContentView: View {
       let searchParams = MultiSearchParameters(queryBy: "title", perPage: initialRecipes ? 8 : 25)
         Task {
             do {
-              print("here")
               let (data, _) = try await client.multiSearch().perform(searchRequests: [collectionParams], commonParameters: searchParams, for: Recipe.self)
               hits = (data?.results[0].hits) ?? []
             } catch (let error) {

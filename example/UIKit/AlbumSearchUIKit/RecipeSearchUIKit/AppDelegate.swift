@@ -1,6 +1,6 @@
 //
 //  AppDelegate.swift
-//  AlbumSearchUIKit
+//  RecipeSearchUIKit
 //
 //  Created by Sabesh Bharathi on 04/01/22.
 //
