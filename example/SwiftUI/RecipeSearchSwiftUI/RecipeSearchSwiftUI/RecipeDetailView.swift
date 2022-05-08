@@ -34,7 +34,7 @@ struct RecipeDetailView: View {
           
           Section(header: Text("Cooking Directions")) {
             ForEach(recipe.directions, id: \.self) { direction in
-              Text(direction)
+                Text("\(recipe.directions.firstIndex(of: direction)! + 1). " + direction)
             }
           }
           

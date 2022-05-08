@@ -13,6 +13,7 @@ struct ContentView: View {
     @State private var hits: [SearchResultHit<Recipe>] = []
     @State private var showingSheet = false
     @State private var selectedRecipe: Recipe? = nil
+    @Environment(\.colorScheme) private var colorScheme
     
     let client: Client
     
@@ -23,30 +24,41 @@ struct ContentView: View {
     
     var body: some View {
         NavigationView {
-        
-            List(hits, id: \.document){ hit in
-              Button {
-                selectedRecipe = hit.document
-              } label: {
-                VStack(alignment: .leading) {
-                  Text(hit.document!.title)
-                        .font(.headline)
-                    HStack{
-                      Text("From " + getFoodProvider(link: hit.document?.link ?? "N/A"))
-                    }
-                    .font(.caption)
-                  
-                  
-                  Text(attachIngredients(recipe: hit.document))
-                    .padding(.top, 5)
+          ScrollView {
+            ForEach(hits, id: \.document){ hit in
+              HStack {
+                Button {
+                  selectedRecipe = hit.document
+                } label: {
+                  VStack(alignment: .leading) {
+                    Text(hit.document!.title)
+                          .font(.headline)
+                      HStack{
+                        Text("From " + getFoodProvider(link: hit.document?.link ?? "N/A"))
+                      }
+                      .font(.caption)
+                    
+                    
+                    Text(attachIngredients(recipe: hit.document))
+                      .padding(.top, 5)
+                  }
+                  .padding(.vertical, 2)
                 }
-                .padding(.vertical, 2)
-              }.buttonStyle(.plain)
-
-               
+                .buttonStyle(.plain)
+                Spacer()
+              }
+              .padding()
+              .background(colorScheme == .dark ? Color.gray.opacity(0.2) : Color.white)
+              .cornerRadius(20)
+              .padding(.horizontal, 20)
+              .padding(.vertical, 10)
+              .shadow(color: .black.opacity(0.2), radius: 20, x: 0, y: 10)
             }
-            .navigationTitle("Search Recipes 🥘")
+            
+          }
+          .navigationTitle("Search Recipes 🥘")
         }
+        .background(Color.red)
         .sheet(item: $selectedRecipe) { chosenItem in
           RecipeDetailView(recipe: chosenItem)
         }
