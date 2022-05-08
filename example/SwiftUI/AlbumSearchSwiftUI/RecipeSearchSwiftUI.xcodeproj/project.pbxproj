@@ -7,21 +7,21 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		88E779C627942B7500202A6A /* AlbumSearchSwiftUIApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88E779C527942B7500202A6A /* AlbumSearchSwiftUIApp.swift */; };
+		88E779C627942B7500202A6A /* RecipeSearchSwiftUIApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88E779C527942B7500202A6A /* RecipeSearchSwiftUIApp.swift */; };
 		88E779C827942B7500202A6A /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88E779C727942B7500202A6A /* ContentView.swift */; };
 		88E779CA27942B7600202A6A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 88E779C927942B7600202A6A /* Assets.xcassets */; };
 		88E779CD27942B7600202A6A /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 88E779CC27942B7600202A6A /* Preview Assets.xcassets */; };
 		88E779D527942BD400202A6A /* Typesense in Frameworks */ = {isa = PBXBuildFile; productRef = 88E779D427942BD400202A6A /* Typesense */; };
-		88E779D727942BE800202A6A /* Album.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88E779D627942BE800202A6A /* Album.swift */; };
+		88E779D727942BE800202A6A /* Recipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88E779D627942BE800202A6A /* Recipe.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		88E779C227942B7500202A6A /* AlbumSearchSwiftUI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AlbumSearchSwiftUI.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		88E779C527942B7500202A6A /* AlbumSearchSwiftUIApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumSearchSwiftUIApp.swift; sourceTree = "<group>"; };
+		88E779C227942B7500202A6A /* RecipeSearchSwiftUI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RecipeSearchSwiftUI.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		88E779C527942B7500202A6A /* RecipeSearchSwiftUIApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeSearchSwiftUIApp.swift; sourceTree = "<group>"; };
 		88E779C727942B7500202A6A /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		88E779C927942B7600202A6A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		88E779CC27942B7600202A6A /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		88E779D627942BE800202A6A /* Album.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Album.swift; sourceTree = "<group>"; };
+		88E779D627942BE800202A6A /* Recipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Recipe.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -39,7 +39,7 @@
 		88E779B927942B7500202A6A = {
 			isa = PBXGroup;
 			children = (
-				88E779C427942B7500202A6A /* AlbumSearchSwiftUI */,
+				88E779C427942B7500202A6A /* RecipeSearchSwiftUI */,
 				88E779C327942B7500202A6A /* Products */,
 			);
 			sourceTree = "<group>";
@@ -47,21 +47,21 @@
 		88E779C327942B7500202A6A /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				88E779C227942B7500202A6A /* AlbumSearchSwiftUI.app */,
+				88E779C227942B7500202A6A /* RecipeSearchSwiftUI.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		88E779C427942B7500202A6A /* AlbumSearchSwiftUI */ = {
+		88E779C427942B7500202A6A /* RecipeSearchSwiftUI */ = {
 			isa = PBXGroup;
 			children = (
-				88E779C527942B7500202A6A /* AlbumSearchSwiftUIApp.swift */,
+				88E779C527942B7500202A6A /* RecipeSearchSwiftUIApp.swift */,
 				88E779C727942B7500202A6A /* ContentView.swift */,
-				88E779D627942BE800202A6A /* Album.swift */,
+				88E779D627942BE800202A6A /* Recipe.swift */,
 				88E779C927942B7600202A6A /* Assets.xcassets */,
 				88E779CB27942B7600202A6A /* Preview Content */,
 			);
-			path = AlbumSearchSwiftUI;
+			path = RecipeSearchSwiftUI;
 			sourceTree = "<group>";
 		};
 		88E779CB27942B7600202A6A /* Preview Content */ = {
@@ -75,9 +75,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		88E779C127942B7500202A6A /* AlbumSearchSwiftUI */ = {
+		88E779C127942B7500202A6A /* RecipeSearchSwiftUI */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 88E779D027942B7600202A6A /* Build configuration list for PBXNativeTarget "AlbumSearchSwiftUI" */;
+			buildConfigurationList = 88E779D027942B7600202A6A /* Build configuration list for PBXNativeTarget "RecipeSearchSwiftUI" */;
 			buildPhases = (
 				88E779BE27942B7500202A6A /* Sources */,
 				88E779BF27942B7500202A6A /* Frameworks */,
@@ -87,12 +87,12 @@
 			);
 			dependencies = (
 			);
-			name = AlbumSearchSwiftUI;
+			name = RecipeSearchSwiftUI;
 			packageProductDependencies = (
 				88E779D427942BD400202A6A /* Typesense */,
 			);
 			productName = AlbumSearchSwiftUI;
-			productReference = 88E779C227942B7500202A6A /* AlbumSearchSwiftUI.app */;
+			productReference = 88E779C227942B7500202A6A /* RecipeSearchSwiftUI.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -110,7 +110,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 88E779BD27942B7500202A6A /* Build configuration list for PBXProject "AlbumSearchSwiftUI" */;
+			buildConfigurationList = 88E779BD27942B7500202A6A /* Build configuration list for PBXProject "RecipeSearchSwiftUI" */;
 			compatibilityVersion = "Xcode 13.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -126,7 +126,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				88E779C127942B7500202A6A /* AlbumSearchSwiftUI */,
+				88E779C127942B7500202A6A /* RecipeSearchSwiftUI */,
 			);
 		};
 /* End PBXProject section */
@@ -149,8 +149,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				88E779C827942B7500202A6A /* ContentView.swift in Sources */,
-				88E779C627942B7500202A6A /* AlbumSearchSwiftUIApp.swift in Sources */,
-				88E779D727942BE800202A6A /* Album.swift in Sources */,
+				88E779C627942B7500202A6A /* RecipeSearchSwiftUIApp.swift in Sources */,
+				88E779D727942BE800202A6A /* Recipe.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -280,7 +280,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"AlbumSearchSwiftUI/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"RecipeSearchSwiftUI/Preview Content\"";
 				DEVELOPMENT_TEAM = X6LYJPR437;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -294,8 +294,8 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.sabeshbharathi.AlbumSearchSwiftUI;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.sabeshbharathi.RecipeSearchSwiftUI;
+				PRODUCT_NAME = RecipeSearchSwiftUI;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -309,7 +309,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"AlbumSearchSwiftUI/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"RecipeSearchSwiftUI/Preview Content\"";
 				DEVELOPMENT_TEAM = X6LYJPR437;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -323,8 +323,8 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.sabeshbharathi.AlbumSearchSwiftUI;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.sabeshbharathi.RecipeSearchSwiftUI;
+				PRODUCT_NAME = RecipeSearchSwiftUI;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -334,7 +334,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		88E779BD27942B7500202A6A /* Build configuration list for PBXProject "AlbumSearchSwiftUI" */ = {
+		88E779BD27942B7500202A6A /* Build configuration list for PBXProject "RecipeSearchSwiftUI" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				88E779CE27942B7600202A6A /* Debug */,
@@ -343,7 +343,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		88E779D027942B7600202A6A /* Build configuration list for PBXNativeTarget "AlbumSearchSwiftUI" */ = {
+		88E779D027942B7600202A6A /* Build configuration list for PBXNativeTarget "RecipeSearchSwiftUI" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				88E779D127942B7600202A6A /* Debug */,
@@ -360,7 +360,7 @@
 			repositoryURL = "https://github.com/typesense/typesense-swift";
 			requirement = {
 				kind = exactVersion;
-				version = 0.1.0;
+				version = 0.1.2;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
