@@ -7,9 +7,9 @@
 
 import Foundation
 
-public struct Recipe: Codable, Hashable {  
+public struct Recipe: Codable, Hashable, Identifiable {
   var directions: [String]
-  var id: String
+  public var id: String
   var ingredient_names: [String]
   var ingredients_with_measurements: [String]
   var link: String

@@ -11,6 +11,8 @@ import Typesense
 struct ContentView: View {
     @State private var queryString = ""
     @State private var hits: [SearchResultHit<Recipe>] = []
+    @State private var showingSheet = false
+    @State private var selectedRecipe: Recipe? = nil
     
     let client: Client
     
@@ -23,6 +25,9 @@ struct ContentView: View {
         NavigationView {
         
             List(hits, id: \.document){ hit in
+              Button {
+                selectedRecipe = hit.document
+              } label: {
                 VStack(alignment: .leading) {
                   Text(hit.document!.title)
                         .font(.headline)
@@ -33,14 +38,21 @@ struct ContentView: View {
                   
                   
                   Text(attachIngredients(recipe: hit.document))
+                    .padding(.top, 5)
                 }
                 .padding(.vertical, 2)
+              }.buttonStyle(.plain)
+
+               
             }
             .navigationTitle("Search Recipes 🥘")
         }
+        .sheet(item: $selectedRecipe) { chosenItem in
+          RecipeDetailView(recipe: chosenItem)
+        }
         .searchable(text: $queryString)
         .onChange(of: queryString) { quer in
-          fetchRecipes(searchQuery: quer)
+          fetchRecipes(searchQuery: quer, quer == "" ? true : false)
         }
         .onAppear {
           fetchRecipes(searchQuery: "", true)
