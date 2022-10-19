@@ -80,6 +80,10 @@ public struct Documents {
             searchQueryParams.append(URLQueryItem(name: "filter_by", value: filterBy))
         }
         
+        if let inFix = searchParameters.infix {
+            searchQueryParams.append(URLQueryItem(name: "infix", value: inFix))
+        }
+        
         if let sortBy = searchParameters.sortBy {
             searchQueryParams.append(URLQueryItem(name: "sort_by", value: sortBy))
         }
