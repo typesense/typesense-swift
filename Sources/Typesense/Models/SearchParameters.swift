@@ -22,6 +22,8 @@ public struct SearchParameters: Codable {
     /** Boolean field to indicate that the last word in the query should be treated as a prefix, and not as a whole word. This is used for building autocomplete and instant search interfaces. Defaults to true. */
     public var _prefix: String?
     /** Filter conditions for refining youropen api validator search results. Separate multiple conditions with &amp;&amp;. */
+    public var inFix: String?
+    /** infix searching can be done on a per-field basis by sending a comma separated string */
     public var filterBy: String?
     /** A list of numerical fields and their corresponding sort orders that will be used for ordering your results. Up to 3 sort fields can be specified. The text similarity score is exposed as a special &#x60;_text_match&#x60; field that you can use in the list of sorting fields. If no &#x60;sort_by&#x60; parameter is specified, results are sorted by &#x60;_text_match:desc,default_sorting_field:desc&#x60; */
     public var sortBy: String?
@@ -84,12 +86,13 @@ public struct SearchParameters: Codable {
     /** Minimum word length for 2-typo correction to be applied.  The value of num_typos is still treated as the maximum allowed typos.  */
     public var minLen2typo: Int?
 
-    public init(q: String, queryBy: String, queryByWeights: String? = nil, maxHits: String? = nil, _prefix: String? = nil, filterBy: String? = nil, sortBy: String? = nil, facetBy: String? = nil, maxFacetValues: Int? = nil, facetQuery: String? = nil, numTypos: Int? = nil, page: Int? = nil, perPage: Int? = nil, groupBy: String? = nil, groupLimit: Int? = nil, includeFields: String? = nil, excludeFields: String? = nil, highlightFullFields: String? = nil, highlightAffixNumTokens: Int? = nil, highlightStartTag: String? = nil, highlightEndTag: String? = nil, snippetThreshold: Int? = nil, dropTokensThreshold: Int? = nil, typoTokensThreshold: Int? = nil, pinnedHits: String? = nil, hiddenHits: String? = nil, highlightFields: String? = nil, preSegmentedQuery: Bool? = nil, enableOverrides: Bool? = nil, prioritizeExactMatch: Bool? = nil, exhaustiveSearch: Bool? = nil, searchCutoffMs: Int? = nil, useCache: Bool? = nil, cacheTtl: Int? = nil, minLen1typo: Int? = nil, minLen2typo: Int? = nil) {
+    public init(q: String, queryBy: String, queryByWeights: String? = nil, maxHits: String? = nil, _prefix: String? = nil, inFix:String?, filterBy: String? = nil, sortBy: String? = nil, facetBy: String? = nil, maxFacetValues: Int? = nil, facetQuery: String? = nil, numTypos: Int? = nil, page: Int? = nil, perPage: Int? = nil, groupBy: String? = nil, groupLimit: Int? = nil, includeFields: String? = nil, excludeFields: String? = nil, highlightFullFields: String? = nil, highlightAffixNumTokens: Int? = nil, highlightStartTag: String? = nil, highlightEndTag: String? = nil, snippetThreshold: Int? = nil, dropTokensThreshold: Int? = nil, typoTokensThreshold: Int? = nil, pinnedHits: String? = nil, hiddenHits: String? = nil, highlightFields: String? = nil, preSegmentedQuery: Bool? = nil, enableOverrides: Bool? = nil, prioritizeExactMatch: Bool? = nil, exhaustiveSearch: Bool? = nil, searchCutoffMs: Int? = nil, useCache: Bool? = nil, cacheTtl: Int? = nil, minLen1typo: Int? = nil, minLen2typo: Int? = nil) {
         self.q = q
         self.queryBy = queryBy
         self.queryByWeights = queryByWeights
         self.maxHits = maxHits
         self._prefix = _prefix
+        self.inFix = inFix
         self.filterBy = filterBy
         self.sortBy = sortBy
         self.facetBy = facetBy
@@ -129,6 +132,7 @@ public struct SearchParameters: Codable {
         case queryByWeights = "query_by_weights"
         case maxHits = "max_hits"
         case _prefix = "prefix"
+        case inFix = "infix"
         case filterBy = "filter_by"
         case sortBy = "sort_by"
         case facetBy = "facet_by"
