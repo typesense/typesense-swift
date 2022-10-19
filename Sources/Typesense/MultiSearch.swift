@@ -37,7 +37,7 @@ public struct MultiSearch {
             searchQueryParams.append(URLQueryItem(name: "prefix", value: String(fullString.dropLast())))
         }
         
-        if let inFix = commonParameters.infix {
+        if let inFix = commonParameters.inFix {
             searchQueryParams.append(URLQueryItem(name: "infix", value: inFix))
         }
         
