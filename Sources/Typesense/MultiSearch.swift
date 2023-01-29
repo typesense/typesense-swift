@@ -37,10 +37,6 @@ public struct MultiSearch {
             searchQueryParams.append(URLQueryItem(name: "prefix", value: String(fullString.dropLast())))
         }
         
-        if let inFix = commonParameters.inFix {
-            searchQueryParams.append(URLQueryItem(name: "infix", value: inFix))
-        }
-        
         if let filterBy = commonParameters.filterBy {
             searchQueryParams.append(URLQueryItem(name: "filter_by", value: filterBy))
         }
@@ -165,6 +161,18 @@ public struct MultiSearch {
             searchQueryParams.append(URLQueryItem(name: "min_len2type", value: String(minLen2typo)))
         }
         
+        if let inFix = commonParameters.inFix {
+            searchQueryParams.append(URLQueryItem(name: "infix", value: inFix))
+        }
+        
+        if let maxExtraPrefix = commonParameters.maxExtraPrefix {
+            searchQueryParams.append(URLQueryItem(name: "max_extra_prefix", value: String(maxExtraPrefix)))
+        }
+        
+        if let maxExtraSuffix = commonParameters.maxExtraSuffix {
+            searchQueryParams.append(URLQueryItem(name: "max_extra_suffix", value: String(maxExtraSuffix)))
+        }
+    
         let searches = MultiSearchSearchesParameter(searches: searchRequests)
         
         let searchesData = try encoder.encode(searches)

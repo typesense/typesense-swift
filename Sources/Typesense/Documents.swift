@@ -80,10 +80,6 @@ public struct Documents {
             searchQueryParams.append(URLQueryItem(name: "filter_by", value: filterBy))
         }
         
-        if let inFix = searchParameters.inFix {
-            searchQueryParams.append(URLQueryItem(name: "infix", value: inFix))
-        }
-        
         if let sortBy = searchParameters.sortBy {
             searchQueryParams.append(URLQueryItem(name: "sort_by", value: sortBy))
         }
@@ -204,7 +200,18 @@ public struct Documents {
             searchQueryParams.append(URLQueryItem(name: "min_len2type", value: String(minLen2typo)))
         }
         
-
+        if let inFix = searchParameters.inFix {
+            searchQueryParams.append(URLQueryItem(name: "infix", value: inFix))
+        }
+        
+        if let maxExtraPrefix = searchParameters.maxExtraPrefix {
+            searchQueryParams.append(URLQueryItem(name: "max_extra_prefix", value: String(maxExtraPrefix)))
+        }
+        
+        if let maxExtraSuffix = searchParameters.maxExtraSuffix {
+            searchQueryParams.append(URLQueryItem(name: "max_extra_suffix", value: String(maxExtraSuffix)))
+        }
+        
         let (data, response) = try await apiCall.get(endPoint: "\(RESOURCEPATH)/search", queryParameters: searchQueryParams)
 
         if let validData = data {
