@@ -14,7 +14,7 @@ public struct SearchResultHit<T: Codable>: Codable {
     /** (Deprecated) Contains highlighted portions of the search fields */
     public var highlights: [SearchHighlight]?
     /** Highlighted version of the matching document */
-    public var highlight: Dictionary?
+    public var highlight: [String:String]?
     /** Can be any key-value pair */
     public var document: T?
     public var textMatch: Int64?
@@ -23,7 +23,7 @@ public struct SearchResultHit<T: Codable>: Codable {
     /** Distance between the query vector and matching document&#x27;s vector value */
     public var vectorDistance: Float?
 
-    public init(highlights: [SearchHighlight]? = nil, highlight: Dictionary? = nil, document: T? = nil, textMatch: Int64? = nil, geoDistanceMeters: [String:Int]? = nil, vectorDistance: Float? = nil) {
+    public init(highlights: [SearchHighlight]? = nil, highlight: [String:String]? = nil, document: T? = nil, textMatch: Int64? = nil, geoDistanceMeters: [String:Int]? = nil, vectorDistance: Float? = nil) {
         self.highlights = highlights
         self.highlight = highlight
         self.document = document
