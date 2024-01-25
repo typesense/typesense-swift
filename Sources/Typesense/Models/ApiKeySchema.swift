@@ -11,12 +11,14 @@ import Foundation
 
 public struct ApiKeySchema: Codable {
 
-    public var _description: String?
+    public var value: String?
+    public var _description: String
     public var actions: [String]
     public var collections: [String]
     public var expiresAt: Int64?
 
-    public init(_description: String? = nil, actions: [String], collections: [String], expiresAt: Int64? = nil) {
+    public init(value: String? = nil, _description: String, actions: [String], collections: [String], expiresAt: Int64? = nil) {
+        self.value = value
         self._description = _description
         self.actions = actions
         self.collections = collections
@@ -24,6 +26,7 @@ public struct ApiKeySchema: Codable {
     }
 
     public enum CodingKeys: String, CodingKey { 
+        case value
         case _description = "description"
         case actions
         case collections

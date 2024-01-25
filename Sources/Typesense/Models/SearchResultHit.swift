@@ -11,26 +11,34 @@ import Foundation
 
 public struct SearchResultHit<T: Codable>: Codable {
 
-    /** Contains highlighted portions of the search fields */
+    /** (Deprecated) Contains highlighted portions of the search fields */
     public var highlights: [SearchHighlight]?
+    /** Highlighted version of the matching document */
+    public var highlight: Dictionary?
     /** Can be any key-value pair */
     public var document: T?
     public var textMatch: Int64?
     /** Can be any key-value pair */
     public var geoDistanceMeters: [String:Int]?
+    /** Distance between the query vector and matching document&#x27;s vector value */
+    public var vectorDistance: Float?
 
-    public init(highlights: [SearchHighlight]? = nil, document: T? = nil, textMatch: Int64? = nil, geoDistanceMeters: [String:Int]? = nil) {
+    public init(highlights: [SearchHighlight]? = nil, highlight: Dictionary? = nil, document: T? = nil, textMatch: Int64? = nil, geoDistanceMeters: [String:Int]? = nil, vectorDistance: Float? = nil) {
         self.highlights = highlights
+        self.highlight = highlight
         self.document = document
         self.textMatch = textMatch
         self.geoDistanceMeters = geoDistanceMeters
+        self.vectorDistance = vectorDistance
     }
 
     public enum CodingKeys: String, CodingKey { 
         case highlights
+        case highlight
         case document
         case textMatch = "text_match"
         case geoDistanceMeters = "geo_distance_meters"
+        case vectorDistance = "vector_distance"
     }
 
 }

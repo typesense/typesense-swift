@@ -16,13 +16,25 @@ public struct Field: Codable {
     public var _optional: Bool?
     public var facet: Bool?
     public var index: Bool?
+    public var locale: String?
+    public var sort: Bool?
+    public var _infix: Bool?
+    public var numDim: Int?
+    public var drop: Bool?
+    public var embed: FieldEmbed?
 
-    public init(name: String, type: String, _optional: Bool? = nil, facet: Bool? = nil, index: Bool? = nil) {
+    public init(name: String, type: String, _optional: Bool? = nil, facet: Bool? = nil, index: Bool? = nil, locale: String? = nil, sort: Bool? = nil, _infix: Bool? = nil, numDim: Int? = nil, drop: Bool? = nil, embed: FieldEmbed? = nil) {
         self.name = name
         self.type = type
         self._optional = _optional
         self.facet = facet
         self.index = index
+        self.locale = locale
+        self.sort = sort
+        self._infix = _infix
+        self.numDim = numDim
+        self.drop = drop
+        self.embed = embed
     }
 
     public enum CodingKeys: String, CodingKey { 
@@ -31,6 +43,12 @@ public struct Field: Codable {
         case _optional = "optional"
         case facet
         case index
+        case locale
+        case sort
+        case _infix = "infix"
+        case numDim = "num_dim"
+        case drop
+        case embed
     }
 
 }

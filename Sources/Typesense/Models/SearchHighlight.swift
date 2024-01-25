@@ -16,14 +16,20 @@ public struct SearchHighlight: Codable {
     public var snippet: String?
     /** Present only for (array) string[] fields */
     public var snippets: [String]?
+    /** Full field value with highlighting, present only for (non-array) string fields */
+    public var value: String?
+    /** Full field value with highlighting, present only for (array) string[] fields */
+    public var values: [String]?
     /** The indices property will be present only for string[] fields and will contain the corresponding indices of the snippets in the search field */
     public var indices: [Int]?
     public var matchedTokens: StringQuantum?
 
-    public init(field: String? = nil, snippet: String? = nil, snippets: [String]? = nil, indices: [Int]? = nil, matchedTokens: StringQuantum? = nil) {
+    public init(field: String? = nil, snippet: String? = nil, snippets: [String]? = nil, value: String? = nil, values: [String]? = nil, indices: [Int]? = nil, matchedTokens: StringQuantum? = nil) {
         self.field = field
         self.snippet = snippet
         self.snippets = snippets
+        self.value = value
+        self.values = values
         self.indices = indices
         self.matchedTokens = matchedTokens
     }
@@ -32,6 +38,8 @@ public struct SearchHighlight: Codable {
         case field
         case snippet
         case snippets
+        case value
+        case values
         case indices
         case matchedTokens = "matched_tokens"
     }

@@ -19,14 +19,17 @@ public struct CollectionSchema: Codable {
     public var defaultSortingField: String?
     /** List of symbols or special characters to be used for  splitting the text into individual words in addition to space and new-line characters.  */
     public var tokenSeparators: [String]?
+    /** Enables experimental support at a collection level for nested object or object array fields. This field is only available if the Typesense server is version &#x60;0.24.0.rcn34&#x60; or later. */
+    public var enableNestedFields: Bool?
     /** List of symbols or special characters to be indexed.  */
     public var symbolsToIndex: [String]?
 
-    public init(name: String, fields: [Field], defaultSortingField: String? = nil, tokenSeparators: [String]? = nil, symbolsToIndex: [String]? = nil) {
+    public init(name: String, fields: [Field], defaultSortingField: String? = nil, tokenSeparators: [String]? = nil, enableNestedFields: Bool? = nil, symbolsToIndex: [String]? = nil) {
         self.name = name
         self.fields = fields
         self.defaultSortingField = defaultSortingField
         self.tokenSeparators = tokenSeparators
+        self.enableNestedFields = enableNestedFields
         self.symbolsToIndex = symbolsToIndex
     }
 
@@ -35,6 +38,7 @@ public struct CollectionSchema: Codable {
         case fields
         case defaultSortingField = "default_sorting_field"
         case tokenSeparators = "token_separators"
+        case enableNestedFields = "enable_nested_fields"
         case symbolsToIndex = "symbols_to_index"
     }
 

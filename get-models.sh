@@ -1,4 +1,4 @@
-curl https://raw.githubusercontent.com/typesense/typesense-api-spec/v0.22.0/openapi.yml > openapi.yml
+curl https://raw.githubusercontent.com/typesense/typesense-api-spec/master/openapi.yml > openapi.yml
 swagger-codegen generate -i openapi.yml -l swift5 -o output
 rm -rf Models
 cd output/SwaggerClient/Classes/Swaggers

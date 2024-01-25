@@ -17,10 +17,16 @@ public struct MultiSearchCollectionParameters: Codable {
     public var queryBy: String?
     /** The relative weight to give each &#x60;query_by&#x60; field when ranking results. This can be used to boost fields in priority, when looking for matches. Multiple fields are separated with a comma. */
     public var queryByWeights: String?
-    /** Maximum number of hits returned. Increasing this value might increase search latency. Default: 500. Use &#x60;all&#x60; to return all hits found.  */
-    public var maxHits: String?
+    /** In a multi-field matching context, this parameter determines how the representative text match score of a record is calculated. Possible values are max_score (default) or max_weight. */
+    public var textMatchType: String?
     /** Boolean field to indicate that the last word in the query should be treated as a prefix, and not as a whole word. This is used for building autocomplete and instant search interfaces. Defaults to true. */
     public var _prefix: String?
+    /** If infix index is enabled for this field, infix searching can be done on a per-field basis by sending a comma separated string parameter called infix to the search query. This parameter can have 3 values; &#x60;off&#x60; infix search is disabled, which is default &#x60;always&#x60; infix search is performed along with regular search &#x60;fallback&#x60; infix search is performed if regular search does not produce results */
+    public var _infix: String?
+    /** There are also 2 parameters that allow you to control the extent of infix searching max_extra_prefix and max_extra_suffix which specify the maximum number of symbols before or after the query that can be present in the token. For example query \&quot;K2100\&quot; has 2 extra symbols in \&quot;6PK2100\&quot;. By default, any number of prefixes/suffixes can be present for a match. */
+    public var maxExtraPrefix: Int?
+    /** There are also 2 parameters that allow you to control the extent of infix searching max_extra_prefix and max_extra_suffix which specify the maximum number of symbols before or after the query that can be present in the token. For example query \&quot;K2100\&quot; has 2 extra symbols in \&quot;6PK2100\&quot;. By default, any number of prefixes/suffixes can be present for a match. */
+    public var maxExtraSuffix: Int?
     /** Filter conditions for refining youropen api validator search results. Separate multiple conditions with &amp;&amp;. */
     public var filterBy: String?
     /** A list of numerical fields and their corresponding sort orders that will be used for ordering your results. Up to 3 sort fields can be specified. The text similarity score is exposed as a special &#x60;_text_match&#x60; field that you can use in the list of sorting fields. If no &#x60;sort_by&#x60; parameter is specified, results are sorted by &#x60;_text_match:desc,default_sorting_field:desc&#x60; */
@@ -32,11 +38,15 @@ public struct MultiSearchCollectionParameters: Codable {
     /** Facet values that are returned can now be filtered via this parameter. The matching facet text is also highlighted. For example, when faceting by &#x60;category&#x60;, you can set &#x60;facet_query&#x3D;category:shoe&#x60; to return only facet values that contain the prefix \&quot;shoe\&quot;. */
     public var facetQuery: String?
     /** The number of typographical errors (1 or 2) that would be tolerated. Default: 2  */
-    public var numTypos: Int?
+    public var numTypos: String?
     /** Results from this specific page number would be fetched. */
     public var page: Int?
     /** Number of results to fetch per page. Default: 10 */
     public var perPage: Int?
+    /** Number of hits to fetch. Can be used as an alternative to the per_page parameter.  Default: 10.  */
+    public var limit: Int?
+    /** Identifies the starting point to return hits from a result set. Can be used as an alternative to the page parameter. */
+    public var offset: Int?
     /** You can aggregate search results into groups or buckets by specify one or more &#x60;group_by&#x60; fields. Separate multiple fields with a comma. To group on a particular field, it must be a faceted field. */
     public var groupBy: String?
     /** Maximum number of hits to be returned for every group. If the &#x60;group_limit&#x60; is set as &#x60;K&#x60; then only the top K hits in each group are returned in the response. Default: 3  */
@@ -65,8 +75,10 @@ public struct MultiSearchCollectionParameters: Codable {
     public var hiddenHits: String?
     /** A list of custom fields that must be highlighted even if you don&#x27;t query  for them  */
     public var highlightFields: String?
-    /** You can index content from any logographic language into Typesense if you are able to segment / split the text into space-separated words yourself  before indexing and querying. Set this parameter to tre to do the same  */
+    /** You can index content from any logographic language into Typesense if you are able to segment / split the text into space-separated words yourself  before indexing and querying. Set this parameter to true to do the same  */
     public var preSegmentedQuery: Bool?
+    /** Search using a bunch of search parameters by setting this parameter to the name of the existing Preset.  */
+    public var preset: String?
     /** If you have some overrides defined but want to disable all of them during query time, you can do that by setting this parameter to false  */
     public var enableOverrides: Bool?
     /** Set this parameter to true to ensure that an exact match is ranked above the others  */
@@ -83,15 +95,24 @@ public struct MultiSearchCollectionParameters: Codable {
     public var minLen1typo: Int?
     /** Minimum word length for 2-typo correction to be applied.  The value of num_typos is still treated as the maximum allowed typos.  */
     public var minLen2typo: Int?
+    /** Vector query expression for fetching documents \&quot;closest\&quot; to a given query/document vector.  */
+    public var vectorQuery: String?
+    /** Timeout (in milliseconds) for fetching remote embeddings.  */
+    public var remoteEmbeddingTimeoutMs: Int?
+    /** Number of times to retry fetching remote embeddings.  */
+    public var remoteEmbeddingNumTries: Int?
     /** The collection to search in.  */
     public var collection: String
 
-    public init(q: String? = nil, queryBy: String? = nil, queryByWeights: String? = nil, maxHits: String? = nil, _prefix: String? = nil, filterBy: String? = nil, sortBy: String? = nil, facetBy: String? = nil, maxFacetValues: Int? = nil, facetQuery: String? = nil, numTypos: Int? = nil, page: Int? = nil, perPage: Int? = nil, groupBy: String? = nil, groupLimit: Int? = nil, includeFields: String? = nil, excludeFields: String? = nil, highlightFullFields: String? = nil, highlightAffixNumTokens: Int? = nil, highlightStartTag: String? = nil, highlightEndTag: String? = nil, snippetThreshold: Int? = nil, dropTokensThreshold: Int? = nil, typoTokensThreshold: Int? = nil, pinnedHits: String? = nil, hiddenHits: String? = nil, highlightFields: String? = nil, preSegmentedQuery: Bool? = nil, enableOverrides: Bool? = nil, prioritizeExactMatch: Bool? = nil, exhaustiveSearch: Bool? = nil, searchCutoffMs: Int? = nil, useCache: Bool? = nil, cacheTtl: Int? = nil, minLen1typo: Int? = nil, minLen2typo: Int? = nil, collection: String) {
+    public init(q: String? = nil, queryBy: String? = nil, queryByWeights: String? = nil, textMatchType: String? = nil, _prefix: String? = nil, _infix: String? = nil, maxExtraPrefix: Int? = nil, maxExtraSuffix: Int? = nil, filterBy: String? = nil, sortBy: String? = nil, facetBy: String? = nil, maxFacetValues: Int? = nil, facetQuery: String? = nil, numTypos: String? = nil, page: Int? = nil, perPage: Int? = nil, limit: Int? = nil, offset: Int? = nil, groupBy: String? = nil, groupLimit: Int? = nil, includeFields: String? = nil, excludeFields: String? = nil, highlightFullFields: String? = nil, highlightAffixNumTokens: Int? = nil, highlightStartTag: String? = nil, highlightEndTag: String? = nil, snippetThreshold: Int? = nil, dropTokensThreshold: Int? = nil, typoTokensThreshold: Int? = nil, pinnedHits: String? = nil, hiddenHits: String? = nil, highlightFields: String? = nil, preSegmentedQuery: Bool? = nil, preset: String? = nil, enableOverrides: Bool? = nil, prioritizeExactMatch: Bool? = nil, exhaustiveSearch: Bool? = nil, searchCutoffMs: Int? = nil, useCache: Bool? = nil, cacheTtl: Int? = nil, minLen1typo: Int? = nil, minLen2typo: Int? = nil, vectorQuery: String? = nil, remoteEmbeddingTimeoutMs: Int? = nil, remoteEmbeddingNumTries: Int? = nil, collection: String) {
         self.q = q
         self.queryBy = queryBy
         self.queryByWeights = queryByWeights
-        self.maxHits = maxHits
+        self.textMatchType = textMatchType
         self._prefix = _prefix
+        self._infix = _infix
+        self.maxExtraPrefix = maxExtraPrefix
+        self.maxExtraSuffix = maxExtraSuffix
         self.filterBy = filterBy
         self.sortBy = sortBy
         self.facetBy = facetBy
@@ -100,6 +121,8 @@ public struct MultiSearchCollectionParameters: Codable {
         self.numTypos = numTypos
         self.page = page
         self.perPage = perPage
+        self.limit = limit
+        self.offset = offset
         self.groupBy = groupBy
         self.groupLimit = groupLimit
         self.includeFields = includeFields
@@ -115,6 +138,7 @@ public struct MultiSearchCollectionParameters: Codable {
         self.hiddenHits = hiddenHits
         self.highlightFields = highlightFields
         self.preSegmentedQuery = preSegmentedQuery
+        self.preset = preset
         self.enableOverrides = enableOverrides
         self.prioritizeExactMatch = prioritizeExactMatch
         self.exhaustiveSearch = exhaustiveSearch
@@ -123,6 +147,9 @@ public struct MultiSearchCollectionParameters: Codable {
         self.cacheTtl = cacheTtl
         self.minLen1typo = minLen1typo
         self.minLen2typo = minLen2typo
+        self.vectorQuery = vectorQuery
+        self.remoteEmbeddingTimeoutMs = remoteEmbeddingTimeoutMs
+        self.remoteEmbeddingNumTries = remoteEmbeddingNumTries
         self.collection = collection
     }
 
@@ -130,8 +157,11 @@ public struct MultiSearchCollectionParameters: Codable {
         case q
         case queryBy = "query_by"
         case queryByWeights = "query_by_weights"
-        case maxHits = "max_hits"
+        case textMatchType = "text_match_type"
         case _prefix = "prefix"
+        case _infix = "infix"
+        case maxExtraPrefix = "max_extra_prefix"
+        case maxExtraSuffix = "max_extra_suffix"
         case filterBy = "filter_by"
         case sortBy = "sort_by"
         case facetBy = "facet_by"
@@ -140,6 +170,8 @@ public struct MultiSearchCollectionParameters: Codable {
         case numTypos = "num_typos"
         case page
         case perPage = "per_page"
+        case limit
+        case offset
         case groupBy = "group_by"
         case groupLimit = "group_limit"
         case includeFields = "include_fields"
@@ -155,6 +187,7 @@ public struct MultiSearchCollectionParameters: Codable {
         case hiddenHits = "hidden_hits"
         case highlightFields = "highlight_fields"
         case preSegmentedQuery = "pre_segmented_query"
+        case preset
         case enableOverrides = "enable_overrides"
         case prioritizeExactMatch = "prioritize_exact_match"
         case exhaustiveSearch = "exhaustive_search"
@@ -163,6 +196,9 @@ public struct MultiSearchCollectionParameters: Codable {
         case cacheTtl = "cache_ttl"
         case minLen1typo = "min_len_1typo"
         case minLen2typo = "min_len_2typo"
+        case vectorQuery = "vector_query"
+        case remoteEmbeddingTimeoutMs = "remote_embedding_timeout_ms"
+        case remoteEmbeddingNumTries = "remote_embedding_num_tries"
         case collection
     }
 
