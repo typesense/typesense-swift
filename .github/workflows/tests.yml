@@ -11,7 +11,7 @@ jobs:
 
       - name: Install Typesense
         run: |
-          curl --output ts.tar.gz  https://dl.typesense.org/releases/0.22.2/typesense-server-0.22.2-darwin-amd64.tar.gz
+          curl --output ts.tar.gz  https://dl.typesense.org/releases/0.25.2/typesense-server-0.25.2-darwin-amd64.tar.gz
           tar -xzf ts.tar.gz
 
       - name: Run Typesense
