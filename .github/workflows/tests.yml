@@ -17,7 +17,9 @@ jobs:
       - name: Install and start dependencies
         run: |
           brew install docker
-          colima start
+          # https://github.com/abiosoft/colima/issues/424#issuecomment-1335912905
+          colima delete
+          colima start --arch x86_64
 
       - name: Run Typesense
         run: |
