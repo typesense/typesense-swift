@@ -9,14 +9,19 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Install Typesense
+      - name: Install Docker
         run: |
-          curl --output ts.tar.gz  https://dl.typesense.org/releases/0.25.2/typesense-server-0.25.2-darwin-amd64.tar.gz
-          tar -xzf ts.tar.gz
+          brew install docker
 
       - name: Run Typesense
         run: |
-          ./typesense-server --api-key=xyz --data-dir=/tmp &
+          mkdir $(pwd)/typesense-data
+          docker run -p 8108:8108 \
+            -d \
+            -v$(pwd)/typesense-data:/data typesense/typesense:0.25.2 \
+            --data-dir /data \
+            --api-key=xyz \
+            --enable-cors
         shell: bash
 
       - name: Set up Xcode 13.2.1
