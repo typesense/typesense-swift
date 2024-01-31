@@ -16,7 +16,7 @@ jobs:
 
       - name: Install and start dependencies
         run: |
-          brew install docker colima
+          brew install docker
           colima start
 
       - name: Run Typesense
