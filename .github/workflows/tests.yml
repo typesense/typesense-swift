@@ -1,17 +1,23 @@
-name: Build and Test
-
+name: tests
 on: [push, pull_request]
+
+# Cancel previous running if a new push is made
+# Source: https://stackoverflow.com/a/72408109/123545
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   test:
-    runs-on: macos-11
+    runs-on: macos-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Install Docker
+      - name: Install and start dependencies
         run: |
-          brew install docker
+          brew install docker colima
+          colima start
 
       - name: Run Typesense
         run: |
