@@ -21,4 +21,5 @@ public enum ResponseError: Error {
     case invalidCollection(desc: String)
     case apiKeyNotFound(desc: String)
     case aliasNotFound(desc: String)
+    case analyticsRuleDoesNotExist(desc: String)
 }
