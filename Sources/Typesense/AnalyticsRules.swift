@@ -30,7 +30,7 @@ public struct AnalyticsRules {
     }
     
     private func endpointPath(_ operation: String? = nil) -> String {
-        if let operation {
+        if let operation = operation {
             return "\(AnalyticsRules.resourcePath)/\(operation)"
         } else {
             return AnalyticsRules.resourcePath
