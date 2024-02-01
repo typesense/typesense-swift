@@ -12,8 +12,8 @@ import Foundation
 public struct AnalyticsRuleSchema: Codable {
 
     public var name: String
-    public var type: String
-    public var params: AnalyticsRuleParameters
+    public var type: String?
+    public var params: AnalyticsRuleParameters?
 
     public init(name: String, type: String, params: AnalyticsRuleParameters) {
         self.name = name

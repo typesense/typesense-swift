@@ -18,8 +18,8 @@ final class AnalyticsTests: XCTestCase {
             }
             print(validRule)
             XCTAssertEqual(validRule.name, schema.name)
-            XCTAssertEqual(validRule.params.limit, schema.params.limit)
-            XCTAssertEqual(validRule.params.destination.collection, schema.params.destination.collection)
+            XCTAssertEqual(validRule.params?.limit, schema.params?.limit)
+            XCTAssertEqual(validRule.params?.destination.collection, schema.params?.destination.collection)
         } catch (let error) {
             print(error.localizedDescription)
             XCTAssertTrue(false)
