@@ -11,7 +11,7 @@ final class AnalyticsTests: XCTestCase {
         let source = AnalyticsRuleParametersSource(collections: ["products"])
         let schema = AnalyticsRuleSchema(name: "product_queries_aggregation", type: "popular_queries", params: AnalyticsRuleParameters(source: source, destination: destination, limit: 1000))
         do {
-            let (rule, _) = try await client.analytics().rules().create(params: schema)
+            let (rule, _) = try await client.analytics().rules().upsert(params: schema)
             XCTAssertNotNil(rule)
             guard let validRule = rule else {
                 throw DataError.dataNotFound
@@ -21,7 +21,6 @@ final class AnalyticsTests: XCTestCase {
             XCTAssertEqual(validRule.params.limit, schema.params.limit)
             XCTAssertEqual(validRule.params.destination.collection, schema.params.destination.collection)
         } catch (let error) {
-            print("ERROR", error)
             print(error.localizedDescription)
             XCTAssertTrue(false)
         }
