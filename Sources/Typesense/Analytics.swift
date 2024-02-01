@@ -1,11 +1,7 @@
 import Foundation
 
-let RESOURCEPATH = "/analytics"
-
 public struct Analytics {
-    static var resourcePath: String {
-        return RESOURCEPATH
-    }
+    static let resourcePath: String = "/analytics"
     
     private var analyticsRules: AnalyticsRules
     var apiCall: ApiCall
