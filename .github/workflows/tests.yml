@@ -1,22 +1,35 @@
-name: Build and Test
-
+name: tests
 on: [push, pull_request]
+
+# Cancel previous running if a new push is made
+# Source: https://stackoverflow.com/a/72408109/123545
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   test:
-    runs-on: macos-11
+    runs-on: macos-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Install Typesense
+      - name: Install and start dependencies
         run: |
-          curl --output ts.tar.gz  https://dl.typesense.org/releases/0.22.2/typesense-server-0.22.2-darwin-amd64.tar.gz
-          tar -xzf ts.tar.gz
+          brew install docker
+          # https://github.com/abiosoft/colima/issues/424#issuecomment-1335912905
+          colima delete
+          colima start --arch x86_64
 
       - name: Run Typesense
         run: |
-          ./typesense-server --api-key=xyz --data-dir=/tmp &
+          mkdir $(pwd)/typesense-data
+          docker run -p 8108:8108 \
+            -d \
+            -v$(pwd)/typesense-data:/data typesense/typesense:0.25.2 \
+            --data-dir /data \
+            --api-key=xyz \
+            --enable-cors
         shell: bash
 
       - name: Set up Xcode 13.2.1
