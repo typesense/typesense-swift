@@ -220,6 +220,36 @@ final class DocumentTests: XCTestCase {
         
     }
     
+    func testDocumentGroupSearch() async {
+        let config = Configuration(nodes: [Node(host: "localhost", port: "8108", nodeProtocol: "http")], apiKey: "xyz", logger: Logger(debugMode: true))
+        
+        let client = Client(config: config)
+        
+        let searchParams = SearchParameters(q: "*", queryBy: "company_name", groupBy: "num_employees")
+        
+        do {
+            let (data, _) =  try await client.collection(name: "companies").documents().search(searchParams, for: Company.self)
+      
+            XCTAssertNotNil(data)
+            guard let validResp = data else {
+                throw DataError.dataNotFound
+            }
+            if let gotSomeGroupedHits = validResp.groupedHits {
+                XCTAssertNotNil(validResp.groupedHits)
+                XCTAssertNotNil(validResp.found)
+                XCTAssertNotNil(gotSomeGroupedHits.first)
+                XCTAssertNotNil(gotSomeGroupedHits.first?.found)
+            }
+        } catch HTTPError.serverError(let code, let desc) {
+            print(desc)
+            print("The response status code is \(code)")
+            XCTAssertTrue(false)
+        } catch (let error) {
+            print(error.localizedDescription)
+            XCTAssertTrue(false)
+        }
+    }
+    
     func testDocumentImport() async {
         let config = Configuration(nodes: [Node(host: "localhost", port: "8108", nodeProtocol: "http")], apiKey: "xyz", logger: Logger(debugMode: true))
         
