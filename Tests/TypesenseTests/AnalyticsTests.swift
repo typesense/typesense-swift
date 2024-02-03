@@ -1,7 +1,7 @@
 import XCTest
 @testable import Typesense
 
-final class TypesenseAnalyticsTests: XCTestCase {
+final class AnalyticsTests: XCTestCase {
     func testAnalyticsRuleCreate() async {
         let config = Configuration(nodes: [Node(host: "localhost", port: "8108", nodeProtocol: "http")], apiKey: "xyz")
         let client = Client(config: config)
