@@ -85,8 +85,14 @@ public struct MultiSearchCollectionParameters: Codable {
     public var minLen2typo: Int?
     /** The collection to search in.  */
     public var collection: String
+    /** infix searching can be done on a per-field basis by sending a comma separated string */
+    public var inFix: String?
+    /** Control infix searching by specifying the maximum number of characters preceeding search query */
+    public var maxExtraPrefix: Int?
+    /** Control infix searching by specifying the maximum number of characters following search query */
+    public var maxExtraSuffix: Int?
 
-    public init(q: String? = nil, queryBy: String? = nil, queryByWeights: String? = nil, maxHits: String? = nil, _prefix: String? = nil, filterBy: String? = nil, sortBy: String? = nil, facetBy: String? = nil, maxFacetValues: Int? = nil, facetQuery: String? = nil, numTypos: Int? = nil, page: Int? = nil, perPage: Int? = nil, groupBy: String? = nil, groupLimit: Int? = nil, includeFields: String? = nil, excludeFields: String? = nil, highlightFullFields: String? = nil, highlightAffixNumTokens: Int? = nil, highlightStartTag: String? = nil, highlightEndTag: String? = nil, snippetThreshold: Int? = nil, dropTokensThreshold: Int? = nil, typoTokensThreshold: Int? = nil, pinnedHits: String? = nil, hiddenHits: String? = nil, highlightFields: String? = nil, preSegmentedQuery: Bool? = nil, enableOverrides: Bool? = nil, prioritizeExactMatch: Bool? = nil, exhaustiveSearch: Bool? = nil, searchCutoffMs: Int? = nil, useCache: Bool? = nil, cacheTtl: Int? = nil, minLen1typo: Int? = nil, minLen2typo: Int? = nil, collection: String) {
+    public init(q: String? = nil, queryBy: String? = nil, queryByWeights: String? = nil, maxHits: String? = nil, _prefix: String? = nil, filterBy: String? = nil, sortBy: String? = nil, facetBy: String? = nil, maxFacetValues: Int? = nil, facetQuery: String? = nil, numTypos: Int? = nil, page: Int? = nil, perPage: Int? = nil, groupBy: String? = nil, groupLimit: Int? = nil, includeFields: String? = nil, excludeFields: String? = nil, highlightFullFields: String? = nil, highlightAffixNumTokens: Int? = nil, highlightStartTag: String? = nil, highlightEndTag: String? = nil, snippetThreshold: Int? = nil, dropTokensThreshold: Int? = nil, typoTokensThreshold: Int? = nil, pinnedHits: String? = nil, hiddenHits: String? = nil, highlightFields: String? = nil, preSegmentedQuery: Bool? = nil, enableOverrides: Bool? = nil, prioritizeExactMatch: Bool? = nil, exhaustiveSearch: Bool? = nil, searchCutoffMs: Int? = nil, useCache: Bool? = nil, cacheTtl: Int? = nil, minLen1typo: Int? = nil, minLen2typo: Int? = nil, collection: String, inFix: String? = nil, maxExtraPrefix: Int? = nil, maxExtraSuffix: Int? = nil) {
         self.q = q
         self.queryBy = queryBy
         self.queryByWeights = queryByWeights
@@ -124,6 +130,9 @@ public struct MultiSearchCollectionParameters: Codable {
         self.minLen1typo = minLen1typo
         self.minLen2typo = minLen2typo
         self.collection = collection
+        self.inFix = inFix
+        self.maxExtraPrefix = maxExtraPrefix
+        self.maxExtraSuffix = maxExtraSuffix
     }
 
     public enum CodingKeys: String, CodingKey { 
@@ -164,6 +173,9 @@ public struct MultiSearchCollectionParameters: Codable {
         case minLen1typo = "min_len_1typo"
         case minLen2typo = "min_len_2typo"
         case collection
+        case inFix = "infix"
+        case maxExtraPrefix = "max_extra_prefix"
+        case maxExtraSuffix = "max_extra_suffix"
     }
 
 }
