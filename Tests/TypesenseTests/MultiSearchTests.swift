@@ -50,8 +50,23 @@ final class MultiSearchTests: XCTestCase {
         let commonParams = MultiSearchParameters(queryBy: "name")
         
         do {
-            let (_, _) = try await client.collections.create(schema: productSchema) //Creating test collection - Products
-            let (_,_) = try await client.collections.create(schema: brandSchema)
+            do {
+                let _ = try await client.collections.create(schema: productSchema)
+            } catch ResponseError.collectionAlreadyExists(let desc) {
+                print(desc)
+            } catch (let error) {
+                print(error.localizedDescription)
+                XCTAssertTrue(false)
+            }
+            
+            do {
+                let _ = try await client.collections.create(schema: brandSchema)
+            } catch ResponseError.collectionAlreadyExists(let desc) {
+                print(desc)
+            } catch (let error) {
+                print(error.localizedDescription)
+                XCTAssertTrue(false)
+            }
             
             let (_,_) = try await client.collection(name: "products").documents().create(document: encoder.encode(product1))
             

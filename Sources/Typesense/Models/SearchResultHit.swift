@@ -11,26 +11,48 @@ import Foundation
 
 public struct SearchResultHit<T: Codable>: Codable {
 
-    /** Contains highlighted portions of the search fields */
+    /** (Deprecated) Contains highlighted portions of the search fields */
     public var highlights: [SearchHighlight]?
-    /** Can be any key-value pair */
     public var document: T?
     public var textMatch: Int64?
-    /** Can be any key-value pair */
     public var geoDistanceMeters: [String:Int]?
+    /** Distance between the query vector and matching document&#x27;s vector value */
+    public var vectorDistance: Float?
 
-    public init(highlights: [SearchHighlight]? = nil, document: T? = nil, textMatch: Int64? = nil, geoDistanceMeters: [String:Int]? = nil) {
+    public init(highlights: [SearchHighlight]? = nil, document: T? = nil, textMatch: Int64? = nil, geoDistanceMeters: [String:Int]? = nil, vectorDistance: Float? = nil) {
         self.highlights = highlights
+//        self.highlightData = highlight
         self.document = document
         self.textMatch = textMatch
         self.geoDistanceMeters = geoDistanceMeters
+        self.vectorDistance = vectorDistance
+    }
+    
+    public init(from decoder: Decoder) throws {
+        let container: KeyedDecodingContainer<SearchResultHit<T>.CodingKeys> = try decoder.container(keyedBy: SearchResultHit<T>.CodingKeys.self)
+        self.highlights = try container.decodeIfPresent([SearchHighlight].self, forKey: SearchResultHit<T>.CodingKeys.highlights)
+        self.document = try container.decodeIfPresent(T.self, forKey: SearchResultHit<T>.CodingKeys.document)
+        self.textMatch = try container.decodeIfPresent(Int64.self, forKey: SearchResultHit<T>.CodingKeys.textMatch)
+        self.geoDistanceMeters = try container.decodeIfPresent([String : Int].self, forKey: SearchResultHit<T>.CodingKeys.geoDistanceMeters)
+        self.vectorDistance = try container.decodeIfPresent(Float.self, forKey: SearchResultHit<T>.CodingKeys.vectorDistance)
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(highlights, forKey: CodingKeys.highlights)
+        try container.encode(document, forKey: CodingKeys.document)
+        try container.encode(textMatch, forKey: CodingKeys.textMatch)
+        try container.encode(geoDistanceMeters, forKey: CodingKeys.geoDistanceMeters)
+        try container.encode(vectorDistance, forKey: CodingKeys.vectorDistance)
     }
 
     public enum CodingKeys: String, CodingKey { 
         case highlights
+        case highlight
         case document
         case textMatch = "text_match"
         case geoDistanceMeters = "geo_distance_meters"
+        case vectorDistance = "vector_distance"
     }
 
 }

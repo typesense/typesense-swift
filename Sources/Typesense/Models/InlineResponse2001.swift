@@ -11,11 +11,15 @@ import Foundation
 
 public struct InlineResponse2001: Codable {
 
-    public var version: String?
+    /** The number of documents that have been updated */
+    public var numUpdated: Int
 
-    public init(version: String? = nil) {
-        self.version = version
+    public init(numUpdated: Int) {
+        self.numUpdated = numUpdated
     }
 
+    public enum CodingKeys: String, CodingKey { 
+        case numUpdated = "num_updated"
+    }
 
 }

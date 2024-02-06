@@ -11,12 +11,12 @@ import Foundation
 
 public struct SearchResult<T: Codable>: Codable {
 
-    public var facetCounts: [Int]?
+    public var facetCounts: [FacetCounts]?
     /** The number of documents found */
     public var found: Int?
     /** The number of milliseconds the search took */
     public var searchTimeMs: Int?
-    /** The total number of pages */
+    /** The total number of documents in the collection */
     public var outOf: Int?
     /** Whether the search was cut off */
     public var searchCutoff: Bool?
@@ -27,7 +27,7 @@ public struct SearchResult<T: Codable>: Codable {
     public var hits: [SearchResultHit<T>]?
     public var requestParams: SearchResultRequestParams?
 
-    public init(facetCounts: [Int]? = nil, found: Int? = nil, searchTimeMs: Int? = nil, outOf: Int? = nil, searchCutoff: Bool? = nil, page: Int? = nil, groupedHits: [SearchGroupedHit<T>]? = nil, hits: [SearchResultHit<T>]? = nil, requestParams: SearchResultRequestParams? = nil) {
+    public init(facetCounts: [FacetCounts]? = nil, found: Int? = nil, searchTimeMs: Int? = nil, outOf: Int? = nil, searchCutoff: Bool? = nil, page: Int? = nil, groupedHits: [SearchGroupedHit<T>]? = nil, hits: [SearchResultHit<T>]? = nil, requestParams: SearchResultRequestParams? = nil) {
         self.facetCounts = facetCounts
         self.found = found
         self.searchTimeMs = searchTimeMs

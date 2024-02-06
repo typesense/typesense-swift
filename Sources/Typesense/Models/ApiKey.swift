@@ -11,31 +11,31 @@ import Foundation
 
 public struct ApiKey: Codable {
 
-    public var _description: String?
+    public var value: String?
+    public var _description: String
     public var actions: [String]
     public var collections: [String]
     public var expiresAt: Int64?
-    public var _id: Int64
-    public var value: String?
+    public var _id: Int64?
     public var valuePrefix: String?
 
-    public init(_description: String? = nil, actions: [String], collections: [String], expiresAt: Int64? = nil, _id: Int64, value: String? = nil, valuePrefix: String? = nil) {
+    public init(value: String? = nil, _description: String, actions: [String], collections: [String], expiresAt: Int64? = nil, _id: Int64? = nil, valuePrefix: String? = nil) {
+        self.value = value
         self._description = _description
         self.actions = actions
         self.collections = collections
         self.expiresAt = expiresAt
         self._id = _id
-        self.value = value
         self.valuePrefix = valuePrefix
     }
 
     public enum CodingKeys: String, CodingKey { 
+        case value
         case _description = "description"
         case actions
         case collections
         case expiresAt = "expires_at"
         case _id = "id"
-        case value
         case valuePrefix = "value_prefix"
     }
 

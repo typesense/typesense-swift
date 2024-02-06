@@ -20,17 +20,20 @@ public struct ImportDocumentsParameters: Codable {
     public var action: String?
     public var batchSize: Int?
     public var dirtyValues: DirtyValues?
+    public var remoteEmbeddingBatchSize: Int?
 
-    public init(action: String? = nil, batchSize: Int? = nil, dirtyValues: DirtyValues? = nil) {
+    public init(action: String? = nil, batchSize: Int? = nil, dirtyValues: DirtyValues? = nil, remoteEmbeddingBatchSize: Int? = nil) {
         self.action = action
         self.batchSize = batchSize
         self.dirtyValues = dirtyValues
+        self.remoteEmbeddingBatchSize = remoteEmbeddingBatchSize
     }
 
     public enum CodingKeys: String, CodingKey { 
         case action
         case batchSize = "batch_size"
         case dirtyValues = "dirty_values"
+        case remoteEmbeddingBatchSize = "remote_embedding_batch_size"
     }
 
 }

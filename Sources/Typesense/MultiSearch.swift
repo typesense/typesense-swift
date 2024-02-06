@@ -23,8 +23,8 @@ public struct MultiSearch {
             searchQueryParams.append(URLQueryItem(name: "query_by_weights", value: queryByWeights))
         }
         
-        if let maxHits = commonParameters.maxHits {
-            searchQueryParams.append(URLQueryItem(name: "max_hits", value: maxHits))
+        if let textMatchType = commonParameters.textMatchType {
+            searchQueryParams.append(URLQueryItem(name: "text_match_type", value: textMatchType))
         }
         
         if let _prefix = commonParameters._prefix {
@@ -35,6 +35,18 @@ public struct MultiSearch {
             }
             
             searchQueryParams.append(URLQueryItem(name: "prefix", value: String(fullString.dropLast())))
+        }
+        
+        if let _infix = commonParameters._infix {
+            searchQueryParams.append(URLQueryItem(name: "infix", value: _infix))
+        }
+        
+        if let maxExtraPrefix = commonParameters.maxExtraPrefix {
+            searchQueryParams.append(URLQueryItem(name: "max_extra_prefix", value: String(maxExtraPrefix)))
+        }
+        
+        if let maxExtraSuffix = commonParameters.maxExtraSuffix {
+            searchQueryParams.append(URLQueryItem(name: "max_extra_suffix", value: String(maxExtraSuffix)))
         }
         
         if let filterBy = commonParameters.filterBy {
@@ -68,6 +80,15 @@ public struct MultiSearch {
         if let perPage = commonParameters.perPage {
             searchQueryParams.append(URLQueryItem(name: "per_page", value: String(perPage)))
         }
+        
+        if let limit = commonParameters.limit {
+            searchQueryParams.append(URLQueryItem(name: "limit", value: String(limit)))
+        }
+        
+        if let offset = commonParameters.offset {
+            searchQueryParams.append(URLQueryItem(name: "offset", value: String(offset)))
+        }
+        
         
         if let groupBy = commonParameters.groupBy {
             searchQueryParams.append(URLQueryItem(name: "group_by", value: groupBy))
@@ -129,6 +150,10 @@ public struct MultiSearch {
             searchQueryParams.append(URLQueryItem(name: "pre_segmented_query", value: String(preSegmentedQuery)))
         }
         
+        if let preset = commonParameters.preset {
+            searchQueryParams.append(URLQueryItem(name: "preset", value: preset))
+        }
+        
         if let enableOverrides = commonParameters.enableOverrides {
             searchQueryParams.append(URLQueryItem(name: "enable_overrides", value: String(enableOverrides)))
         }
@@ -159,6 +184,18 @@ public struct MultiSearch {
         
         if let minLen2typo = commonParameters.minLen2typo {
             searchQueryParams.append(URLQueryItem(name: "min_len2type", value: String(minLen2typo)))
+        }
+        
+        if let vectorQuery = commonParameters.vectorQuery {
+            searchQueryParams.append(URLQueryItem(name: "vector_query", value: vectorQuery))
+        }
+        
+        if let remoteEmbeddingTimeoutMS = commonParameters.remoteEmbeddingTimeoutMs {
+            searchQueryParams.append(URLQueryItem(name: "remote_embedding_timeout_ms", value: String(remoteEmbeddingTimeoutMS)))
+        }
+        
+        if let remoteEmbeddingNumTries = commonParameters.remoteEmbeddingNumTries {
+            searchQueryParams.append(URLQueryItem(name: "remote_embedding_num_tries", value: String(remoteEmbeddingNumTries)))
         }
         
         let searches = MultiSearchSearchesParameter(searches: searchRequests)

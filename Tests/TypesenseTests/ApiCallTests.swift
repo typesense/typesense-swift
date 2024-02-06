@@ -2,7 +2,7 @@ import XCTest
 
 @testable import Typesense
 
-final class ApiCallTests: XCTestCase {
+final class A_ApiCallTests: XCTestCase {
     
     func testDefaultConfiguration() {
         let apiCall = ApiCall(config: Configuration(nodes: [Node(host: "localhost", port: "8108", nodeProtocol: "http")], apiKey: "xyz"))

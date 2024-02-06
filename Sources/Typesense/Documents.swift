@@ -62,8 +62,8 @@ public struct Documents {
             searchQueryParams.append(URLQueryItem(name: "query_by_weights", value: queryByWeights))
         }
         
-        if let maxHits = searchParameters.maxHits {
-            searchQueryParams.append(URLQueryItem(name: "max_hits", value: maxHits))
+        if let textMatchType = searchParameters.textMatchType {
+            searchQueryParams.append(URLQueryItem(name: "text_match_type", value: textMatchType))
         }
         
         if let _prefix = searchParameters._prefix {
@@ -72,8 +72,19 @@ public struct Documents {
                 fullString.append(String(item))
                 fullString.append(",")
             }
-            
             searchQueryParams.append(URLQueryItem(name: "prefix", value: String(fullString.dropLast())))
+        }
+        
+        if let _infix = searchParameters._infix {
+            searchQueryParams.append(URLQueryItem(name: "infix", value: _infix))
+        }
+        
+        if let maxExtraPrefix = searchParameters.maxExtraPrefix {
+            searchQueryParams.append(URLQueryItem(name: "max_extra_prefix", value: String(maxExtraPrefix)))
+        }
+        
+        if let maxExtraSuffix = searchParameters.maxExtraSuffix {
+            searchQueryParams.append(URLQueryItem(name: "max_extra_suffix", value: String(maxExtraSuffix)))
         }
         
         if let filterBy = searchParameters.filterBy {
@@ -108,6 +119,14 @@ public struct Documents {
             searchQueryParams.append(URLQueryItem(name: "per_page", value: String(perPage)))
         }
         
+        if let limit = searchParameters.limit {
+            searchQueryParams.append(URLQueryItem(name: "limit", value: String(limit)))
+        }
+        
+        if let offset = searchParameters.offset {
+            searchQueryParams.append(URLQueryItem(name: "offset", value: String(offset)))
+        }
+        
         if let groupBy = searchParameters.groupBy {
             searchQueryParams.append(URLQueryItem(name: "group_by", value: groupBy))
         }
@@ -140,6 +159,10 @@ public struct Documents {
             searchQueryParams.append(URLQueryItem(name: "highlight_end_tag", value: highlightEndTag))
         }
         
+        if let enableHighlightV1 = searchParameters.enableHighlightV1 {
+            searchQueryParams.append(URLQueryItem(name: "enable_highlight_v1", value: String(enableHighlightV1)))
+        }
+        
         if let snippetThreshold = searchParameters.snippetThreshold {
             searchQueryParams.append(URLQueryItem(name: "snippet_threshold", value: String(snippetThreshold)))
         }
@@ -164,8 +187,16 @@ public struct Documents {
             searchQueryParams.append(URLQueryItem(name: "highlight_fields", value: highlightFields))
         }
         
+        if let splitJoinTokens = searchParameters.splitJoinTokens {
+            searchQueryParams.append(URLQueryItem(name: "split_join_tokens", value: splitJoinTokens))
+        }
+        
         if let preSegmentedQuery = searchParameters.preSegmentedQuery {
             searchQueryParams.append(URLQueryItem(name: "pre_segmented_query", value: String(preSegmentedQuery)))
+        }
+        
+        if let preset = searchParameters.preset {
+            searchQueryParams.append(URLQueryItem(name: "preset", value: preset))
         }
         
         if let enableOverrides = searchParameters.enableOverrides {
@@ -174,6 +205,14 @@ public struct Documents {
         
         if let prioritizeExactMatch = searchParameters.prioritizeExactMatch {
             searchQueryParams.append(URLQueryItem(name: "prioritize_exact_match", value: String(prioritizeExactMatch)))
+        }
+        
+        if let maxCandidates = searchParameters.maxCandidates {
+            searchQueryParams.append(URLQueryItem(name: "max_candidates", value: String(maxCandidates)))
+        }
+        
+        if let prioritizeTokenPosition = searchParameters.prioritizeTokenPosition {
+            searchQueryParams.append(URLQueryItem(name: "prioritize_token_position", value: String(prioritizeTokenPosition)))
         }
         
         if let exhaustiveSearch = searchParameters.exhaustiveSearch {
@@ -200,6 +239,17 @@ public struct Documents {
             searchQueryParams.append(URLQueryItem(name: "min_len2type", value: String(minLen2typo)))
         }
         
+        if let vectorQuery = searchParameters.vectorQuery {
+            searchQueryParams.append(URLQueryItem(name: "vector_query", value: vectorQuery))
+        }
+        
+        if let remoteEmbeddingTimeoutMS = searchParameters.remoteEmbeddingTimeoutMs {
+            searchQueryParams.append(URLQueryItem(name: "remote_embedding_timeout_ms", value: String(remoteEmbeddingTimeoutMS)))
+        }
+        
+        if let remoteEmbeddingNumTries = searchParameters.remoteEmbeddingNumTries {
+            searchQueryParams.append(URLQueryItem(name: "remote_embedding_num_tries", value: String(remoteEmbeddingNumTries)))
+        }
 
         let (data, response) = try await apiCall.get(endPoint: "\(RESOURCEPATH)/search", queryParameters: searchQueryParams)
 

@@ -31,4 +31,8 @@ public struct Client {
     public func multiSearch() -> MultiSearch {
         return MultiSearch(config: self.configuration)
     }
+    
+    public func analytics() -> Analytics {
+        return Analytics(config: self.configuration)
+    }
 }
