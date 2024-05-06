@@ -51,7 +51,7 @@ public struct Documents {
         
     }
     
-    public func search<T>(_ searchParameters: SearchParameters, for: T.Type) async throws -> (SearchResult<T>?, URLResponse?) {
+    public func search(_ searchParameters: SearchParameters) async throws -> (Data?, URLResponse?) {
         var searchQueryParams: [URLQueryItem] =
         [
             URLQueryItem(name: "q", value: searchParameters.q),
@@ -251,7 +251,11 @@ public struct Documents {
             searchQueryParams.append(URLQueryItem(name: "remote_embedding_num_tries", value: String(remoteEmbeddingNumTries)))
         }
 
-        let (data, response) = try await apiCall.get(endPoint: "\(RESOURCEPATH)/search", queryParameters: searchQueryParams)
+        return try await apiCall.get(endPoint: "\(RESOURCEPATH)/search", queryParameters: searchQueryParams)
+    }
+    
+    public func search<T>(_ searchParameters: SearchParameters, for: T.Type) async throws -> (SearchResult<T>?, URLResponse?) {
+        let (data, response) = try await search(searchParameters)
 
         if let validData = data {
             let searchRes = try decoder.decode(SearchResult<T>.self, from: validData)

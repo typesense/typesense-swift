@@ -8,7 +8,7 @@ public struct MultiSearch {
         apiCall = ApiCall(config: config)
     }
     
-    public func perform<T>(searchRequests: [MultiSearchCollectionParameters], commonParameters: MultiSearchParameters, for: T.Type) async throws -> (MultiSearchResult<T>?, URLResponse?) {
+    public func perform(searchRequests: [MultiSearchCollectionParameters], commonParameters: MultiSearchParameters) async throws -> (Data?, URLResponse?) {
         var searchQueryParams: [URLQueryItem] = []
         
         if let query = commonParameters.q {
@@ -202,7 +202,11 @@ public struct MultiSearch {
         
         let searchesData = try encoder.encode(searches)
 
-        let (data, response) = try await apiCall.post(endPoint: "\(RESOURCEPATH)", body: searchesData, queryParameters: searchQueryParams)
+        return try await apiCall.post(endPoint: "\(RESOURCEPATH)", body: searchesData, queryParameters: searchQueryParams)
+    }
+    
+    public func perform<T>(searchRequests: [MultiSearchCollectionParameters], commonParameters: MultiSearchParameters, for: T.Type) async throws -> (MultiSearchResult<T>?, URLResponse?) {
+        let (data, response) = try await perform(searchRequests: searchRequests, commonParameters: commonParameters)
 
         if let validData = data {
             let searchRes = try decoder.decode(MultiSearchResult<T>.self, from: validData)
