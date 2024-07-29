@@ -1,4 +1,5 @@
 import Foundation
+import FoundationNetworking
 
 public struct AnalyticsRule {
     var name: String
@@ -7,7 +8,7 @@ public struct AnalyticsRule {
         self.name = name
         self.apiCall = apiCall
     }
-    
+
     public func retrieve() async throws -> (AnalyticsRuleSchema?, URLResponse?) {
         let (data, response) = try await self.apiCall.get(endPoint: endpointPath())
         if let result = data {
@@ -19,7 +20,7 @@ public struct AnalyticsRule {
         }
         return (nil, response)
     }
-    
+
     public func delete() async throws -> (AnalyticsRuleSchema?, URLResponse?) {
         let (data, response) = try await self.apiCall.delete(endPoint: endpointPath())
         if let result = data {
@@ -31,7 +32,7 @@ public struct AnalyticsRule {
         }
         return (nil, response)
     }
-    
+
     private func endpointPath() -> String {
         return "\(AnalyticsRules.resourcePath)/\(name)"
     }
