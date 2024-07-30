@@ -2,7 +2,7 @@ import Foundation
 import FoundationNetworking
 
 
-let APIKEYHEADERNAME = "X-TYPESENSE-API-KEY"
+let APIKEYHEADERNAME = "X-Typesense-Api-Key"
 let HEALTHY = true
 let UNHEALTHY = false
 private var currentNodeIndex = -1
