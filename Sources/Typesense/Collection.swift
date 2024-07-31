@@ -50,4 +50,8 @@ public struct Collection {
     public func synonyms() -> Synonyms {
         return Synonyms(config: self.config, collectionName: self.collectionName)
     }
+
+    public func overrides() -> Overrides{
+        return Overrides(config:self.config, collectionName: self.collectionName)
+    }
 }
