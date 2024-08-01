@@ -38,6 +38,7 @@ let myConfig = Configuration(nodes: [node1, node2], apiKey: "coolstuff")
 
 let client = Client(config: myConfig)
 ```
+
 You can use Typesense parameters like `nearestNode` and `connectionTimeoutSeconds` while creating the configuration. You can also pass in a `logger` parameter to debug the code like this:
 
 ```swift
@@ -50,7 +51,7 @@ You can create a collection by first defining a collection schema:
 
 ```swift
 let myCoolSchema = CollectionSchema(name: "schools", fields: [Field(name: "school_name", type: "string"), Field(name: "num_students", type: "int32"), Field(name: "country", type: "string", facet: true)], defaultSortingField: "num_students")
-    
+
 let (data, response) = try await client.collections.create(schema: myCoolSchema)
 ```
 
@@ -67,9 +68,10 @@ struct School: Codable {
 let document = School(id: "7", school_name: "Hogwarts", num_students: 600, country: "United Kingdom")
 let documentData = try JSONEncoder().encode(document)
 let (data, response) = try await client.collection(name: "schools").documents().create(document: documentData)
-//or 
+//or
 let (data, response) = try await client.collection(name: "schools").documents().upsert(document: documentData)
 ```
+
 You can perform CRUD actions to `Collections` and `Documents` that belong to a certain collection. You can also use `.importBatch()` on the `documents()` method to import and index a batch of documents (in .jsonl format).
 
 ### Searching
@@ -81,7 +83,46 @@ let searchParameters = SearchParameters(q: "hog", queryBy: "school_name", filter
 
 let (data, response) = try await client.collection(name: "schools").documents().search(searchParameters, for: School.self)
 ```
+
 This returns a `SearchResult` object as the data, which can be further parsed as desired.
+
+### Create or update an override
+
+```swift
+let schema = SearchOverrideSchema<MetadataType>(
+    rule: SearchOverrideRule(tags: ["test"], query: "apple", match: SearchOverrideRule.Match.exact, filterBy: "employees:=50"),
+    includes: [SearchOverrideInclude(_id: "include-id", position: 1)],
+    excludes: [SearchOverrideExclude(_id: "exclude-id")],
+    filterBy: "test:=true",
+    removeMatchedTokens: false,
+    metadata: MetadataType(message: "test-json"),
+    sortBy: "num_employees:desc",
+    replaceQuery: "test",
+    filterCuratedHits: false,
+    effectiveFromTs: 123,
+    effectiveToTs: 456,
+    stopProcessing: false
+)
+let (data, response) = try await client.collection(name: "books").overrides().upsert(overrideId: "test-id", params: schema)
+```
+
+### Retrieve all overrides
+
+```swift
+let (data, response) = try await client.collection(name: "books").overrides().retrieve(metadataType: Never.self )
+```
+
+### Retrieve an override
+
+```swift
+let (data, response) = try await client.collection(name: "books").override("test-id").retrieve(metadataType: MetadataType.self )
+```
+
+### Delete an override
+
+```swift
+let (data, response) = try await client.collection(name: "books").override("test-id").delete()
+```
 
 ## Contributing
 
@@ -95,6 +136,5 @@ The generated Models (inside the Models directory) are to be used inside the Mod
 
 ## TODO: Features
 
-- Curation API
 - Dealing with Dirty Data
 - Scoped Search Key
