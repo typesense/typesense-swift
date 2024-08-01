@@ -1,5 +1,7 @@
 import Foundation
-import FoundationNetworking
+#if canImport(FoundationNetworking)
+    import FoundationNetworking
+#endif
 
 
 let APIKEYHEADERNAME = "X-Typesense-Api-Key"
