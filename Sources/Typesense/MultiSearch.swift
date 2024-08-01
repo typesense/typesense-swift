@@ -143,6 +143,10 @@ public struct MultiSearch {
             searchQueryParams.append(URLQueryItem(name: "hidden_hits", value: hiddenHits))
         }
 
+        if let overrideTags = commonParameters.overrideTags {
+            searchQueryParams.append(URLQueryItem(name: "override_tags", value: overrideTags))
+        }
+
         if let highlightFields = commonParameters.highlightFields {
             searchQueryParams.append(URLQueryItem(name: "highlight_fields", value: highlightFields))
         }
@@ -161,6 +165,18 @@ public struct MultiSearch {
 
         if let prioritizeExactMatch = commonParameters.prioritizeExactMatch {
             searchQueryParams.append(URLQueryItem(name: "prioritize_exact_match", value: String(prioritizeExactMatch)))
+        }
+
+        if let prioritizeTokenPosition = commonParameters.prioritizeTokenPosition {
+            searchQueryParams.append(URLQueryItem(name: "prioritize_token_position", value: String(prioritizeTokenPosition)))
+        }
+
+        if let prioritizeNumMatchingFields = commonParameters.prioritizeNumMatchingFields {
+            searchQueryParams.append(URLQueryItem(name: "prioritize_num_matching_fields", value: String(prioritizeNumMatchingFields)))
+        }
+
+        if let enableTyposForNumericalTokens = commonParameters.enableTyposForNumericalTokens {
+            searchQueryParams.append(URLQueryItem(name: "enable_typos_for_numerical_tokens", value: String(enableTyposForNumericalTokens)))
         }
 
         if let exhaustiveSearch = commonParameters.exhaustiveSearch {
@@ -197,6 +213,18 @@ public struct MultiSearch {
 
         if let remoteEmbeddingNumTries = commonParameters.remoteEmbeddingNumTries {
             searchQueryParams.append(URLQueryItem(name: "remote_embedding_num_tries", value: String(remoteEmbeddingNumTries)))
+        }
+
+        if let facetStrategy = commonParameters.facetStrategy {
+            searchQueryParams.append(URLQueryItem(name: "facet_strategy", value: facetStrategy))
+        }
+
+        if let stopwords = commonParameters.stopwords {
+            searchQueryParams.append(URLQueryItem(name: "stopwords", value: stopwords))
+        }
+
+        if let facetReturnParent = commonParameters.facetReturnParent {
+            searchQueryParams.append(URLQueryItem(name: "facet_strategy", value: facetReturnParent))
         }
 
         let searches = MultiSearchSearchesParameter(searches: searchRequests)
