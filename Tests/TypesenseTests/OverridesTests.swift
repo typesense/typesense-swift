@@ -2,7 +2,7 @@ import XCTest
 @testable import Typesense
 
 final class OverridesTests: XCTestCase {
-    override func setUp() async {
+    override func setUp() async throws {
         try? await setUpCollection()
     }
 
