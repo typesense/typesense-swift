@@ -54,11 +54,15 @@ public struct Documents {
     }
 
     public func search<T>(_ searchParameters: SearchParameters, for: T.Type) async throws -> (SearchResult<T>?, URLResponse?) {
-        var searchQueryParams: [URLQueryItem] =
-        [
-            URLQueryItem(name: "q", value: searchParameters.q),
-            URLQueryItem(name: "query_by", value: searchParameters.queryBy),
-        ]
+        var searchQueryParams: [URLQueryItem] = []
+
+        if let q = searchParameters.q {
+            searchQueryParams.append(URLQueryItem(name: "q", value: q))
+        }
+
+        if let queryBy = searchParameters.queryBy {
+            searchQueryParams.append(URLQueryItem(name: "query_by", value: queryBy))
+        }
 
         if let queryByWeights = searchParameters.queryByWeights {
             searchQueryParams.append(URLQueryItem(name: "query_by_weights", value: queryByWeights))
@@ -185,6 +189,10 @@ public struct Documents {
             searchQueryParams.append(URLQueryItem(name: "hidden_hits", value: hiddenHits))
         }
 
+        if let overrideTags = searchParameters.overrideTags {
+            searchQueryParams.append(URLQueryItem(name: "override_tags", value: overrideTags))
+        }
+
         if let highlightFields = searchParameters.highlightFields {
             searchQueryParams.append(URLQueryItem(name: "highlight_fields", value: highlightFields))
         }
@@ -215,6 +223,14 @@ public struct Documents {
 
         if let prioritizeTokenPosition = searchParameters.prioritizeTokenPosition {
             searchQueryParams.append(URLQueryItem(name: "prioritize_token_position", value: String(prioritizeTokenPosition)))
+        }
+
+        if let prioritizeNumMatchingFields = searchParameters.prioritizeNumMatchingFields {
+            searchQueryParams.append(URLQueryItem(name: "prioritize_num_matching_fields", value: String(prioritizeNumMatchingFields)))
+        }
+
+        if let enableTyposForNumericalTokens = searchParameters.enableTyposForNumericalTokens {
+            searchQueryParams.append(URLQueryItem(name: "enable_typos_for_numerical_tokens", value: String(enableTyposForNumericalTokens)))
         }
 
         if let exhaustiveSearch = searchParameters.exhaustiveSearch {
@@ -251,6 +267,18 @@ public struct Documents {
 
         if let remoteEmbeddingNumTries = searchParameters.remoteEmbeddingNumTries {
             searchQueryParams.append(URLQueryItem(name: "remote_embedding_num_tries", value: String(remoteEmbeddingNumTries)))
+        }
+
+        if let facetStrategy = searchParameters.facetStrategy {
+            searchQueryParams.append(URLQueryItem(name: "facet_strategy", value: facetStrategy))
+        }
+
+        if let stopwords = searchParameters.stopwords {
+            searchQueryParams.append(URLQueryItem(name: "stopwords", value: stopwords))
+        }
+
+        if let facetReturnParent = searchParameters.facetReturnParent {
+            searchQueryParams.append(URLQueryItem(name: "facet_strategy", value: facetReturnParent))
         }
 
         let (data, response) = try await apiCall.get(endPoint: "\(RESOURCEPATH)/search", queryParameters: searchQueryParams)
