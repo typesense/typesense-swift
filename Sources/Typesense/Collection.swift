@@ -52,6 +52,10 @@ public struct Collection {
     }
 
     public func overrides() -> Overrides{
-        return Overrides(config:self.config, collectionName: self.collectionName)
+        return Overrides(apiCall:self.apiCall, collectionName: self.collectionName)
+    }
+
+    public func override(_ overrideId: String) -> Override{
+        return Override(apiCall:self.apiCall, collectionName: self.collectionName, overrideId: overrideId)
     }
 }

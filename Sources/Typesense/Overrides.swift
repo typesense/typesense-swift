@@ -7,8 +7,8 @@ public struct Overrides {
     private var collectionName: String
 
 
-    init(config: Configuration, collectionName: String) {
-        self.apiCall = ApiCall(config: config)
+    init(apiCall: ApiCall, collectionName: String) {
+        self.apiCall = apiCall
         self.collectionName = collectionName
     }
 

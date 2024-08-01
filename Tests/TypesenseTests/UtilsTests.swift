@@ -1,8 +1,7 @@
 import Typesense
 
-
-fileprivate var config = Configuration(nodes: [Node(host: "localhost", port: "8108", nodeProtocol: "http")], apiKey: "xyz")
-fileprivate var client = Client(config: config)
+let config = Configuration(nodes: [Node(host: "localhost", port: "8108", nodeProtocol: "http")], apiKey: "xyz")
+let client = Client(config: config)
 
 func tearDownCollections() async throws {
     let (collResp, _) = try await client.collections.retrieveAll()
@@ -20,4 +19,11 @@ func setUpCollection() async throws{
     guard collResp != nil else {
         throw DataError.dataNotFound
     }
+}
+
+func createAnOverride() async throws {
+    let _ = try! await client.collection(name: "test-utils-collection").overrides().upsert(
+        overrideId: "test-id",
+        params: SearchOverrideSchema<SearchOverrideExclude>(rule: SearchOverrideRule(filterBy: "test"), filterBy: "test:=true", metadata: SearchOverrideExclude(_id: "exclude-id"))
+    )
 }

@@ -2,16 +2,15 @@ import XCTest
 @testable import Typesense
 
 final class OverridesTests: XCTestCase {
+    override func setUp() async {
+        try? await setUpCollection()
+    }
 
     override func tearDown() async throws  {
        try! await tearDownCollections()
     }
 
     func testOverridesUpsert() async {
-        try? await setUpCollection()
-        let config = Configuration(nodes: [Node(host: "localhost", port: "8108", nodeProtocol: "http")], apiKey: "xyz", logger: Logger(debugMode: true))
-        let client = Client(config: config)
-
         let schema = SearchOverrideSchema<SearchOverrideExclude>(
             rule: SearchOverrideRule(tags: ["test"], query: "test", match: SearchOverrideRule.Match.exact, filterBy: "employees:=50"),
             includes: [SearchOverrideInclude(_id: "include-id", position: 1)],
@@ -56,13 +55,7 @@ final class OverridesTests: XCTestCase {
     }
 
     func testOverridesRetrieve() async {
-        try? await setUpCollection()
-        let config = Configuration(nodes: [Node(host: "localhost", port: "8108", nodeProtocol: "http")], apiKey: "xyz", logger: Logger(debugMode: true))
-        let client = Client(config: config)
-        let _ = try! await client.collection(name: "test-utils-collection").overrides().upsert(
-            overrideId: "test-id",
-            params: SearchOverrideSchema<SearchOverrideExclude>(rule: SearchOverrideRule(filterBy: "test"), filterBy: "test:=true")
-        )
+         try! await createAnOverride()
 
         do {
             let (overrides, _) = try await client.collection(name: "test-utils-collection").overrides().retrieve(metadataType: SearchOverrideExclude.self )
