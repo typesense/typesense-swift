@@ -11,8 +11,6 @@ import Foundation
 
 public struct MultiSearchCollectionParameters: Codable {
 
-    /** The collection to search in.  */
-    public var collection: String
     /** The query text to search for in the collection. Use * as the search string to return all documents. This is typically useful when used in conjunction with filter_by. */
     public var q: String?
     /** A list of &#x60;string&#x60; fields that should be queried against. Multiple fields are separated with a comma. */
@@ -111,6 +109,8 @@ public struct MultiSearchCollectionParameters: Codable {
     public var remoteEmbeddingTimeoutMs: Int?
     /** Number of times to retry fetching remote embeddings.  */
     public var remoteEmbeddingNumTries: Int?
+    /** The collection to search in.  */
+    public var collection: String?
     /** Choose the underlying faceting strategy used. Comma separated string of allows values: exhaustive, top_values or automatic (default).  */
     public var facetStrategy: String?
     /** Name of the stopwords set to apply for this search, the keywords present in the set will be removed from the search query.  */
@@ -118,8 +118,7 @@ public struct MultiSearchCollectionParameters: Codable {
     /** Comma separated string of nested facet fields whose parent object should be returned in facet response.  */
     public var facetReturnParent: String?
 
-    public init(collection: String, q: String? = nil, queryBy: String? = nil, queryByWeights: String? = nil, textMatchType: String? = nil, _prefix: String? = nil, _infix: String? = nil, maxExtraPrefix: Int? = nil, maxExtraSuffix: Int? = nil, filterBy: String? = nil, sortBy: String? = nil, facetBy: String? = nil, maxFacetValues: Int? = nil, facetQuery: String? = nil, numTypos: String? = nil, page: Int? = nil, perPage: Int? = nil, limit: Int? = nil, offset: Int? = nil, groupBy: String? = nil, groupLimit: Int? = nil, includeFields: String? = nil, excludeFields: String? = nil, highlightFullFields: String? = nil, highlightAffixNumTokens: Int? = nil, highlightStartTag: String? = nil, highlightEndTag: String? = nil, snippetThreshold: Int? = nil, dropTokensThreshold: Int? = nil, typoTokensThreshold: Int? = nil, pinnedHits: String? = nil, hiddenHits: String? = nil, overrideTags: String? = nil, highlightFields: String? = nil, preSegmentedQuery: Bool? = nil, preset: String? = nil, enableOverrides: Bool? = nil, prioritizeExactMatch: Bool? = nil, prioritizeTokenPosition: Bool? = nil, prioritizeNumMatchingFields: Bool? = nil, enableTyposForNumericalTokens: Bool? = nil, exhaustiveSearch: Bool? = nil, searchCutoffMs: Int? = nil, useCache: Bool? = nil, cacheTtl: Int? = nil, minLen1typo: Int? = nil, minLen2typo: Int? = nil, vectorQuery: String? = nil, remoteEmbeddingTimeoutMs: Int? = nil, remoteEmbeddingNumTries: Int? = nil, facetStrategy: String? = nil, stopwords: String? = nil, facetReturnParent: String? = nil) {
-        self.collection = collection
+    public init(q: String? = nil, queryBy: String? = nil, queryByWeights: String? = nil, textMatchType: String? = nil, _prefix: String? = nil, _infix: String? = nil, maxExtraPrefix: Int? = nil, maxExtraSuffix: Int? = nil, filterBy: String? = nil, sortBy: String? = nil, facetBy: String? = nil, maxFacetValues: Int? = nil, facetQuery: String? = nil, numTypos: String? = nil, page: Int? = nil, perPage: Int? = nil, limit: Int? = nil, offset: Int? = nil, groupBy: String? = nil, groupLimit: Int? = nil, includeFields: String? = nil, excludeFields: String? = nil, highlightFullFields: String? = nil, highlightAffixNumTokens: Int? = nil, highlightStartTag: String? = nil, highlightEndTag: String? = nil, snippetThreshold: Int? = nil, dropTokensThreshold: Int? = nil, typoTokensThreshold: Int? = nil, pinnedHits: String? = nil, hiddenHits: String? = nil, overrideTags: String? = nil, highlightFields: String? = nil, preSegmentedQuery: Bool? = nil, preset: String? = nil, enableOverrides: Bool? = nil, prioritizeExactMatch: Bool? = nil, prioritizeTokenPosition: Bool? = nil, prioritizeNumMatchingFields: Bool? = nil, enableTyposForNumericalTokens: Bool? = nil, exhaustiveSearch: Bool? = nil, searchCutoffMs: Int? = nil, useCache: Bool? = nil, cacheTtl: Int? = nil, minLen1typo: Int? = nil, minLen2typo: Int? = nil, vectorQuery: String? = nil, remoteEmbeddingTimeoutMs: Int? = nil, remoteEmbeddingNumTries: Int? = nil, collection: String? = nil, facetStrategy: String? = nil, stopwords: String? = nil, facetReturnParent: String? = nil) {
         self.q = q
         self.queryBy = queryBy
         self.queryByWeights = queryByWeights
@@ -169,6 +168,7 @@ public struct MultiSearchCollectionParameters: Codable {
         self.vectorQuery = vectorQuery
         self.remoteEmbeddingTimeoutMs = remoteEmbeddingTimeoutMs
         self.remoteEmbeddingNumTries = remoteEmbeddingNumTries
+        self.collection = collection
         self.facetStrategy = facetStrategy
         self.stopwords = stopwords
         self.facetReturnParent = facetReturnParent
