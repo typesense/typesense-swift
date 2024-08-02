@@ -9,11 +9,11 @@ import Foundation
 
 
 
-public struct SearchOverridesResponse: Codable {
+public struct SearchOverridesResponse<T: Codable>: Codable {
 
-    public var overrides: [SearchOverride]
+    public var overrides: [SearchOverride<T>]
 
-    public init(overrides: [SearchOverride]) {
+    public init(overrides: [SearchOverride<T>]) {
         self.overrides = overrides
     }
 

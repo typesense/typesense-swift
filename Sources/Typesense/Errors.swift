@@ -22,4 +22,5 @@ public enum ResponseError: Error {
     case apiKeyNotFound(desc: String)
     case aliasNotFound(desc: String)
     case analyticsRuleDoesNotExist(desc: String)
+    case requestMalformed(desc: String)
 }

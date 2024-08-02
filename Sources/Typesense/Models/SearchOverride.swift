@@ -9,8 +9,9 @@ import Foundation
 
 
 
-public struct SearchOverride: Codable {
+public struct SearchOverride<T: Codable>: Codable {
 
+    public var _id: String
     public var rule: SearchOverrideRule
     /** List of document &#x60;id&#x60;s that should be included in the search results with their corresponding &#x60;position&#x60;s. */
     public var includes: [SearchOverrideInclude]?
@@ -20,24 +21,51 @@ public struct SearchOverride: Codable {
     public var filterBy: String?
     /** Indicates whether search query tokens that exist in the override&#x27;s rule should be removed from the search query.  */
     public var removeMatchedTokens: Bool?
-    public var _id: String
+    /** Return a custom JSON object in the Search API response, when this rule is triggered. This can can be used to display a pre-defined message (eg: a promotion banner) on the front-end when a particular rule is triggered.  */
+    public var metadata: T?
+    /** A sort by clause that is applied to any search query that matches the override rule.  */
+    public var sortBy: String?
+    /** Replaces the current search query with this value, when the search query matches the override rule.  */
+    public var replaceQuery: String?
+    /** When set to true, the filter conditions of the query is applied to the curated records as well. Default: false.  */
+    public var filterCuratedHits: Bool?
+    /** A Unix timestamp that indicates the date/time from which the override will be active. You can use this to create override rules that start applying from a future point in time.  */
+    public var effectiveFromTs: Int?
+    /** A Unix timestamp that indicates the date/time until which the override will be active. You can use this to create override rules that stop applying after a period of time.  */
+    public var effectiveToTs: Int?
+    /** When set to true, override processing will stop at the first matching rule. When set to false override processing will continue and multiple override actions will be triggered in sequence. Overrides are processed in the lexical sort order of their id field. Default: true.  */
+    public var stopProcessing: Bool?
 
-    public init(rule: SearchOverrideRule, includes: [SearchOverrideInclude]? = nil, excludes: [SearchOverrideExclude]? = nil, filterBy: String? = nil, removeMatchedTokens: Bool? = nil, _id: String) {
+    public init(_id: String, rule: SearchOverrideRule, includes: [SearchOverrideInclude]? = nil, excludes: [SearchOverrideExclude]? = nil, filterBy: String? = nil, removeMatchedTokens: Bool? = nil, metadata: T? = nil, sortBy: String? = nil, replaceQuery: String? = nil, filterCuratedHits: Bool? = nil, effectiveFromTs: Int? = nil, effectiveToTs: Int? = nil, stopProcessing: Bool? = nil) {
+        self._id = _id
         self.rule = rule
         self.includes = includes
         self.excludes = excludes
         self.filterBy = filterBy
         self.removeMatchedTokens = removeMatchedTokens
-        self._id = _id
+        self.metadata = metadata
+        self.sortBy = sortBy
+        self.replaceQuery = replaceQuery
+        self.filterCuratedHits = filterCuratedHits
+        self.effectiveFromTs = effectiveFromTs
+        self.effectiveToTs = effectiveToTs
+        self.stopProcessing = stopProcessing
     }
 
-    public enum CodingKeys: String, CodingKey { 
+    public enum CodingKeys: String, CodingKey {
+        case _id = "id"
         case rule
         case includes
         case excludes
         case filterBy = "filter_by"
         case removeMatchedTokens = "remove_matched_tokens"
-        case _id = "id"
+        case metadata
+        case sortBy = "sort_by"
+        case replaceQuery = "replace_query"
+        case filterCuratedHits = "filter_curated_hits"
+        case effectiveFromTs = "effective_from_ts"
+        case effectiveToTs = "effective_to_ts"
+        case stopProcessing = "stop_processing"
     }
 
 }

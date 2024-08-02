@@ -11,19 +11,31 @@ import Foundation
 
 public struct SearchOverrideRule: Codable {
 
-    public enum Match: String, Codable { 
+    public enum Match: String, Codable {
         case exact = "exact"
         case contains = "contains"
     }
+    /** List of tag values to associate with this override rule. */
+    public var tags: [String]?
     /** Indicates what search queries should be overridden */
-    public var query: String
+    public var query: String?
     /** Indicates whether the match on the query term should be &#x60;exact&#x60; or &#x60;contains&#x60;. If we want to match all queries that contained the word &#x60;apple&#x60;, we will use the &#x60;contains&#x60; match instead.  */
-    public var match: Match
+    public var match: Match?
+    /** Indicates that the override should apply when the filter_by parameter in a search query exactly matches the string specified here (including backticks, spaces, brackets, etc).  */
+    public var filterBy: String?
 
-    public init(query: String, match: Match) {
+    public init(tags: [String]? = nil, query: String? = nil, match: Match? = nil, filterBy: String? = nil) {
+        self.tags = tags
         self.query = query
         self.match = match
+        self.filterBy = filterBy
     }
 
+    public enum CodingKeys: String, CodingKey {
+        case tags
+        case query
+        case match
+        case filterBy = "filter_by"
+    }
 
 }

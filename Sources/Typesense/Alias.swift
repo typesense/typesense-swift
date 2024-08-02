@@ -1,4 +1,7 @@
 import Foundation
+#if canImport(FoundationNetworking)
+    import FoundationNetworking
+#endif
 
 public struct Alias {
     var apiCall: ApiCall
@@ -9,12 +12,12 @@ public struct Alias {
         apiCall = ApiCall(config: config)
         self.config = config
     }
-    
+
     public func upsert(name: String, collection: CollectionAliasSchema) async throws -> (CollectionAlias?, URLResponse?) {
         let schemaData: Data?
-        
+
         schemaData = try encoder.encode(collection)
-        
+
         if let validSchema = schemaData {
             let (data, response) = try await apiCall.put(endPoint: "\(RESOURCEPATH)/\(name)", body: validSchema)
             if let result = data {
@@ -24,7 +27,7 @@ public struct Alias {
         }
         return (nil, nil)
     }
-    
+
     public func retrieve(name: String) async throws -> (CollectionAlias?, URLResponse?) {
         let (data, response) = try await apiCall.get(endPoint: "\(RESOURCEPATH)/\(name)")
         if let result = data {
@@ -36,7 +39,7 @@ public struct Alias {
         }
         return (nil, nil)
     }
-    
+
     public func retrieve() async throws -> (CollectionAliasesResponse?, URLResponse?) {
         let (data, response) = try await apiCall.get(endPoint: "\(RESOURCEPATH)")
         if let result = data {
@@ -45,7 +48,7 @@ public struct Alias {
         }
         return (nil, nil)
     }
-    
+
     public func delete(name: String) async throws -> (CollectionAlias?, URLResponse?) {
         let (data, response) = try await apiCall.delete(endPoint: "\(RESOURCEPATH)/\(name)")
         if let result = data {
@@ -57,6 +60,6 @@ public struct Alias {
         }
         return (nil, nil)
     }
-    
-    
+
+
 }

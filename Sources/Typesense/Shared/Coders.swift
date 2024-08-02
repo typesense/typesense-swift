@@ -1,36 +1,39 @@
 import Foundation
+#if canImport(FoundationNetworking)
+    import FoundationNetworking
+#endif
 
 public let encoder = JSONEncoder()
 public let decoder = JSONDecoder()
 
 public enum StringQuantum: Codable {
-    
+
     public var arrStr : [String]? {
         guard case .arrOfStrings(let arrOfStrings) = self else { return nil }
         return arrOfStrings
     }
-    
+
     public var arrArrStr : [[String]]? {
         guard case .arrOfArrOfStrings(let arrOfArrOfStrings) = self else { return nil }
         return arrOfArrOfStrings
     }
 
     case arrOfStrings([String]), arrOfArrOfStrings([[String]])
-    
+
     public init(from decoder: Decoder) throws {
         if let arrS = try? decoder.singleValueContainer().decode([String].self) {
             self = .arrOfStrings(arrS)
             return
         }
-        
+
         if let arrArrS = try? decoder.singleValueContainer().decode([[String]].self) {
             self = .arrOfArrOfStrings(arrArrS)
             return
         }
-        
+
         throw QuantumError.missingValue
     }
-    
+
     public enum QuantumError:Error {
         case missingValue
     }
@@ -48,7 +51,7 @@ public struct SlowRequest: Codable {
     public init(_ timeInMS: Float? = nil) {
         self.logSlowRequestsTimeMs = timeInMS
     }
-    
+
     public enum CodingKeys: String, CodingKey {
         case logSlowRequestsTimeMs = "log-slow-requests-time-ms"
     }

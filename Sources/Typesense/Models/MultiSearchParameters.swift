@@ -44,7 +44,7 @@ public struct MultiSearchParameters: Codable {
     public var page: Int?
     /** Number of results to fetch per page. Default: 10 */
     public var perPage: Int?
-    /** Number of hits to fetch. Can be used as an alternative to the per_page parameter.  Default: 10.  */
+    /** Number of hits to fetch. Can be used as an alternative to the per_page parameter. Default: 10.  */
     public var limit: Int?
     /** Identifies the starting point to return hits from a result set. Can be used as an alternative to the page parameter. */
     public var offset: Int?
@@ -70,13 +70,15 @@ public struct MultiSearchParameters: Codable {
     public var dropTokensThreshold: Int?
     /** If the number of results found for a specific query is less than this number, Typesense will attempt to look for tokens with more typos until enough results are found. Default: 100  */
     public var typoTokensThreshold: Int?
-    /** A list of records to unconditionally include in the search results at specific positions. An example use case would be to feature or promote certain items on the top of search results. A list of &#x60;record_id:hit_position&#x60;. Eg: to include a record with ID 123 at Position 1 and another record with ID 456 at Position 5, you&#x27;d specify &#x60;123:1,456:5&#x60;. You could also use the Overrides feature to override search results based on rules. Overrides are applied first, followed by &#x60;pinned_hits&#x60; and  finally &#x60;hidden_hits&#x60;.  */
+    /** A list of records to unconditionally include in the search results at specific positions. An example use case would be to feature or promote certain items on the top of search results. A list of &#x60;record_id:hit_position&#x60;. Eg: to include a record with ID 123 at Position 1 and another record with ID 456 at Position 5, you&#x27;d specify &#x60;123:1,456:5&#x60;. You could also use the Overrides feature to override search results based on rules. Overrides are applied first, followed by &#x60;pinned_hits&#x60; and finally &#x60;hidden_hits&#x60;.  */
     public var pinnedHits: String?
     /** A list of records to unconditionally hide from search results. A list of &#x60;record_id&#x60;s to hide. Eg: to hide records with IDs 123 and 456, you&#x27;d specify &#x60;123,456&#x60;. You could also use the Overrides feature to override search results based on rules. Overrides are applied first, followed by &#x60;pinned_hits&#x60; and finally &#x60;hidden_hits&#x60;.  */
     public var hiddenHits: String?
-    /** A list of custom fields that must be highlighted even if you don&#x27;t query  for them  */
+    /** Comma separated list of tags to trigger the curations rules that match the tags. */
+    public var overrideTags: String?
+    /** A list of custom fields that must be highlighted even if you don&#x27;t query for them  */
     public var highlightFields: String?
-    /** You can index content from any logographic language into Typesense if you are able to segment / split the text into space-separated words yourself  before indexing and querying. Set this parameter to true to do the same  */
+    /** You can index content from any logographic language into Typesense if you are able to segment / split the text into space-separated words yourself before indexing and querying. Set this parameter to true to do the same  */
     public var preSegmentedQuery: Bool?
     /** Search using a bunch of search parameters by setting this parameter to the name of the existing Preset.  */
     public var preset: String?
@@ -84,17 +86,23 @@ public struct MultiSearchParameters: Codable {
     public var enableOverrides: Bool?
     /** Set this parameter to true to ensure that an exact match is ranked above the others  */
     public var prioritizeExactMatch: Bool?
-    /** Setting this to true will make Typesense consider all prefixes and typo  corrections of the words in the query without stopping early when enough results are found  (drop_tokens_threshold and typo_tokens_threshold configurations are ignored).  */
+    /** Make Typesense prioritize documents where the query words appear earlier in the text.  */
+    public var prioritizeTokenPosition: Bool?
+    /** Make Typesense prioritize documents where the query words appear in more number of fields.  */
+    public var prioritizeNumMatchingFields: Bool?
+    /** Make Typesense disable typos for numerical tokens.  */
+    public var enableTyposForNumericalTokens: Bool?
+    /** Setting this to true will make Typesense consider all prefixes and typo corrections of the words in the query without stopping early when enough results are found (drop_tokens_threshold and typo_tokens_threshold configurations are ignored).  */
     public var exhaustiveSearch: Bool?
-    /** Typesense will attempt to return results early if the cutoff time has elapsed.  This is not a strict guarantee and facet computation is not bound by this parameter.  */
+    /** Typesense will attempt to return results early if the cutoff time has elapsed. This is not a strict guarantee and facet computation is not bound by this parameter.  */
     public var searchCutoffMs: Int?
     /** Enable server side caching of search query results. By default, caching is disabled.  */
     public var useCache: Bool?
-    /** The duration (in seconds) that determines how long the search query is cached.  This value can be set on a per-query basis. Default: 60.  */
+    /** The duration (in seconds) that determines how long the search query is cached. This value can be set on a per-query basis. Default: 60.  */
     public var cacheTtl: Int?
-    /** Minimum word length for 1-typo correction to be applied.  The value of num_typos is still treated as the maximum allowed typos.  */
+    /** Minimum word length for 1-typo correction to be applied. The value of num_typos is still treated as the maximum allowed typos.  */
     public var minLen1typo: Int?
-    /** Minimum word length for 2-typo correction to be applied.  The value of num_typos is still treated as the maximum allowed typos.  */
+    /** Minimum word length for 2-typo correction to be applied. The value of num_typos is still treated as the maximum allowed typos.  */
     public var minLen2typo: Int?
     /** Vector query expression for fetching documents \&quot;closest\&quot; to a given query/document vector.  */
     public var vectorQuery: String?
@@ -102,8 +110,14 @@ public struct MultiSearchParameters: Codable {
     public var remoteEmbeddingTimeoutMs: Int?
     /** Number of times to retry fetching remote embeddings.  */
     public var remoteEmbeddingNumTries: Int?
+    /** Choose the underlying faceting strategy used. Comma separated string of allows values: exhaustive, top_values or automatic (default).  */
+    public var facetStrategy: String?
+    /** Name of the stopwords set to apply for this search, the keywords present in the set will be removed from the search query.  */
+    public var stopwords: String?
+    /** Comma separated string of nested facet fields whose parent object should be returned in facet response.  */
+    public var facetReturnParent: String?
 
-    public init(q: String? = nil, queryBy: String? = nil, queryByWeights: String? = nil, textMatchType: String? = nil, _prefix: String? = nil, _infix: String? = nil, maxExtraPrefix: Int? = nil, maxExtraSuffix: Int? = nil, filterBy: String? = nil, sortBy: String? = nil, facetBy: String? = nil, maxFacetValues: Int? = nil, facetQuery: String? = nil, numTypos: String? = nil, page: Int? = nil, perPage: Int? = nil, limit: Int? = nil, offset: Int? = nil, groupBy: String? = nil, groupLimit: Int? = nil, includeFields: String? = nil, excludeFields: String? = nil, highlightFullFields: String? = nil, highlightAffixNumTokens: Int? = nil, highlightStartTag: String? = nil, highlightEndTag: String? = nil, snippetThreshold: Int? = nil, dropTokensThreshold: Int? = nil, typoTokensThreshold: Int? = nil, pinnedHits: String? = nil, hiddenHits: String? = nil, highlightFields: String? = nil, preSegmentedQuery: Bool? = nil, preset: String? = nil, enableOverrides: Bool? = nil, prioritizeExactMatch: Bool? = nil, exhaustiveSearch: Bool? = nil, searchCutoffMs: Int? = nil, useCache: Bool? = nil, cacheTtl: Int? = nil, minLen1typo: Int? = nil, minLen2typo: Int? = nil, vectorQuery: String? = nil, remoteEmbeddingTimeoutMs: Int? = nil, remoteEmbeddingNumTries: Int? = nil) {
+    public init(q: String? = nil, queryBy: String? = nil, queryByWeights: String? = nil, textMatchType: String? = nil, _prefix: String? = nil, _infix: String? = nil, maxExtraPrefix: Int? = nil, maxExtraSuffix: Int? = nil, filterBy: String? = nil, sortBy: String? = nil, facetBy: String? = nil, maxFacetValues: Int? = nil, facetQuery: String? = nil, numTypos: String? = nil, page: Int? = nil, perPage: Int? = nil, limit: Int? = nil, offset: Int? = nil, groupBy: String? = nil, groupLimit: Int? = nil, includeFields: String? = nil, excludeFields: String? = nil, highlightFullFields: String? = nil, highlightAffixNumTokens: Int? = nil, highlightStartTag: String? = nil, highlightEndTag: String? = nil, snippetThreshold: Int? = nil, dropTokensThreshold: Int? = nil, typoTokensThreshold: Int? = nil, pinnedHits: String? = nil, hiddenHits: String? = nil, overrideTags: String? = nil, highlightFields: String? = nil, preSegmentedQuery: Bool? = nil, preset: String? = nil, enableOverrides: Bool? = nil, prioritizeExactMatch: Bool? = nil, prioritizeTokenPosition: Bool? = nil, prioritizeNumMatchingFields: Bool? = nil, enableTyposForNumericalTokens: Bool? = nil, exhaustiveSearch: Bool? = nil, searchCutoffMs: Int? = nil, useCache: Bool? = nil, cacheTtl: Int? = nil, minLen1typo: Int? = nil, minLen2typo: Int? = nil, vectorQuery: String? = nil, remoteEmbeddingTimeoutMs: Int? = nil, remoteEmbeddingNumTries: Int? = nil, facetStrategy: String? = nil, stopwords: String? = nil, facetReturnParent: String? = nil) {
         self.q = q
         self.queryBy = queryBy
         self.queryByWeights = queryByWeights
@@ -135,11 +149,15 @@ public struct MultiSearchParameters: Codable {
         self.typoTokensThreshold = typoTokensThreshold
         self.pinnedHits = pinnedHits
         self.hiddenHits = hiddenHits
+        self.overrideTags = overrideTags
         self.highlightFields = highlightFields
         self.preSegmentedQuery = preSegmentedQuery
         self.preset = preset
         self.enableOverrides = enableOverrides
         self.prioritizeExactMatch = prioritizeExactMatch
+        self.prioritizeTokenPosition = prioritizeTokenPosition
+        self.prioritizeNumMatchingFields = prioritizeNumMatchingFields
+        self.enableTyposForNumericalTokens = enableTyposForNumericalTokens
         self.exhaustiveSearch = exhaustiveSearch
         self.searchCutoffMs = searchCutoffMs
         self.useCache = useCache
@@ -149,9 +167,12 @@ public struct MultiSearchParameters: Codable {
         self.vectorQuery = vectorQuery
         self.remoteEmbeddingTimeoutMs = remoteEmbeddingTimeoutMs
         self.remoteEmbeddingNumTries = remoteEmbeddingNumTries
+        self.facetStrategy = facetStrategy
+        self.stopwords = stopwords
+        self.facetReturnParent = facetReturnParent
     }
 
-    public enum CodingKeys: String, CodingKey { 
+    public enum CodingKeys: String, CodingKey {
         case q
         case queryBy = "query_by"
         case queryByWeights = "query_by_weights"
@@ -183,11 +204,15 @@ public struct MultiSearchParameters: Codable {
         case typoTokensThreshold = "typo_tokens_threshold"
         case pinnedHits = "pinned_hits"
         case hiddenHits = "hidden_hits"
+        case overrideTags = "override_tags"
         case highlightFields = "highlight_fields"
         case preSegmentedQuery = "pre_segmented_query"
         case preset
         case enableOverrides = "enable_overrides"
         case prioritizeExactMatch = "prioritize_exact_match"
+        case prioritizeTokenPosition = "prioritize_token_position"
+        case prioritizeNumMatchingFields = "prioritize_num_matching_fields"
+        case enableTyposForNumericalTokens = "enable_typos_for_numerical_tokens"
         case exhaustiveSearch = "exhaustive_search"
         case searchCutoffMs = "search_cutoff_ms"
         case useCache = "use_cache"
@@ -197,6 +222,9 @@ public struct MultiSearchParameters: Codable {
         case vectorQuery = "vector_query"
         case remoteEmbeddingTimeoutMs = "remote_embedding_timeout_ms"
         case remoteEmbeddingNumTries = "remote_embedding_num_tries"
+        case facetStrategy = "facet_strategy"
+        case stopwords
+        case facetReturnParent = "facet_return_parent"
     }
 
 }
