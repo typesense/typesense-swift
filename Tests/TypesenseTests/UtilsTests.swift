@@ -13,6 +13,16 @@ func tearDownCollections() async throws {
     }
 }
 
+func tearDownPresets() async throws {
+    let (presets, _) = try await client.presets().retrieve()
+    guard let validData = presets else {
+        throw DataError.dataNotFound
+    }
+    for item in validData.presets {
+        let _ = try! await client.preset(item.name).delete()
+    }
+}
+
 func setUpCollection() async throws{
     let schema = CollectionSchema(name: "test-utils-collection", fields: [Field(name: "company_name", type: "string"), Field(name: "num_employees", type: "int32"), Field(name: "country", type: "string", facet: true)], defaultSortingField: "num_employees")
     let (collResp, _) = try! await client.collections.create(schema: schema)
@@ -25,5 +35,23 @@ func createAnOverride() async throws {
     let _ = try! await client.collection(name: "test-utils-collection").overrides().upsert(
         overrideId: "test-id",
         params: SearchOverrideSchema<SearchOverrideExclude>(rule: SearchOverrideRule(filterBy: "test"), filterBy: "test:=true", metadata: SearchOverrideExclude(_id: "exclude-id"))
+    )
+}
+
+func createSingleCollectionSearchPreset() async throws {
+    let _ = try! await client.presets().upsert(
+        presetName: "test-id",
+        params: PresetUpsertSchema(
+            value: .singleCollectionSearch(SearchParameters(q: "apple"))
+        )
+    )
+}
+
+func createMultiSearchPreset() async throws {
+    let _ = try! await client.presets().upsert(
+        presetName: "test-id-preset-multi-search",
+        params: PresetUpsertSchema(
+            value: .multiSearch(MultiSearchSearchesParameter(searches: [MultiSearchCollectionParameters(q: "banana")]))
+        )
     )
 }
