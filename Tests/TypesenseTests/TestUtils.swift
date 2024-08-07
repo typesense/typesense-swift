@@ -23,6 +23,16 @@ func tearDownPresets() async throws {
     }
 }
 
+func tearDownStopwords() async throws {
+    let (data, _) = try await client.stopwords().retrieve()
+    guard let validData = data else {
+        throw DataError.dataNotFound
+    }
+    for item in validData {
+        let _ = try! await client.stopword(item._id).delete()
+    }
+}
+
 func setUpCollection() async throws{
     let schema = CollectionSchema(name: "test-utils-collection", fields: [Field(name: "company_name", type: "string"), Field(name: "num_employees", type: "int32"), Field(name: "country", type: "string", facet: true)], defaultSortingField: "num_employees")
     let (collResp, _) = try! await client.collections.create(schema: schema)
@@ -52,6 +62,16 @@ func createMultiSearchPreset() async throws {
         presetName: "test-id-preset-multi-search",
         params: PresetUpsertSchema(
             value: .multiSearch(MultiSearchSearchesParameter(searches: [MultiSearchCollectionParameters(q: "banana")]))
+        )
+    )
+}
+
+func createStopwordSet() async throws {
+    let _ = try! await client.stopwords().upsert(
+        stopwordsSetId: "test-id-stopword-set",
+        params: StopwordsSetUpsertSchema(
+            stopwords: ["states","united"],
+            locale: "en"
         )
     )
 }

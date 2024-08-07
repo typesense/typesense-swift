@@ -43,4 +43,12 @@ public struct Client {
     public func preset(_ presetName: String) -> Preset {
         return Preset(apiCall: apiCall, presetName: presetName)
     }
+
+    public func stopwords() -> Stopwords {
+        return Stopwords(apiCall: apiCall)
+    }
+
+    public func stopword(_ stopwordsSetId: String) -> Stopword {
+        return Stopword(apiCall: apiCall, stopwordsSetId: stopwordsSetId)
+    }
 }
