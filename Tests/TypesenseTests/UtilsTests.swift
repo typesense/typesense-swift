@@ -55,3 +55,18 @@ func createMultiSearchPreset() async throws {
         )
     )
 }
+
+struct Product: Codable, Equatable {
+    var name: String?
+    var price: Int?
+    var brand: String?
+    var desc: String?
+
+    static func == (lhs: Product, rhs: Product) -> Bool {
+            return
+                lhs.name == rhs.name &&
+                lhs.price == rhs.price &&
+                lhs.brand == rhs.brand &&
+                lhs.desc == rhs.desc
+    }
+}
