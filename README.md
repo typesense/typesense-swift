@@ -109,19 +109,82 @@ let (data, response) = try await client.collection(name: "books").overrides().up
 ### Retrieve all overrides
 
 ```swift
-let (data, response) = try await client.collection(name: "books").overrides().retrieve(metadataType: Never.self )
+let (data, response) = try await client.collection(name: "books").overrides().retrieve(metadataType: Never.self)
 ```
 
 ### Retrieve an override
 
 ```swift
-let (data, response) = try await client.collection(name: "books").override("test-id").retrieve(metadataType: MetadataType.self )
+let (data, response) = try await client.collection(name: "books").override("test-id").retrieve(metadataType: MetadataType.self)
 ```
 
 ### Delete an override
 
 ```swift
 let (data, response) = try await client.collection(name: "books").override("test-id").delete()
+```
+
+### Create or update a preset
+
+```swift
+let schema = PresetUpsertSchema(
+    value: PresetValue.singleCollectionSearch(SearchParameters(q: "apple"))
+    // or: value: PresetValue.multiSearch(MultiSearchSearchesParameter(searches: [MultiSearchCollectionParameters(q: "apple")]))
+)
+let (data, response) = try await client.presets().upsert(presetName: "listing_view", params: schema)
+```
+
+### Retrieve all presets
+
+```swift
+let (data, response) = try await client.presets().retrieve()
+```
+
+### Retrieve a preset
+
+```swift
+let (data, response) = try await client.preset("listing_view").retrieve()
+
+switch data?.value {
+    case .singleCollectionSearch(let value):
+        print(value)
+    case .multiSearch(let value):
+        print(value)
+}
+```
+
+### Delete a preset
+
+```swift
+let (data, response) = try await client.preset("listing_view").delete()
+```
+
+### Create or update a stopwords set
+
+```swift
+let schema = StopwordsSetUpsertSchema(
+    stopwords: ["states","united"],
+    locale: "en"
+)
+let (data, response) = try await client.stopwords().upsert(stopwordsSetId: "stopword_set1", params: schema)
+```
+
+### Retrieve all stopwords sets
+
+```swift
+let (data, response) = try await client.stopwords().retrieve()
+```
+
+### Retrieve a stopwords set
+
+```swift
+let (data, response) = try await client.stopword("stopword_set1").retrieve()
+```
+
+### Delete a preset
+
+```swift
+let (data, response) = try await client.stopword("stopword_set1").delete()
 ```
 
 ## Contributing

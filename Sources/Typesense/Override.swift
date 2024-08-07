@@ -28,8 +28,8 @@ public struct Override {
     public func delete() async throws -> (SearchOverrideDeleteResponse?, URLResponse?) {
         let (data, response) = try await apiCall.delete(endPoint: endpointPath())
         if let result = data {
-            let overrides = try decoder.decode(SearchOverrideDeleteResponse.self, from: result)
-            return (overrides, response)
+            let decodedData = try decoder.decode(SearchOverrideDeleteResponse.self, from: result)
+            return (decodedData, response)
         }
         return (nil, response)
     }
