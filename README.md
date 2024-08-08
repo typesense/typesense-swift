@@ -181,10 +181,16 @@ let (data, response) = try await client.stopwords().retrieve()
 let (data, response) = try await client.stopword("stopword_set1").retrieve()
 ```
 
-### Delete a preset
+### Delete a stopwords set
 
 ```swift
 let (data, response) = try await client.stopword("stopword_set1").delete()
+```
+
+### Retrieve debug information
+
+```swift
+let (data, response) = try await client.operations().getDebug()
 ```
 
 ## Contributing
