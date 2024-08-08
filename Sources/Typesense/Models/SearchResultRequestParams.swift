@@ -14,17 +14,20 @@ public struct SearchResultRequestParams: Codable {
     public var collectionName: String
     public var q: String
     public var perPage: Int
+    public var voiceQuery: SearchResultRequestParamsVoiceQuery?
 
-    public init(collectionName: String, q: String, perPage: Int) {
+    public init(collectionName: String, q: String, perPage: Int, voiceQuery: SearchResultRequestParamsVoiceQuery? = nil) {
         self.collectionName = collectionName
         self.q = q
         self.perPage = perPage
+        self.voiceQuery = voiceQuery
     }
 
-    public enum CodingKeys: String, CodingKey { 
+    public enum CodingKeys: String, CodingKey {
         case collectionName = "collection_name"
         case q
         case perPage = "per_page"
+        case voiceQuery = "voice_query"
     }
 
 }

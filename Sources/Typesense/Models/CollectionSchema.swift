@@ -17,29 +17,32 @@ public struct CollectionSchema: Codable {
     public var fields: [Field]
     /** The name of an int32 / float field that determines the order in which the search results are ranked when a sort_by clause is not provided during searching. This field must indicate some kind of popularity. */
     public var defaultSortingField: String?
-    /** List of symbols or special characters to be used for  splitting the text into individual words in addition to space and new-line characters.  */
+    /** List of symbols or special characters to be used for splitting the text into individual words in addition to space and new-line characters.  */
     public var tokenSeparators: [String]?
     /** Enables experimental support at a collection level for nested object or object array fields. This field is only available if the Typesense server is version &#x60;0.24.0.rcn34&#x60; or later. */
     public var enableNestedFields: Bool?
     /** List of symbols or special characters to be indexed.  */
     public var symbolsToIndex: [String]?
+    public var voiceQueryModel: VoiceQueryModelCollectionConfig?
 
-    public init(name: String, fields: [Field], defaultSortingField: String? = nil, tokenSeparators: [String]? = nil, enableNestedFields: Bool? = nil, symbolsToIndex: [String]? = nil) {
+    public init(name: String, fields: [Field], defaultSortingField: String? = nil, tokenSeparators: [String]? = nil, enableNestedFields: Bool? = nil, symbolsToIndex: [String]? = nil, voiceQueryModel: VoiceQueryModelCollectionConfig? = nil) {
         self.name = name
         self.fields = fields
         self.defaultSortingField = defaultSortingField
         self.tokenSeparators = tokenSeparators
         self.enableNestedFields = enableNestedFields
         self.symbolsToIndex = symbolsToIndex
+        self.voiceQueryModel = voiceQueryModel
     }
 
-    public enum CodingKeys: String, CodingKey { 
+    public enum CodingKeys: String, CodingKey {
         case name
         case fields
         case defaultSortingField = "default_sorting_field"
         case tokenSeparators = "token_separators"
         case enableNestedFields = "enable_nested_fields"
         case symbolsToIndex = "symbols_to_index"
+        case voiceQueryModel = "voice_query_model"
     }
 
 }
