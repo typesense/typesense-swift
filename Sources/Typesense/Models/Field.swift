@@ -19,11 +19,14 @@ public struct Field: Codable {
     public var locale: String?
     public var sort: Bool?
     public var _infix: Bool?
+    public var reference: String?
     public var numDim: Int?
     public var drop: Bool?
+    /** Whether to store the image on disk.  */
+    public var store: Bool?
     public var embed: FieldEmbed?
 
-    public init(name: String, type: String, _optional: Bool? = nil, facet: Bool? = nil, index: Bool? = nil, locale: String? = nil, sort: Bool? = nil, _infix: Bool? = nil, numDim: Int? = nil, drop: Bool? = nil, embed: FieldEmbed? = nil) {
+    public init(name: String, type: String, _optional: Bool? = nil, facet: Bool? = nil, index: Bool? = nil, locale: String? = nil, sort: Bool? = nil, _infix: Bool? = nil, reference: String? = nil, numDim: Int? = nil, drop: Bool? = nil, store: Bool? = nil, embed: FieldEmbed? = nil) {
         self.name = name
         self.type = type
         self._optional = _optional
@@ -32,8 +35,10 @@ public struct Field: Codable {
         self.locale = locale
         self.sort = sort
         self._infix = _infix
+        self.reference = reference
         self.numDim = numDim
         self.drop = drop
+        self.store = store
         self.embed = embed
     }
 
@@ -46,8 +51,10 @@ public struct Field: Codable {
         case locale
         case sort
         case _infix = "infix"
+        case reference
         case numDim = "num_dim"
         case drop
+        case store
         case embed
     }
 
