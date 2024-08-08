@@ -45,9 +45,6 @@ final class OverridesTests: XCTestCase {
             XCTAssertEqual(123, validOverride.effectiveFromTs)
             XCTAssertEqual(456, validOverride.effectiveToTs)
             XCTAssertEqual(false, validOverride.stopProcessing)
-        } catch ResponseError.requestMalformed( let desc) {
-            print(desc)
-            XCTAssertTrue(false)
         } catch (let error) {
             print(error.localizedDescription)
             XCTAssertTrue(false)

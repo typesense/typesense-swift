@@ -2,6 +2,7 @@ import Foundation
 
 public enum HTTPError: Error {
     case serverError(code: Int, desc: String)
+    case clientError(code: Int, desc: String)
 }
 
 public enum URLError: Error {
@@ -22,5 +23,4 @@ public enum ResponseError: Error {
     case apiKeyNotFound(desc: String)
     case aliasNotFound(desc: String)
     case analyticsRuleDoesNotExist(desc: String)
-    case requestMalformed(desc: String)
 }

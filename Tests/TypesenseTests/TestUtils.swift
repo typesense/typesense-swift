@@ -1,7 +1,7 @@
 import Typesense
 
-let config = Configuration(nodes: [Node(host: "localhost", port: "8108", nodeProtocol: "http")], apiKey: "xyz")
-let client = Client(config: config)
+let CONFIG = Configuration(nodes: [Node(host: "localhost", port: "8108", nodeProtocol: "http")], apiKey: "xyz", logger: Logger(debugMode: true))
+let client = Client(config: CONFIG)
 
 func tearDownCollections() async throws {
     let (collResp, _) = try await client.collections.retrieveAll()
