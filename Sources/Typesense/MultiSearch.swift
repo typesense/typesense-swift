@@ -31,13 +31,7 @@ public struct MultiSearch {
         }
 
         if let _prefix = commonParameters._prefix {
-            var fullString = ""
-            for item in _prefix {
-                fullString.append(String(item))
-                fullString.append(",")
-            }
-
-            searchQueryParams.append(URLQueryItem(name: "prefix", value: String(fullString.dropLast())))
+            searchQueryParams.append(URLQueryItem(name: "prefix", value: _prefix))
         }
 
         if let _infix = commonParameters._infix {
