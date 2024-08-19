@@ -12,7 +12,7 @@ public struct AnalyticsRules {
         self.apiCall = apiCall
     }
 
-    func upsert(params: AnalyticsRuleSchema) async throws -> (AnalyticsRuleSchema?, URLResponse?) {
+    public func upsert(params: AnalyticsRuleSchema) async throws -> (AnalyticsRuleSchema?, URLResponse?) {
         let ruleData = try encoder.encode(params)
         let (data, response) = try await self.apiCall.put(endPoint: endpointPath(params.name), body: ruleData)
         if let result = data {
@@ -23,7 +23,7 @@ public struct AnalyticsRules {
         return (nil, response)
     }
 
-    func retrieveAll() async throws -> (AnalyticsRulesRetrieveSchema?, URLResponse?) {
+    public func retrieveAll() async throws -> (AnalyticsRulesRetrieveSchema?, URLResponse?) {
         let (data, response) = try await self.apiCall.get(endPoint: endpointPath())
         if let result = data {
             let rules = try decoder.decode(AnalyticsRulesRetrieveSchema.self, from: result)
