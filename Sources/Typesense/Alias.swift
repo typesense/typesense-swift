@@ -6,11 +6,9 @@ import Foundation
 public struct Alias {
     var apiCall: ApiCall
     let RESOURCEPATH = "aliases"
-    var config: Configuration
 
-    public init(config: Configuration) {
-        apiCall = ApiCall(config: config)
-        self.config = config
+    init(apiCall: ApiCall) {
+        self.apiCall = apiCall
     }
 
     public func upsert(name: String, collection: CollectionAliasSchema) async throws -> (CollectionAlias?, URLResponse?) {

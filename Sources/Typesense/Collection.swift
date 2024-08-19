@@ -7,22 +7,20 @@ import Foundation
 public struct Collection {
     var apiCall: ApiCall
     let RESOURCEPATH = "collections"
-    var config: Configuration
 
     var collectionName: String
 
-    public init(config: Configuration, collectionName: String) {
-        apiCall = ApiCall(config: config)
-        self.config = config
+    init(apiCall: ApiCall, collectionName: String) {
+        self.apiCall = apiCall
         self.collectionName = collectionName
     }
 
     public func documents() -> Documents {
-        return Documents(config: self.config, collectionName: self.collectionName)
+        return Documents(apiCall: apiCall, collectionName: self.collectionName)
     }
 
     public func document(id: String) -> Document {
-        return Document(config: self.config, collectionName: self.collectionName, id: id)
+        return Document(apiCall: apiCall, collectionName: self.collectionName, id: id)
     }
 
     public func delete() async throws -> (CollectionResponse?, URLResponse?) {
@@ -44,14 +42,14 @@ public struct Collection {
     }
 
     public func synonyms() -> Synonyms {
-        return Synonyms(config: self.config, collectionName: self.collectionName)
+        return Synonyms(apiCall: apiCall, collectionName: self.collectionName)
     }
 
     public func overrides() -> Overrides{
-        return Overrides(apiCall:self.apiCall, collectionName: self.collectionName)
+        return Overrides(apiCall: self.apiCall, collectionName: self.collectionName)
     }
 
     public func override(_ overrideId: String) -> Override{
-        return Override(apiCall:self.apiCall, collectionName: self.collectionName, overrideId: overrideId)
+        return Override(apiCall: self.apiCall, collectionName: self.collectionName, overrideId: overrideId)
     }
 }

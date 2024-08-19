@@ -6,8 +6,8 @@ public struct Analytics {
     private var analyticsRules: AnalyticsRules
     var apiCall: ApiCall
 
-    init(config: Configuration) {
-        self.apiCall = ApiCall(config: config)
+    init(apiCall: ApiCall) {
+        self.apiCall = apiCall
         self.analyticsRules = AnalyticsRules(apiCall: apiCall)
     }
 

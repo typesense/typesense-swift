@@ -10,8 +10,8 @@ public struct Document {
     var id: String
     let RESOURCEPATH: String
 
-    public init(config: Configuration, collectionName: String, id: String) {
-        apiCall = ApiCall(config: config)
+    init(apiCall: ApiCall, collectionName: String, id: String) {
+        self.apiCall = apiCall
         self.collectionName = collectionName
         self.id = id
         self.RESOURCEPATH = "collections/\(collectionName)/documents"

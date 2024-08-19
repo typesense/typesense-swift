@@ -9,8 +9,8 @@ public struct Documents {
     var collectionName: String
     let RESOURCEPATH: String
 
-    public init(config: Configuration, collectionName: String) {
-        apiCall = ApiCall(config: config)
+    init(apiCall: ApiCall, collectionName: String) {
+        self.apiCall = apiCall
         self.collectionName = collectionName
         self.RESOURCEPATH = "collections/\(collectionName)/documents"
     }

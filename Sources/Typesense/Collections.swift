@@ -8,8 +8,8 @@ public struct Collections {
     var apiCall: ApiCall
     static let RESOURCEPATH = "collections"
 
-    public init(config: Configuration) {
-        apiCall = ApiCall(config: config)
+    init(apiCall: ApiCall) {
+        self.apiCall = apiCall
     }
 
     public func create(schema: CollectionSchema) async throws -> (CollectionResponse?, URLResponse?) {

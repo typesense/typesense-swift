@@ -8,8 +8,8 @@ public struct ApiKeys {
     var apiCall: ApiCall
     let RESOURCEPATH = "keys"
 
-    public init(config: Configuration) {
-        apiCall = ApiCall(config: config)
+    init(apiCall: ApiCall) {
+        self.apiCall = apiCall
     }
 
     public func create(_ keySchema: ApiKeySchema) async throws -> (ApiKey?, URLResponse?) {

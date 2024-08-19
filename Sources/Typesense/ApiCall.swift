@@ -7,9 +7,10 @@ import Foundation
 let APIKEYHEADERNAME = "X-Typesense-Api-Key"
 let HEALTHY = true
 let UNHEALTHY = false
+//!BUG
 private var currentNodeIndex = -1
 
-struct ApiCall {
+class ApiCall {
     var nodes: [Node]
     var apiKey: String
     var nearestNode: Node? = nil
@@ -176,7 +177,7 @@ struct ApiCall {
 
             logger.log("Request #\(requestNumber): Falling back to individual nodes")
         }
-
+        logger.log("Node index \(currentNodeIndex)")
         //Fallback to nodes as usual
         logger.log("Request #\(requestNumber): Listing health of nodes")
         let _ = self.nodes.map { node in
@@ -216,7 +217,7 @@ struct ApiCall {
     }
 
     //Initializes a node's health status and last access time
-    mutating func initializeMetadataForNodes() {
+    func initializeMetadataForNodes() {
         if let existingNearestNode = self.nearestNode {
             self.nearestNode = self.setNodeHealthCheck(node: existingNearestNode, isHealthy: HEALTHY)
         }

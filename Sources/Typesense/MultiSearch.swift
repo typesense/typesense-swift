@@ -7,8 +7,8 @@ public struct MultiSearch {
     var apiCall: ApiCall
     let RESOURCEPATH = "multi_search"
 
-    public init(config: Configuration) {
-        apiCall = ApiCall(config: config)
+    init(apiCall: ApiCall) {
+        self.apiCall = apiCall
     }
 
     public func perform<T>(searchRequests: [MultiSearchCollectionParameters], commonParameters: MultiSearchParameters, for: T.Type) async throws -> (MultiSearchResult<T>?, URLResponse?) {

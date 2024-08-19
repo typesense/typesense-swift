@@ -9,31 +9,31 @@ public struct Client {
     public init(config: Configuration) {
         self.configuration = config
         self.apiCall = ApiCall(config: config)
-        self.collections = Collections(config: config)
+        self.collections = Collections(apiCall: apiCall)
     }
 
     public func collection(name: String) -> Collection {
-        return Collection(config: self.configuration, collectionName: name)
+        return Collection(apiCall: apiCall, collectionName: name)
     }
 
     public func keys() -> ApiKeys {
-        return ApiKeys(config: self.configuration)
+        return ApiKeys(apiCall: apiCall)
     }
 
     public func aliases() -> Alias {
-        return Alias(config: self.configuration)
+        return Alias(apiCall: apiCall)
     }
 
     public func operations() -> Operations {
-        return Operations(config: self.configuration)
+        return Operations(apiCall: apiCall)
     }
 
     public func multiSearch() -> MultiSearch {
-        return MultiSearch(config: self.configuration)
+        return MultiSearch(apiCall: apiCall)
     }
 
     public func analytics() -> Analytics {
-        return Analytics(config: self.configuration)
+        return Analytics(apiCall: apiCall)
     }
 
     public func presets() -> Presets {
