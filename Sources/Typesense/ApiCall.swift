@@ -7,8 +7,6 @@ import Foundation
 let APIKEYHEADERNAME = "X-Typesense-Api-Key"
 let HEALTHY = true
 let UNHEALTHY = false
-//!BUG
-private var currentNodeIndex = -1
 
 class ApiCall {
     var nodes: [Node]
@@ -20,6 +18,7 @@ class ApiCall {
     var retryIntervalSeconds: Float = 0.1
     var sendApiKeyAsQueryParam: Bool = false
     var logger: Logger
+    var currentNodeIndex = -1
 
     init(config: Configuration) {
         self.apiKey = config.apiKey
@@ -177,7 +176,6 @@ class ApiCall {
 
             logger.log("Request #\(requestNumber): Falling back to individual nodes")
         }
-        logger.log("Node index \(currentNodeIndex)")
         //Fallback to nodes as usual
         logger.log("Request #\(requestNumber): Listing health of nodes")
         let _ = self.nodes.map { node in
