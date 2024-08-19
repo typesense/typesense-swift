@@ -206,21 +206,23 @@ final class DocumentTests: XCTestCase {
         try! await tearDownPresets()
     }
 
-//! BUGS
     func testDocumentGroupSearch() async {
-        let searchParams = SearchParameters(q: "*", queryBy: "company_name", groupBy: "num_employees")
+        let searchParams = SearchParameters(q: "*", queryBy: "company_name", groupBy: "num_employees,country,metadata")
 
         do {
             try await createDocument()
             let (data, _) =  try await client.collection(name: "companies").documents().search(searchParams, for: Company.self)
-
             XCTAssertNotNil(data)
-            guard let validResp = data else {
+            guard let validData = data else {
                 throw DataError.dataNotFound
             }
-            if let gotSomeGroupedHits = validResp.groupedHits {
-                XCTAssertNotNil(validResp.groupedHits)
-                XCTAssertNotNil(validResp.found)
+            print(validData)
+            if let gotSomeGroupedHits = validData.groupedHits {
+                XCTAssertEqual(gotSomeGroupedHits.first?.groupKey[0].value as! Int, 5215)
+                XCTAssertEqual(gotSomeGroupedHits.first?.groupKey[1].value as! String, "USA")
+                XCTAssertEqual(gotSomeGroupedHits.first?.groupKey[2].value as! Bool, false)
+                XCTAssertNotNil(validData.groupedHits)
+                XCTAssertNotNil(validData.found)
                 XCTAssertNotNil(gotSomeGroupedHits.first)
                 XCTAssertNotNil(gotSomeGroupedHits.first?.found)
             }

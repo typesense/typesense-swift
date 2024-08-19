@@ -3,7 +3,7 @@ import XCTest
 
 final class OverridesTests: XCTestCase {
     override func setUp() async throws {
-        try? await setUpCollection()
+        try? await createCollection()
     }
 
     override func tearDown() async throws  {
@@ -26,7 +26,7 @@ final class OverridesTests: XCTestCase {
             stopProcessing: false
         )
         do {
-            let (result, _) = try await client.collection(name: "test-utils-collection").overrides().upsert(overrideId: "test-id", params: schema)
+            let (result, _) = try await client.collection(name: "companies").overrides().upsert(overrideId: "test-id", params: schema)
             XCTAssertNotNil(result)
             guard let validOverride = result else {
                 throw DataError.dataNotFound
@@ -55,7 +55,7 @@ final class OverridesTests: XCTestCase {
          try! await createAnOverride()
 
         do {
-            let (overrides, _) = try await client.collection(name: "test-utils-collection").overrides().retrieve(metadataType: SearchOverrideExclude.self )
+            let (overrides, _) = try await client.collection(name: "companies").overrides().retrieve(metadataType: SearchOverrideExclude.self )
             guard let validOverrides = overrides else {
                 throw DataError.dataNotFound
             }
