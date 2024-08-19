@@ -28,9 +28,6 @@ public struct Collection {
     public func delete() async throws -> (CollectionResponse?, URLResponse?) {
         let (data, response) = try await apiCall.delete(endPoint: "\(RESOURCEPATH)/\(collectionName)")
         if let result = data {
-            if let notExists = try? decoder.decode(ApiResponse.self, from: result) {
-                throw ResponseError.collectionDoesNotExist(desc: notExists.message)
-            }
             let fetchedCollection = try decoder.decode(CollectionResponse.self, from: result)
             return (fetchedCollection, response)
         }
@@ -40,9 +37,6 @@ public struct Collection {
     public func retrieve() async throws -> (CollectionResponse?, URLResponse?) {
         let (data, response) = try await apiCall.get(endPoint: "\(RESOURCEPATH)/\(collectionName)")
         if let result = data {
-            if let notExists = try? decoder.decode(ApiResponse.self, from: result) {
-                throw ResponseError.collectionDoesNotExist(desc: notExists.message)
-            }
             let fetchedCollection = try decoder.decode(CollectionResponse.self, from: result)
             return (fetchedCollection, response)
         }

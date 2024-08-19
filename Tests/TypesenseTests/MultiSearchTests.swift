@@ -12,10 +12,6 @@ final class MultiSearchTests: XCTestCase {
 
 
     func testMultiSearch() async {
-        let config = Configuration(nodes: [Node(host: "localhost", port: "8108", nodeProtocol: "http")], apiKey: "xyz", logger: Logger(debugMode: true))
-
-        let client = Client(config: config)
-
         let productSchema = CollectionSchema(name: "products", fields: [
             Field(name: "name", type: "string"),
             Field(name: "price", type: "int32"),
@@ -40,8 +36,6 @@ final class MultiSearchTests: XCTestCase {
         do {
             do {
                 let _ = try await client.collections.create(schema: productSchema)
-            } catch ResponseError.collectionAlreadyExists(let desc) {
-                print(desc)
             } catch (let error) {
                 print(error.localizedDescription)
                 XCTAssertTrue(false)
@@ -49,8 +43,6 @@ final class MultiSearchTests: XCTestCase {
 
             do {
                 let _ = try await client.collections.create(schema: brandSchema)
-            } catch ResponseError.collectionAlreadyExists(let desc) {
-                print(desc)
             } catch (let error) {
                 print(error.localizedDescription)
                 XCTAssertTrue(false)
@@ -117,8 +109,6 @@ final class MultiSearchTests: XCTestCase {
         do {
             do {
                 let _ = try await client.collections.create(schema: productSchema)
-            } catch ResponseError.collectionAlreadyExists(let desc) {
-                print(desc)
             } catch (let error) {
                 print(error.localizedDescription)
                 XCTAssertTrue(false)
@@ -126,8 +116,6 @@ final class MultiSearchTests: XCTestCase {
 
             do {
                 let _ = try await client.collections.create(schema: brandSchema)
-            } catch ResponseError.collectionAlreadyExists(let desc) {
-                print(desc)
             } catch (let error) {
                 print(error.localizedDescription)
                 XCTAssertTrue(false)

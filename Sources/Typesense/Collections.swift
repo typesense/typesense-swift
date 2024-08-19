@@ -20,9 +20,6 @@ public struct Collections {
         if let validSchema = schemaData {
             let (data, response) = try await apiCall.post(endPoint: Collections.RESOURCEPATH, body: validSchema)
             if let result = data {
-                if let alreadyExists = try? decoder.decode(ApiResponse.self, from: result) {
-                    throw ResponseError.collectionAlreadyExists(desc: alreadyExists.message)
-                }
                 let fetchedCollection = try decoder.decode(CollectionResponse.self, from: result)
                 return (fetchedCollection, response)
             }

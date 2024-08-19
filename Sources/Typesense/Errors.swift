@@ -5,6 +5,20 @@ public enum HTTPError: Error {
     case clientError(code: Int, desc: String)
 }
 
+extension HTTPError: LocalizedError {
+    public var errorDescription: String? {
+        func errorMessage(_ code: Int, _ desc: String) -> String{
+            return NSLocalizedString("Request to server failed with code \(code). Message: \(desc)", comment: "Typesense error")
+        }
+        switch self {
+            case .serverError(let code, let desc):
+                return errorMessage(code, desc)
+            case .clientError(let code, let desc):
+                return errorMessage(code, desc)
+        }
+    }
+}
+
 public enum URLError: Error {
     case invalidURL
 }
@@ -12,15 +26,4 @@ public enum URLError: Error {
 public enum DataError: Error {
     case unableToParse
     case dataNotFound
-}
-
-public enum ResponseError: Error {
-    case collectionAlreadyExists(desc: String)
-    case collectionDoesNotExist(desc: String)
-    case documentAlreadyExists(desc: String)
-    case documentDoesNotExist(desc: String)
-    case invalidCollection(desc: String)
-    case apiKeyNotFound(desc: String)
-    case aliasNotFound(desc: String)
-    case analyticsRuleDoesNotExist(desc: String)
 }
