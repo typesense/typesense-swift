@@ -16,10 +16,10 @@ public struct ApiKey: Codable {
     public var actions: [String]
     public var collections: [String]
     public var expiresAt: Int64?
-    public var _id: Int64?
+    public var _id: Int
     public var valuePrefix: String?
 
-    public init(value: String? = nil, _description: String, actions: [String], collections: [String], expiresAt: Int64? = nil, _id: Int64? = nil, valuePrefix: String? = nil) {
+    public init(value: String? = nil, _description: String, actions: [String], collections: [String], expiresAt: Int64? = nil, _id: Int, valuePrefix: String? = nil) {
         self.value = value
         self._description = _description
         self.actions = actions
@@ -29,7 +29,7 @@ public struct ApiKey: Codable {
         self.valuePrefix = valuePrefix
     }
 
-    public enum CodingKeys: String, CodingKey { 
+    public enum CodingKeys: String, CodingKey {
         case value
         case _description = "description"
         case actions
