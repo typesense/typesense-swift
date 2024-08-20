@@ -27,8 +27,8 @@ import Typesense
 Declare the Typesense nodes that are available as `Node` members:
 
 ```swift
-let node1 = Node(host: "localhost", port: "8108", nodeProtocol: "http")
-let node2 = Node(host: "super-awesome.search", port: "8080", nodeProtocol: "https") //and so on
+let node1 = Node(url: "http://localhost:8108") // or
+let node2 = Node(host: "xxx-1.a1.typesense.net", port: "443", nodeProtocol: "https")
 ```
 
 Create a configuration and hence a client with the Nodes mentioned:
@@ -181,10 +181,16 @@ let (data, response) = try await client.stopwords().retrieve()
 let (data, response) = try await client.stopword("stopword_set1").retrieve()
 ```
 
-### Delete a preset
+### Delete a stopwords set
 
 ```swift
 let (data, response) = try await client.stopword("stopword_set1").delete()
+```
+
+### Retrieve debug information
+
+```swift
+let (data, response) = try await client.operations().getDebug()
 ```
 
 ## Contributing

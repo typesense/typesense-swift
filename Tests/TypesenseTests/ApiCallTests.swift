@@ -3,10 +3,10 @@ import XCTest
 @testable import Typesense
 
 final class A_ApiCallTests: XCTestCase {
-    
+
     func testDefaultConfiguration() {
         let apiCall = ApiCall(config: Configuration(nodes: [Node(host: "localhost", port: "8108", nodeProtocol: "http")], apiKey: "xyz"))
-        
+
         XCTAssertNotNil(apiCall)
         XCTAssertNotNil(apiCall.nodes)
         XCTAssertEqual(apiCall.apiKey, "xyz")
@@ -17,7 +17,7 @@ final class A_ApiCallTests: XCTestCase {
         XCTAssertEqual(apiCall.retryIntervalSeconds, 0.1)
         XCTAssertEqual(apiCall.sendApiKeyAsQueryParam, false)
     }
-    
+
     func testCustomConfiguration() {
         let apiCall = ApiCall(config: Configuration(
             nodes:
@@ -32,7 +32,7 @@ final class A_ApiCallTests: XCTestCase {
             retryIntervalSeconds: 0.2,
             sendApiKeyAsQueryParam: true)
         )
-        
+
         XCTAssertNotNil(apiCall)
         XCTAssertNotNil(apiCall.nodes)
         XCTAssertNotNil(apiCall.nearestNode)
@@ -45,39 +45,49 @@ final class A_ApiCallTests: XCTestCase {
         XCTAssertEqual(apiCall.retryIntervalSeconds, 0.2)
         XCTAssertEqual(apiCall.sendApiKeyAsQueryParam, true)
     }
-    
-    
-    
+
+
+
     func testNodes() {
         let apiCall = ApiCall(config: Configuration(nodes: [Node(host: "localhost", port: "8108", nodeProtocol: "http")], apiKey: "xyz"))
-        
+
         XCTAssertNotNil(apiCall)
         XCTAssertNotNil(apiCall.nodes)
         XCTAssertNotEqual(0, apiCall.nodes.count)
         XCTAssertEqual(apiCall.nodes[0].host, "localhost")
         XCTAssertEqual(apiCall.nodes[0].port, "8108")
         XCTAssertEqual(apiCall.nodes[0].nodeProtocol, "http")
-        
+
     }
-    
+
+    func testNodesWithURL() {
+        let apiCall = ApiCall(config: Configuration(nodes: [Node(url: "http://localhost:8108")], apiKey: "xyz"))
+
+        XCTAssertNotNil(apiCall)
+        XCTAssertNotNil(apiCall.nodes)
+        XCTAssertNotEqual(0, apiCall.nodes.count)
+        XCTAssertEqual(apiCall.nodes[0].url, "http://localhost:8108")
+
+    }
+
     func testNearestNode() {
         let apiCall = ApiCall(config: Configuration(nodes: [Node(host: "localhost", port: "8108", nodeProtocol: "http")], apiKey: "xyz", nearestNode: Node(host: "nearest.host", port: "8109", nodeProtocol: "https")))
-        
+
         XCTAssertNotNil(apiCall)
         XCTAssertNotNil(apiCall.nodes)
         XCTAssertNotNil(apiCall.nearestNode)
         XCTAssertEqual(apiCall.nearestNode?.host, "nearest.host")
         XCTAssertEqual(apiCall.nearestNode?.port, "8109")
         XCTAssertEqual(apiCall.nearestNode?.nodeProtocol, "https")
-        
+
     }
-    
+
     func testRequest() {
         let apiCall = ApiCall(config: Configuration(nodes: [Node(host: "localhost", port: "8108", nodeProtocol: "http")], apiKey: "xyz"))
-        
+
         do {
             let request = try apiCall.prepareRequest(requestType: RequestType.get, endpoint: "health", body: nil, selectedNode: apiCall.nodes[0])
-            
+
             XCTAssertEqual(request.httpMethod, "GET")
             XCTAssertEqual(request.url?.absoluteString, "http://localhost:8108/health")
             XCTAssertNil(request.httpBody)
@@ -86,31 +96,48 @@ final class A_ApiCallTests: XCTestCase {
         } catch (let error) {
             print(error.localizedDescription)
         }
-        
+
     }
-    
+
+    func testRequestWithNodeURL() {
+        let apiCall = ApiCall(config: Configuration(nodes: [Node(url: "http://localhost:8108")], apiKey: "xyz"))
+
+        do {
+            let request = try apiCall.prepareRequest(requestType: RequestType.get, endpoint: "health", body: nil, selectedNode: apiCall.nodes[0])
+
+            XCTAssertEqual(request.httpMethod, "GET")
+            XCTAssertEqual(request.url?.absoluteString, "http://localhost:8108/health")
+            XCTAssertNil(request.httpBody)
+            XCTAssertTrue(request.allHTTPHeaderFields?.isEmpty != nil)
+            XCTAssertEqual(request.allHTTPHeaderFields?[APIKEYHEADERNAME], apiCall.apiKey)
+        } catch (let error) {
+            print(error.localizedDescription)
+        }
+
+    }
+
     func testSetNodeHealthCheck() {
         let apiCall = ApiCall(config: Configuration(nodes: [
             Node(host: "localhost", port: "8108", nodeProtocol: "http"),
             Node(host: "localhost", port: "8109", nodeProtocol: "http"),
         ], apiKey: "xyz"))
-        
+
         let node1 = apiCall.setNodeHealthCheck(node: apiCall.nodes[0], isHealthy: HEALTHY)
         let node2 = apiCall.setNodeHealthCheck(node: apiCall.nodes[1], isHealthy: UNHEALTHY)
-        
+
         XCTAssertEqual(node1.isHealthy, HEALTHY)
         XCTAssertEqual(node2.isHealthy, UNHEALTHY)
         XCTAssertNotNil(node1.lastAccessTimeStamp)
         XCTAssertNotNil(node2.lastAccessTimeStamp)
-        
+
     }
-    
+
     func testGetNextNode() {
         let apiCall = ApiCall(config: Configuration(nodes: [
             Node(host: "localhost", port: "8108", nodeProtocol: "http"),
             Node(host: "localhost", port: "8109", nodeProtocol: "http"),
         ], apiKey: "xyz"))
-        
+
         var node = apiCall.getNextNode()
         XCTAssertEqual(node.isHealthy, HEALTHY)
         XCTAssertEqual(node.port, "8108")
@@ -120,11 +147,11 @@ final class A_ApiCallTests: XCTestCase {
         XCTAssertEqual(node.isHealthy, HEALTHY)
         XCTAssertEqual(node.port, "8109")
     }
-    
+
     //Integration Test - Requires Typesense Server
     func testServerHealth() async {
         let apiCall = ApiCall(config: Configuration(nodes: [Node(host: "localhost", port: "8108", nodeProtocol: "http")], apiKey: "xyz", logger: Logger(debugMode: true)))
-        
+
         do {
             let (data, response) = try await apiCall.get(endPoint: "health")
             XCTAssertNotNil(data)
@@ -138,5 +165,5 @@ final class A_ApiCallTests: XCTestCase {
             print(error.localizedDescription)
         }
     }
-    
+
 }

@@ -75,12 +75,7 @@ public struct Documents {
         }
 
         if let _prefix = searchParameters._prefix {
-            var fullString = ""
-            for item in _prefix {
-                fullString.append(String(item))
-                fullString.append(",")
-            }
-            searchQueryParams.append(URLQueryItem(name: "prefix", value: String(fullString.dropLast())))
+            searchQueryParams.append(URLQueryItem(name: "prefix", value: _prefix))
         }
 
         if let _infix = searchParameters._infix {

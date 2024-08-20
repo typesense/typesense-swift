@@ -31,6 +31,15 @@ public struct Operations {
         return (data, response)
     }
 
+    public func getDebug() async throws -> (DebugRetrieveSchema?, URLResponse?) {
+        let (data, response) = try await apiCall.get(endPoint: "debug")
+        if let result = data {
+            let decodedData = try decoder.decode(DebugRetrieveSchema.self, from: result)
+            return (decodedData, response)
+        }
+        return (nil, response)
+    }
+
     public func vote() async throws -> (SuccessStatus?, URLResponse?) {
         let (data, response) = try await apiCall.post(endPoint: "\(RESOURCEPATH)/vote", body: Data())
         if let result = data {

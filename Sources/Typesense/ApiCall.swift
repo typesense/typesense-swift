@@ -148,7 +148,10 @@ struct ApiCall {
 
     //Get URL for a node combined with it's end point
     func uriFor(endpoint: String, node: Node) -> String {
-        return "\(node.nodeProtocol)://\(node.host):\(node.port)/\(endpoint)"
+        if let url = node.url{
+            return "\(url)/\(endpoint)"
+        }
+        return "\(node.nodeProtocol!)://\(node.host!):\(node.port!)/\(endpoint)"
     }
 
     //Get the next healthy node from the given nodes
