@@ -86,13 +86,16 @@ public struct MultiSearch {
             searchQueryParams.append(URLQueryItem(name: "offset", value: String(offset)))
         }
 
-
         if let groupBy = commonParameters.groupBy {
             searchQueryParams.append(URLQueryItem(name: "group_by", value: groupBy))
         }
 
         if let groupLimit = commonParameters.groupLimit {
             searchQueryParams.append(URLQueryItem(name: "group_limit", value: String(groupLimit)))
+        }
+
+        if let groupMissingValues = commonParameters.groupMissingValues {
+            searchQueryParams.append(URLQueryItem(name: "group_missing_values", value: String(groupMissingValues)))
         }
 
         if let includeFields = commonParameters.includeFields {

@@ -122,6 +122,10 @@ public struct Documents {
             searchQueryParams.append(URLQueryItem(name: "group_limit", value: String(groupLimit)))
         }
 
+        if let groupMissingValues = searchParameters.groupMissingValues {
+            searchQueryParams.append(URLQueryItem(name: "group_missing_values", value: String(groupMissingValues)))
+        }
+
         if let includeFields = searchParameters.includeFields {
             searchQueryParams.append(URLQueryItem(name: "include_fields", value: includeFields))
         }
