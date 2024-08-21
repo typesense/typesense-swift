@@ -15,14 +15,16 @@ public struct Documents {
         self.RESOURCEPATH = "collections/\(collectionName)/documents"
     }
 
-    public func create(document: Data) async throws -> (Data?, URLResponse?) {
-        let (data, response) = try await apiCall.post(endPoint: RESOURCEPATH, body: document)
+    public func create(document: Data, options: DocumentIndexParameters? = nil) async throws -> (Data?, URLResponse?) {
+        let queryParams = try createURLQuery(forSchema: options)
+        let (data, response) = try await apiCall.post(endPoint: RESOURCEPATH, body: document, queryParameters: queryParams)
         return (data, response)
     }
 
-    public func upsert(document: Data) async throws -> (Data?, URLResponse?) {
-        let upsertAction = URLQueryItem(name: "action", value: "upsert")
-        let (data, response) = try await apiCall.post(endPoint: RESOURCEPATH, body: document, queryParameters: [upsertAction])
+    public func upsert(document: Data, options: DocumentUpsertParameters? = nil) async throws -> (Data?, URLResponse?) {
+        var queryParams = try createURLQuery(forSchema: options)
+        queryParams.append(URLQueryItem(name: "action", value: "upsert"))
+        let (data, response) = try await apiCall.post(endPoint: RESOURCEPATH, body: document, queryParameters: queryParams)
         return (data, response)
     }
 

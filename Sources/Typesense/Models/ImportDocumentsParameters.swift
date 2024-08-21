@@ -11,26 +11,14 @@ import Foundation
 
 public struct ImportDocumentsParameters: Codable {
 
-    public enum Action: String, Codable {
-        case create = "create"
-        case update = "update"
-        case upsert = "upsert"
-        case emplace = "emplace"
-    }
-    public enum DirtyValues: String, Codable {
-        case coerceOrReject = "coerce_or_reject"
-        case coerceOrDrop = "coerce_or_drop"
-        case drop = "drop"
-        case reject = "reject"
-    }
-    public var action: Action?
+    public var action: IndexAction?
     public var batchSize: Int?
     public var dirtyValues: DirtyValues?
     public var remoteEmbeddingBatchSize: Int?
     public var returnDoc: Bool?
     public var returnId: Bool?
 
-    public init(action: Action? = nil, batchSize: Int? = nil, dirtyValues: DirtyValues? = nil, remoteEmbeddingBatchSize: Int? = nil, returnDoc: Bool? = nil, returnId: Bool? = nil) {
+    public init(action: IndexAction? = nil, batchSize: Int? = nil, dirtyValues: DirtyValues? = nil, remoteEmbeddingBatchSize: Int? = nil, returnDoc: Bool? = nil, returnId: Bool? = nil) {
         self.action = action
         self.batchSize = batchSize
         self.dirtyValues = dirtyValues
