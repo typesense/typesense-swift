@@ -27,8 +27,10 @@ public struct CollectionResponse: Codable {
     public var numDocuments: Int64
     /** Timestamp of when the collection was created (Unix epoch in seconds) */
     public var createdAt: Int64
+    public var voiceQueryModel: VoiceQueryModelCollectionConfig?
 
-    public init(name: String, fields: [Field], defaultSortingField: String? = nil, tokenSeparators: [String]? = nil, enableNestedFields: Bool? = nil, symbolsToIndex: [String]? = nil, numDocuments: Int64, createdAt: Int64) {
+
+    public init(name: String, fields: [Field], defaultSortingField: String? = nil, tokenSeparators: [String]? = nil, enableNestedFields: Bool? = nil, symbolsToIndex: [String]? = nil, numDocuments: Int64, createdAt: Int64, voiceQueryModel: VoiceQueryModelCollectionConfig? = nil) {
         self.name = name
         self.fields = fields
         self.defaultSortingField = defaultSortingField
@@ -37,9 +39,10 @@ public struct CollectionResponse: Codable {
         self.symbolsToIndex = symbolsToIndex
         self.numDocuments = numDocuments
         self.createdAt = createdAt
+        self.voiceQueryModel = voiceQueryModel
     }
 
-    public enum CodingKeys: String, CodingKey { 
+    public enum CodingKeys: String, CodingKey {
         case name
         case fields
         case defaultSortingField = "default_sorting_field"
@@ -48,6 +51,7 @@ public struct CollectionResponse: Codable {
         case symbolsToIndex = "symbols_to_index"
         case numDocuments = "num_documents"
         case createdAt = "created_at"
+        case voiceQueryModel = "voice_query_model"
     }
 
 }
