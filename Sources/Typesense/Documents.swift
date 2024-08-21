@@ -21,11 +21,34 @@ public struct Documents {
         return (data, response)
     }
 
-    public func upsert(document: Data, options: DocumentUpsertParameters? = nil) async throws -> (Data?, URLResponse?) {
+    public func upsert(document: Data, options: DocumentIndexParameters? = nil) async throws -> (Data?, URLResponse?) {
         var queryParams = try createURLQuery(forSchema: options)
         queryParams.append(URLQueryItem(name: "action", value: "upsert"))
         let (data, response) = try await apiCall.post(endPoint: RESOURCEPATH, body: document, queryParameters: queryParams)
         return (data, response)
+    }
+
+    public func update<T: Codable>(document: T, options: DocumentIndexParameters? = nil) async throws -> (T?, URLResponse?) {
+        var queryParams = try createURLQuery(forSchema: options)
+        queryParams.append(URLQueryItem(name: "action", value: "update"))
+        let jsonData = try encoder.encode(document)
+        let (data, response) = try await apiCall.post(endPoint: RESOURCEPATH, body: jsonData, queryParameters: queryParams)
+        if let validData = data {
+            let decodedData = try decoder.decode(T.self, from: validData)
+            return (decodedData, response)
+        }
+        return (nil, response)
+    }
+
+    public func update<T: Encodable>(document: T, options: UpdateDocumentsByFilterParameters) async throws -> (UpdateByFilterResponse?, URLResponse?) {
+        let queryParams = try createURLQuery(forSchema: options)
+        let jsonData = try encoder.encode(document)
+        let (data, response) = try await apiCall.patch(endPoint: RESOURCEPATH, body: jsonData, queryParameters: queryParams)
+        if let validData = data {
+            let decodedData = try decoder.decode(UpdateByFilterResponse.self, from: validData)
+            return (decodedData, response)
+        }
+        return (nil, response)
     }
 
     public func delete(filter: String, batchSize: Int? = nil) async throws -> (Data?, URLResponse?) {

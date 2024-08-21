@@ -9,7 +9,7 @@ import Foundation
 
 
 
-public struct UpdateDocumentsParameters: Codable {
+public struct UpdateDocumentsByFilterParameters: Codable {
 
     public var filterBy: String?
 
@@ -17,7 +17,7 @@ public struct UpdateDocumentsParameters: Codable {
         self.filterBy = filterBy
     }
 
-    public enum CodingKeys: String, CodingKey { 
+    public enum CodingKeys: String, CodingKey {
         case filterBy = "filter_by"
     }
 
