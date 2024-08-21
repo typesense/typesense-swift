@@ -24,6 +24,6 @@ public enum URLError: Error {
 }
 
 public enum DataError: Error {
-    case unableToParse
+    case unableToParse(message: String)
     case dataNotFound
 }
