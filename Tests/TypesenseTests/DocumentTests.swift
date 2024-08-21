@@ -263,6 +263,38 @@ final class DocumentTests: XCTestCase {
         }
     }
 
+    func testDocumentImportWithOptions() async {
+        let documents = [
+            Company(id: "124", company_name: "Stark Industries", num_employees: 5125, country: "USA"),
+            Company(id: "125", company_name: "Acme Corp", num_employees: 2133, country: "CA")
+        ]
+
+        do {
+            var jsonLStrings:[String] = []
+            for doc in documents {
+                let data = try encoder.encode(doc)
+                let str = String(data: data, encoding: .utf8)!
+                jsonLStrings.append(str)
+            }
+
+            let jsonLString = jsonLStrings.joined(separator: "\n")
+            print(jsonLString)
+            let jsonL = Data(jsonLString.utf8)
+
+            let (data, _) = try await client.collection(name: "companies").documents().importBatch(jsonL, options: ImportDocumentsParameters(
+                action: .upsert, batchSize: 10, dirtyValues: .drop, remoteEmbeddingBatchSize: 10, returnDoc: true, returnId: false
+            ))
+            XCTAssertNotNil(data)
+            guard let validResp = data else {
+                throw DataError.dataNotFound
+            }
+            print(String(data: validResp, encoding: .utf8) ?? "Unable to Parse JSONL")
+        } catch (let error) {
+            print(error)
+            XCTAssertTrue(false)
+        }
+    }
+
     func testDocumentExport() async {
         do {
             let (data, _) = try await client.collection(name: "companies").documents().export(options: ExportDocumentsParameters(excludeFields: "country"))
