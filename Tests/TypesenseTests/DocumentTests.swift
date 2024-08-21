@@ -265,7 +265,7 @@ final class DocumentTests: XCTestCase {
 
     func testDocumentExport() async {
         do {
-            let (data, _) = try await client.collection(name: "companies").documents().export()
+            let (data, _) = try await client.collection(name: "companies").documents().export(options: ExportDocumentsParameters(excludeFields: "country"))
             XCTAssertNotNil(data)
             guard let validResp = data else {
                 throw DataError.dataNotFound

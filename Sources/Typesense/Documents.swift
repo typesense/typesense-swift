@@ -285,8 +285,9 @@ public struct Documents {
         return (data, response)
     }
 
-    public func export() async throws -> (Data?, URLResponse?) {
-        let (data, response) = try await apiCall.get(endPoint: "\(RESOURCEPATH)/export")
+    public func export(options: ExportDocumentsParameters? = nil) async throws -> (Data?, URLResponse?) {
+        let searchQueryParams = try createURLQuery(forSchema: options)
+        let (data, response) = try await apiCall.get(endPoint: "\(RESOURCEPATH)/export", queryParameters: searchQueryParams)
         return (data, response)
     }
 }
