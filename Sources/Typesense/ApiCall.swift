@@ -65,7 +65,7 @@ class ApiCall {
     func performRequest(requestType: RequestType, endpoint: String, body: Data? = nil, queryParameters: [URLQueryItem]? = nil) async throws -> (Data, URLResponse) {
         let requestNumber = Date().millisecondsSince1970
         logger.log("Request #\(requestNumber): Performing \(requestType.rawValue) request: /\(endpoint)")
-        var lastError: (any Error)? = nil
+        var lastError: any Error = HTTPError.clientError(code: 400, desc: "Typesense client error!")
 
         for numTry in 1...self.numRetries + 1 {
             //Get next healthy node
@@ -111,7 +111,7 @@ class ApiCall {
             }
 
         }
-        throw lastError!
+        throw lastError
     }
 
     //Bundles a URL Request

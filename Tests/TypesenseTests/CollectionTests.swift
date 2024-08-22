@@ -3,7 +3,7 @@ import XCTest
 
 final class CollectionTests: XCTestCase {
     override func tearDown() async throws  {
-       try! await tearDownCollections()
+       try await tearDownCollections()
     }
 
     func testCollectionCreate() async {

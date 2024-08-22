@@ -3,10 +3,10 @@ import XCTest
 
 final class PresetTests: XCTestCase {
     override func setUp() async throws {
-        try? await createSingleCollectionSearchPreset()
+        try await createSingleCollectionSearchPreset()
     }
     override func tearDown() async throws  {
-       try! await tearDownPresets()
+        try await tearDownPresets()
     }
 
     func testPresetRetrieve() async {

@@ -3,7 +3,7 @@ import XCTest
 
 final class MultiSearchTests: XCTestCase {
     override func tearDown() async throws {
-        try! await tearDownCollections()
+        try await tearDownCollections()
     }
 
     struct Brand: Codable {
@@ -163,7 +163,6 @@ final class MultiSearchTests: XCTestCase {
             ))
         )
 
-        let _ = try! await client.presets().upsert(presetName: "test-multi-search", params: preset)
 
         let brand1 = Brand(name: "Nike")
         let product1 = Product(name: "Jordan", price: 70, brand: "Nike", desc: "High quality shoe")
@@ -171,6 +170,7 @@ final class MultiSearchTests: XCTestCase {
         let commonParams = MultiSearchParameters(queryBy: "name", preset: "test-multi-search")
 
         do {
+            let _ = try await client.presets().upsert(presetName: "test-multi-search", params: preset)
             do {
                 let _ = try await client.collections.create(schema: productSchema)
             } catch (let error) {
@@ -212,7 +212,7 @@ final class MultiSearchTests: XCTestCase {
             print(error.localizedDescription)
             XCTAssertTrue(false)
         }
-        try! await tearDownPresets()
+        try? await tearDownPresets()
     }
 
 

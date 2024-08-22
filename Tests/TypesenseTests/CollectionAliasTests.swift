@@ -3,7 +3,7 @@ import XCTest
 
 final class CollectionAliasTests: XCTestCase {
     override func tearDown() async throws  {
-       try! await tearDownAliases()
+       try await tearDownAliases()
     }
 
     func testAliasUpsert() async {

@@ -3,12 +3,12 @@ import XCTest
 
 final class OverrideTests: XCTestCase {
     override func setUp() async throws {
-        try? await createCollection()
-        try! await createAnOverride()
+        try await createCollection()
+        try await createAnOverride()
     }
 
     override func tearDown() async throws  {
-       try! await tearDownCollections()
+        try await tearDownCollections()
     }
 
     func testOverrideRetrieve() async {

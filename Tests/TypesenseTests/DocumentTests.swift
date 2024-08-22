@@ -3,11 +3,11 @@ import XCTest
 
 final class DocumentTests: XCTestCase {
     override func setUp() async throws {
-        try! await createCollection()
+        try await createCollection()
     }
 
     override func tearDown() async throws {
-        try! await tearDownCollections()
+        try await tearDownCollections()
     }
 
     //Partial data format to be used in update() method
@@ -232,11 +232,11 @@ final class DocumentTests: XCTestCase {
             )
         )
 
-        let _ = try! await client.presets().upsert(presetName: "single-collection-search-preset", params: preset)
 
         let product1 = Product(name: "Jordan", price: 70, brand: "Nike", desc: "High quality shoe")
 
         do {
+            let _ = try await client.presets().upsert(presetName: "single-collection-search-preset", params: preset)
             do {
                 let _ = try await client.collections.create(schema: productSchema)
             } catch (let error) {
@@ -262,7 +262,7 @@ final class DocumentTests: XCTestCase {
             print(error.localizedDescription)
             XCTAssertTrue(false)
         }
-        try! await tearDownPresets()
+        try? await tearDownPresets()
     }
 
     func testDocumentGroupSearch() async {

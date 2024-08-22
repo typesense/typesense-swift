@@ -3,7 +3,7 @@ import XCTest
 
 final class AnalyticsTests: XCTestCase {
     override func tearDown() async throws  {
-       try! await tearDownAnalyticsRules()
+       try await tearDownAnalyticsRules()
     }
 
     func testAnalyticsRuleCreate() async {

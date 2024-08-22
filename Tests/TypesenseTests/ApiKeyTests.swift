@@ -3,7 +3,7 @@ import XCTest
 
 final class ApiKeyTests: XCTestCase {
     override func tearDown() async throws  {
-       try! await tearDownAPIKeys()
+       try await tearDownAPIKeys()
     }
 
     func testKeyCreate() async {
