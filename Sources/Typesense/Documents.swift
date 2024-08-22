@@ -51,6 +51,13 @@ public struct Documents {
         return (nil, response)
     }
 
+    public func delete(options: DeleteDocumentsParameters) async throws -> (Data?, URLResponse?) {
+        let queryParams = try createURLQuery(forSchema: options)
+        let (data, response) = try await apiCall.delete(endPoint: "\(RESOURCEPATH)", queryParameters: queryParams)
+        return (data, response)
+    }
+
+    @available(*, deprecated, message: "Use `delete(options: DeleteDocumentsParameters)` instead!")
     public func delete(filter: String, batchSize: Int? = nil) async throws -> (Data?, URLResponse?) {
         var deleteQueryParams: [URLQueryItem] =
         [
@@ -307,6 +314,7 @@ public struct Documents {
         return (data, response)
     }
 
+    @available(*, deprecated, message: "Use `importBatch(_ documents: Data, options: ImportDocumentsParameters)` instead!")
     public func importBatch(_ documents: Data, action: ActionModes? = ActionModes.create) async throws -> (Data?, URLResponse?) {
         var importAction = URLQueryItem(name: "action", value: "create")
         if let specifiedAction = action {
