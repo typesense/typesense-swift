@@ -75,6 +75,11 @@ public struct Documents {
 
     }
 
+    public func search(_ searchParameters: SearchParameters) async throws -> (Data?, URLResponse?) {
+        let queryParams = try createURLQuery(forSchema: searchParameters)
+        return try await apiCall.get(endPoint: "\(RESOURCEPATH)/search", queryParameters: queryParams)
+    }
+
     public func search<T>(_ searchParameters: SearchParameters, for: T.Type) async throws -> (SearchResult<T>?, URLResponse?) {
         var searchQueryParams: [URLQueryItem] = []
 

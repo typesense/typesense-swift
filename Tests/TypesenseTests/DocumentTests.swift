@@ -196,6 +196,28 @@ final class DocumentTests: XCTestCase {
 
     }
 
+    func testDocumentSearchReturnRawData() async {
+        let searchParams = SearchParameters(q: "stark", queryBy: "company_name", filterBy: "num_employees:>100", sortBy: "num_employees:desc")
+
+        do {
+            try await createDocument()
+            let (data, _) = try await client.collection(name: "companies").documents().search(searchParams)
+            guard let validData = data else {
+                throw DataError.dataNotFound
+            }
+             if let json = try JSONSerialization.jsonObject(with: validData, options: []) as? [String: Any]{
+                XCTAssertNotNil(json["hits"])
+                XCTAssertNotNil(json["found"])
+             } else{
+                XCTAssertTrue(false)
+             }
+        } catch (let error) {
+            print(error.localizedDescription)
+            XCTAssertTrue(false)
+        }
+
+    }
+
     func testDocumentSearchWithPreset() async {
         let productSchema = CollectionSchema(name: "products", fields: [
             Field(name: "name", type: "string"),

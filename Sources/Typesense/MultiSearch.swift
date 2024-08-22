@@ -11,6 +11,13 @@ public struct MultiSearch {
         self.apiCall = apiCall
     }
 
+    public func perform(searchRequests: [MultiSearchCollectionParameters], commonParameters: MultiSearchParameters) async throws -> (Data?, URLResponse?) {
+        let queryParams = try createURLQuery(forSchema: commonParameters)
+        let searchesData = try encoder.encode(MultiSearchSearchesParameter(searches: searchRequests))
+
+        return try await apiCall.post(endPoint: "\(RESOURCEPATH)", body: searchesData, queryParameters: queryParams)
+    }
+
     public func perform<T>(searchRequests: [MultiSearchCollectionParameters], commonParameters: MultiSearchParameters, for: T.Type) async throws -> (MultiSearchResult<T>?, URLResponse?) {
         var searchQueryParams: [URLQueryItem] = []
 
