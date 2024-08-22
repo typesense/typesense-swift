@@ -27,8 +27,9 @@ public struct Document {
         return (data, response)
     }
 
-    public func update(newDocument: Data) async throws -> (Data?, URLResponse?) {
-        let (data, response) = try await apiCall.patch(endPoint: "\(RESOURCEPATH)/\(self.id)", body: newDocument)
+    public func update(newDocument: Data, options: DocumentIndexParameters? = nil) async throws -> (Data?, URLResponse?) {
+        let queryParams = try createURLQuery(forSchema: options)
+        let (data, response) = try await apiCall.patch(endPoint: "\(RESOURCEPATH)/\(self.id)", body: newDocument, queryParameters: queryParams)
         return (data, response)
     }
 

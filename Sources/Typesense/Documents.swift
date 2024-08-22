@@ -51,10 +51,14 @@ public struct Documents {
         return (nil, response)
     }
 
-    public func delete(options: DeleteDocumentsParameters) async throws -> (Data?, URLResponse?) {
+    public func delete(options: DeleteDocumentsParameters) async throws -> (DeleteDocumentsResponse?, URLResponse?) {
         let queryParams = try createURLQuery(forSchema: options)
         let (data, response) = try await apiCall.delete(endPoint: "\(RESOURCEPATH)", queryParameters: queryParams)
-        return (data, response)
+        if let validData = data {
+            let decodedData = try decoder.decode(DeleteDocumentsResponse.self, from: validData)
+            return (decodedData, response)
+        }
+        return (nil, response)
     }
 
     @available(*, deprecated, message: "Use `delete(options: DeleteDocumentsParameters)` instead!")

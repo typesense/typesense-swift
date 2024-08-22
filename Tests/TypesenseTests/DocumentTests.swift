@@ -23,7 +23,7 @@ final class DocumentTests: XCTestCase {
 
         do {
             let docuData = try encoder.encode(document)
-            let (data, _) = try await client.collection(name: "companies").documents().create(document: docuData)
+            let (data, _) = try await client.collection(name: "companies").documents().create(document: docuData, options: DocumentIndexParameters(dirtyValues: DirtyValues.coerceOrDrop))
             XCTAssertNotNil(data)
             guard let validResp = data else {
                 throw DataError.dataNotFound
@@ -47,7 +47,7 @@ final class DocumentTests: XCTestCase {
         do {
             let docuData = try encoder.encode(document)
             print(String(data: docuData, encoding: .utf8)!)
-            let (data, _) = try await client.collection(name: "companies").documents().upsert(document: docuData)
+            let (data, _) = try await client.collection(name: "companies").documents().upsert(document: docuData, options: DocumentIndexParameters(dirtyValues: DirtyValues.coerceOrDrop))
             XCTAssertNotNil(data)
             guard let validResp = data else {
                 throw DataError.dataNotFound
@@ -57,6 +57,40 @@ final class DocumentTests: XCTestCase {
             XCTAssertEqual(docuResp.num_employees, 5215)
             XCTAssertEqual(docuResp.id, "124")
             XCTAssertEqual(docuResp.country, "USA")
+        } catch (let error) {
+            print(error.localizedDescription)
+            XCTAssertTrue(false)
+        }
+    }
+
+    func testDocumentsUpdate() async {
+        do {
+            try await createDocument()
+            let (data, _) = try await client.collection(name: "companies").documents().update(
+                document: Company(id: "test-id", company_name: "Stark Industries", num_employees: 5215, country: "Spain"),
+                options: DocumentIndexParameters(dirtyValues: DirtyValues.coerceOrDrop
+            ))
+            guard let validData = data else {
+                throw DataError.dataNotFound
+            }
+            XCTAssertEqual(validData.country, "Spain")
+        } catch (let error) {
+            print(error.localizedDescription)
+            XCTAssertTrue(false)
+        }
+    }
+
+    func testDocumentsUpdateByFilter() async {
+        do {
+            try await createDocument()
+            let (data, _) = try await client.collection(name: "companies").documents().update(
+                document: ["country": "Spain"],
+                options: UpdateDocumentsByFilterParameters(filterBy: "num_employees:>1000")
+            )
+            guard let validData = data else {
+                throw DataError.dataNotFound
+            }
+            XCTAssertEqual(validData.numUpdated, 1)
         } catch (let error) {
             print(error.localizedDescription)
             XCTAssertTrue(false)
@@ -115,7 +149,10 @@ final class DocumentTests: XCTestCase {
         do {
             try await createDocument()
             let docuData = try encoder.encode(newDoc)
-            let (data, _) = try await client.collection(name: "companies").document(id: "test-id").update(newDocument: docuData)
+            let (data, _) = try await client.collection(name: "companies").document(id: "test-id").update(
+                newDocument: docuData,
+                options: DocumentIndexParameters(dirtyValues: DirtyValues.coerceOrDrop)
+            )
             XCTAssertNotNil(data)
             guard let validResp = data else {
                 throw DataError.dataNotFound
@@ -309,7 +346,7 @@ final class DocumentTests: XCTestCase {
         }
     }
 
-    func testDocumentDeleteByQuery() async {
+    func testDocumentsDeleteByQuery() async {
         do {
             let (data, _) = try await client.collection(name: "companies").documents().delete(filter: "num_employees:>100", batchSize: 100)
             XCTAssertNotNil(data)
@@ -317,6 +354,22 @@ final class DocumentTests: XCTestCase {
                 throw DataError.dataNotFound
             }
             print(String(data: validResp, encoding: .utf8) ?? "Unable to Parse JSON")
+        } catch (let error) {
+            print(error.localizedDescription)
+            XCTAssertTrue(false)
+        }
+    }
+
+    func testDocumentsDeleteByQueryWithOptions() async {
+        do {
+            try await createDocument()
+            let (data, _) = try await client.collection(name: "companies").documents().delete(
+                options: DeleteDocumentsParameters(filterBy: "num_employees:>100", batchSize: 10, ignoreNotFound: true
+            ))
+            guard let validData = data else {
+                throw DataError.dataNotFound
+            }
+            XCTAssertEqual(validData.numDeleted, 1)
         } catch (let error) {
             print(error.localizedDescription)
             XCTAssertTrue(false)
