@@ -32,7 +32,7 @@ jobs:
           mkdir $(pwd)/typesense-data
           docker run -p 8108:8108 \
             -d \
-            -v$(pwd)/typesense-data:/data typesense/typesense:26.0 \
+            -v$(pwd)/typesense-data:/data typesense/typesense:27.0.rc35 \
             --data-dir /data \
             --api-key=xyz \
             --enable-cors

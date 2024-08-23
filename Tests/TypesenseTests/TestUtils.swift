@@ -116,10 +116,10 @@ func createStopwordSet() async throws {
 func createAnalyticRule() async throws {
     let _ = try await client.analytics().rules().upsert(params: AnalyticsRuleSchema(
         name: "product_queries_aggregation",
-        type: "popular_queries",
+        type: .counter,
         params: AnalyticsRuleParameters(
-            source: AnalyticsRuleParametersSource(collections: ["products"]),
-            destination: AnalyticsRuleParametersDestination(collection: "product_queries"),
+            source: AnalyticsRuleParametersSource(collections: ["products"], events: [AnalyticsRuleParametersSourceEvents(type: "click", weight: 1, name: "products_click_event")]),
+            destination: AnalyticsRuleParametersDestination(collection: "companies", counterField: "num_employees"),
             limit: 1000
             )
         )

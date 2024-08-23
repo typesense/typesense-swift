@@ -13,13 +13,21 @@ public struct AnalyticsRuleParameters: Codable {
 
     public var source: AnalyticsRuleParametersSource
     public var destination: AnalyticsRuleParametersDestination
-    public var limit: Int
+    public var limit: Int?
+    public var expandQuery: Bool?
 
-    public init(source: AnalyticsRuleParametersSource, destination: AnalyticsRuleParametersDestination, limit: Int) {
+    public init(source: AnalyticsRuleParametersSource, destination: AnalyticsRuleParametersDestination, limit: Int? = nil, expandQuery: Bool? = nil) {
         self.source = source
         self.destination = destination
         self.limit = limit
+        self.expandQuery = expandQuery
     }
 
+    public enum CodingKeys: String, CodingKey { 
+        case source
+        case destination
+        case limit
+        case expandQuery = "expand_query"
+    }
 
 }

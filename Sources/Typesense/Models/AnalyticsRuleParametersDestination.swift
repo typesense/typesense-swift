@@ -11,11 +11,17 @@ import Foundation
 
 public struct AnalyticsRuleParametersDestination: Codable {
 
-    public var collection: String?
+    public var collection: String
+    public var counterField: String?
 
-    public init(collection: String? = nil) {
+    public init(collection: String, counterField: String? = nil) {
         self.collection = collection
+        self.counterField = counterField
     }
 
+    public enum CodingKeys: String, CodingKey { 
+        case collection
+        case counterField = "counter_field"
+    }
 
 }

@@ -2,14 +2,20 @@ import XCTest
 @testable import Typesense
 
 final class AnalyticsTests: XCTestCase {
+    override func setUp() async throws  {
+        try await createCollection()
+        try await createAnalyticRule()
+    }
+
     override func tearDown() async throws  {
        try await tearDownAnalyticsRules()
+       try await tearDownCollections()
     }
 
     func testAnalyticsRuleCreate() async {
         let destination = AnalyticsRuleParametersDestination(collection: "product_queries")
         let source = AnalyticsRuleParametersSource(collections: ["products"])
-        let schema = AnalyticsRuleSchema(name: "product_queries_aggregation", type: "popular_queries", params: AnalyticsRuleParameters(source: source, destination: destination, limit: 1000))
+        let schema = AnalyticsRuleSchema(name: "product_queries_aggregation", type: .popularQueries, params: AnalyticsRuleParameters(source: source, destination: destination, limit: 1000))
         do {
             let (rule, _) = try await client.analytics().rules().upsert(params: schema)
             XCTAssertNotNil(rule)
@@ -18,8 +24,8 @@ final class AnalyticsTests: XCTestCase {
             }
             print(validRule)
             XCTAssertEqual(validRule.name, schema.name)
-            XCTAssertEqual(validRule.params?.limit, schema.params?.limit)
-            XCTAssertEqual(validRule.params?.destination.collection, schema.params?.destination.collection)
+            XCTAssertEqual(validRule.params.limit, schema.params.limit)
+            XCTAssertEqual(validRule.params.destination.collection, schema.params.destination.collection)
         } catch (let error) {
             print(error.localizedDescription)
             XCTAssertTrue(false)
@@ -28,7 +34,6 @@ final class AnalyticsTests: XCTestCase {
 
     func testAnalyticsRuleRetrieve() async {
         do {
-            try await createAnalyticRule()
             let (rule, _) = try await client.analytics().rule(id: "product_queries_aggregation").retrieve()
             guard let validRule = rule else {
                 throw DataError.dataNotFound
@@ -43,7 +48,6 @@ final class AnalyticsTests: XCTestCase {
 
     func testAnalyticsRuleRetrieveAll() async {
         do {
-            try await createAnalyticRule()
             let (rules, _) = try await client.analytics().rules().retrieveAll()
             XCTAssertNotNil(rules)
             guard let validRules = rules?.rules else {
@@ -59,7 +63,6 @@ final class AnalyticsTests: XCTestCase {
 
     func testAnalyticsRuleDelete() async {
         do {
-            try await createAnalyticRule()
             let (deletedRule, _) = try await client.analytics().rule(id: "product_queries_aggregation").delete()
             XCTAssertNotNil(deletedRule)
             guard let validRule = deletedRule else {
@@ -67,6 +70,28 @@ final class AnalyticsTests: XCTestCase {
             }
             print(validRule)
             XCTAssertEqual(validRule.name, "product_queries_aggregation")
+        }  catch (let error) {
+            print(error.localizedDescription)
+            XCTAssertTrue(false)
+        }
+    }
+
+    func testAnalyticsEventsCreate() async {
+        do {
+            let (res, _) = try await client.analytics().events().create(params: AnalyticsEventCreateSchema(
+                type: "click",
+                name: "products_click_event",
+                data: [
+                  "q": "nike shoes",
+                  "doc_id": "1024",
+                  "user_id": "111112"
+                ]
+            ))
+            guard let validRes = res else {
+                throw DataError.dataNotFound
+            }
+            print(validRes)
+            XCTAssertTrue(validRes.ok)
         }  catch (let error) {
             print(error.localizedDescription)
             XCTAssertTrue(false)

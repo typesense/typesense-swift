@@ -11,6 +11,10 @@ public struct Analytics {
         self.analyticsRules = AnalyticsRules(apiCall: apiCall)
     }
 
+    public func events() -> AnalyticsEvents {
+        return AnalyticsEvents(apiCall: self.apiCall)
+    }
+
     public func rule(id: String) -> AnalyticsRule {
         return AnalyticsRule(name: id, apiCall: self.apiCall)
     }
