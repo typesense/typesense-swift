@@ -8,8 +8,8 @@ public struct ApiKeys {
     var apiCall: ApiCall
     let RESOURCEPATH = "keys"
 
-    public init(config: Configuration) {
-        apiCall = ApiCall(config: config)
+    init(apiCall: ApiCall) {
+        self.apiCall = apiCall
     }
 
     public func create(_ keySchema: ApiKeySchema) async throws -> (ApiKey?, URLResponse?) {
@@ -32,9 +32,6 @@ public struct ApiKeys {
 
         let (data, response) = try await apiCall.get(endPoint: "\(RESOURCEPATH)/\(id)")
         if let result = data {
-            if let notFound = try? decoder.decode(ApiResponse.self, from: result) {
-                throw ResponseError.apiKeyNotFound(desc: notFound.message)
-            }
             let keyResponse = try decoder.decode(ApiKey.self, from: result)
             return (keyResponse, response)
         }
@@ -56,11 +53,6 @@ public struct ApiKeys {
     public func delete(id: Int) async throws -> (Data?, URLResponse?) {
 
         let (data, response) = try await apiCall.delete(endPoint: "\(RESOURCEPATH)/\(id)")
-        if let result = data {
-            if let notFound = try? decoder.decode(ApiResponse.self, from: result) {
-                throw ResponseError.apiKeyNotFound(desc: notFound.message)
-            }
-        }
         return (data, response)
     }
 }

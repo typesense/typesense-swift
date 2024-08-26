@@ -9,7 +9,7 @@ import Foundation
 
 
 
-public struct InlineResponse2001: Codable {
+public struct UpdateByFilterResponse: Codable {
 
     /** The number of documents that have been updated */
     public var numUpdated: Int
@@ -18,7 +18,7 @@ public struct InlineResponse2001: Codable {
         self.numUpdated = numUpdated
     }
 
-    public enum CodingKeys: String, CodingKey { 
+    public enum CodingKeys: String, CodingKey {
         case numUpdated = "num_updated"
     }
 

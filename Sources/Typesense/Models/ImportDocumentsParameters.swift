@@ -11,29 +11,29 @@ import Foundation
 
 public struct ImportDocumentsParameters: Codable {
 
-    public enum DirtyValues: String, Codable { 
-        case coerceOrReject = "coerce_or_reject"
-        case coerceOrDrop = "coerce_or_drop"
-        case drop = "drop"
-        case reject = "reject"
-    }
-    public var action: String?
+    public var action: IndexAction?
     public var batchSize: Int?
     public var dirtyValues: DirtyValues?
     public var remoteEmbeddingBatchSize: Int?
+    public var returnDoc: Bool?
+    public var returnId: Bool?
 
-    public init(action: String? = nil, batchSize: Int? = nil, dirtyValues: DirtyValues? = nil, remoteEmbeddingBatchSize: Int? = nil) {
+    public init(action: IndexAction? = nil, batchSize: Int? = nil, dirtyValues: DirtyValues? = nil, remoteEmbeddingBatchSize: Int? = nil, returnDoc: Bool? = nil, returnId: Bool? = nil) {
         self.action = action
         self.batchSize = batchSize
         self.dirtyValues = dirtyValues
         self.remoteEmbeddingBatchSize = remoteEmbeddingBatchSize
+        self.returnDoc = returnDoc
+        self.returnId = returnId
     }
 
-    public enum CodingKeys: String, CodingKey { 
+    public enum CodingKeys: String, CodingKey {
         case action
         case batchSize = "batch_size"
         case dirtyValues = "dirty_values"
         case remoteEmbeddingBatchSize = "remote_embedding_batch_size"
+        case returnDoc = "return_doc"
+        case returnId = "return_id"
     }
 
 }

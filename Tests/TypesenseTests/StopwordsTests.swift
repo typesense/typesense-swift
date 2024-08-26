@@ -3,7 +3,7 @@ import XCTest
 
 final class StopwordsTests: XCTestCase {
     override func tearDown() async throws  {
-       try! await tearDownStopwords()
+       try await tearDownStopwords()
     }
 
     func testStopwordsUpsert() async {
@@ -28,8 +28,8 @@ final class StopwordsTests: XCTestCase {
     }
 
     func testStopwordsRetrieveAll() async {
-        try! await createStopwordSet()
         do {
+            try await createStopwordSet()
             let (result, _) = try await client.stopwords().retrieve()
             guard let validResult = result else {
                 throw DataError.dataNotFound

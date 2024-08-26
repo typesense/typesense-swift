@@ -7,9 +7,8 @@ import Foundation
 let APIKEYHEADERNAME = "X-Typesense-Api-Key"
 let HEALTHY = true
 let UNHEALTHY = false
-private var currentNodeIndex = -1
 
-struct ApiCall {
+class ApiCall {
     var nodes: [Node]
     var apiKey: String
     var nearestNode: Node? = nil
@@ -19,6 +18,7 @@ struct ApiCall {
     var retryIntervalSeconds: Float = 0.1
     var sendApiKeyAsQueryParam: Bool = false
     var logger: Logger
+    var currentNodeIndex = -1
 
     init(config: Configuration) {
         self.apiKey = config.apiKey
@@ -62,9 +62,11 @@ struct ApiCall {
     }
 
     //Actual API Call
-    func performRequest(requestType: RequestType, endpoint: String, body: Data? = nil, queryParameters: [URLQueryItem]? = nil) async throws -> (Data?, URLResponse?) {
+    func performRequest(requestType: RequestType, endpoint: String, body: Data? = nil, queryParameters: [URLQueryItem]? = nil) async throws -> (Data, URLResponse) {
         let requestNumber = Date().millisecondsSince1970
         logger.log("Request #\(requestNumber): Performing \(requestType.rawValue) request: /\(endpoint)")
+        var lastError: any Error = HTTPError.clientError(code: 400, desc: "Typesense client error!")
+
         for numTry in 1...self.numRetries + 1 {
             //Get next healthy node
             var selectedNode = self.getNextNode(requestNumber: requestNumber)
@@ -84,17 +86,23 @@ struct ApiCall {
 
                     logger.log("Request \(requestNumber): Request to \(request.url!) was made. Response Code was \(res.statusCode)")
 
-                    if (res.statusCode < 500) {
-                        //For any response under code 500, return the corresponding HTTP Response without retries
+                    if (res.statusCode >= 200 && res.statusCode < 300) {
+                        // if code is 2xx return the corresponding HTTP Response without retries
                         return (data, response)
+                    }
+                    else if (res.statusCode < 500) {
+                        // Don't retry if code is not 5xx
+                        throw HTTPClientError(data: data, statusCode: res.statusCode)
                     } else {
                         //For all other response codes (>=500) throw custom error
                         throw HTTPError.serverError(code: res.statusCode, desc: res.debugDescription)
                     }
 
                 }
+            } catch HTTPError.clientError(let code, let desc){
+                throw HTTPError.clientError(code: code, desc: desc)
             } catch (let error) {
-
+                lastError = error
                 selectedNode = setNodeHealthCheck(node: selectedNode, isHealthy: UNHEALTHY)
                 logger.log("Request \(requestNumber): Request to \(selectedNode)/\(endpoint) failed with error: \(error.localizedDescription)")
                 logger.log("Request \(requestNumber): Sleeping for \(retryIntervalSeconds) seconds and retrying")
@@ -103,8 +111,7 @@ struct ApiCall {
             }
 
         }
-
-        return (nil,nil)
+        throw lastError
     }
 
     //Bundles a URL Request
@@ -169,7 +176,6 @@ struct ApiCall {
 
             logger.log("Request #\(requestNumber): Falling back to individual nodes")
         }
-
         //Fallback to nodes as usual
         logger.log("Request #\(requestNumber): Listing health of nodes")
         let _ = self.nodes.map { node in
@@ -209,7 +215,7 @@ struct ApiCall {
     }
 
     //Initializes a node's health status and last access time
-    mutating func initializeMetadataForNodes() {
+    func initializeMetadataForNodes() {
         if let existingNearestNode = self.nearestNode {
             self.nearestNode = self.setNodeHealthCheck(node: existingNearestNode, isHealthy: HEALTHY)
         }
@@ -217,6 +223,17 @@ struct ApiCall {
         for i in 0..<self.nodes.count {
             self.nodes[i] = self.setNodeHealthCheck(node: self.nodes[i], isHealthy: HEALTHY)
         }
+    }
+
+    func HTTPClientError(data: Data, statusCode: Int) -> Error {
+        let decodedMessage = try? decoder.decode(ApiResponse.self, from: data)
+
+        var errorMessage = "Request failed with HTTP code \(statusCode)"
+        if let validMessage = decodedMessage{
+            errorMessage += " | Server said: \(validMessage.message)"
+        }
+
+        return HTTPError.clientError(code: statusCode, desc: errorMessage)
     }
 
 }

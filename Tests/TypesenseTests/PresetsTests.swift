@@ -3,7 +3,7 @@ import XCTest
 
 final class PresetsTests: XCTestCase {
     override func tearDown() async throws  {
-       try! await tearDownPresets()
+       try await tearDownPresets()
     }
 
     func testPresetsUpsertSearchParameters() async {
@@ -55,9 +55,9 @@ final class PresetsTests: XCTestCase {
     }
 
     func testPresetsRetrieveAll() async {
-        try! await createSingleCollectionSearchPreset();
-        try! await createMultiSearchPreset();
         do {
+            try await createSingleCollectionSearchPreset();
+            try await createMultiSearchPreset();
             let (result, _) = try await client.presets().retrieve()
             guard let validResult = result else {
                 throw DataError.dataNotFound

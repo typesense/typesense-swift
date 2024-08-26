@@ -9,39 +9,59 @@ public struct Documents {
     var collectionName: String
     let RESOURCEPATH: String
 
-    public init(config: Configuration, collectionName: String) {
-        apiCall = ApiCall(config: config)
+    init(apiCall: ApiCall, collectionName: String) {
+        self.apiCall = apiCall
         self.collectionName = collectionName
         self.RESOURCEPATH = "collections/\(collectionName)/documents"
     }
 
-    public func create(document: Data) async throws -> (Data?, URLResponse?) {
-        let (data, response) = try await apiCall.post(endPoint: RESOURCEPATH, body: document)
-        if let result = data {
-            if let responseErr = try? decoder.decode(ApiResponse.self, from: result) {
-                if (responseErr.message == "Not Found") {
-                    throw ResponseError.invalidCollection(desc: "Collection \(self.collectionName) \(responseErr.message)")
-                }
-                throw ResponseError.documentAlreadyExists(desc: responseErr.message)
-            }
-        }
+    public func create(document: Data, options: DocumentIndexParameters? = nil) async throws -> (Data?, URLResponse?) {
+        let queryParams = try createURLQuery(forSchema: options)
+        let (data, response) = try await apiCall.post(endPoint: RESOURCEPATH, body: document, queryParameters: queryParams)
         return (data, response)
     }
 
-    public func upsert(document: Data) async throws -> (Data?, URLResponse?) {
-        let upsertAction = URLQueryItem(name: "action", value: "upsert")
-        let (data, response) = try await apiCall.post(endPoint: RESOURCEPATH, body: document, queryParameters: [upsertAction])
-        if let result = data {
-            if let responseErr = try? decoder.decode(ApiResponse.self, from: result) {
-                if (responseErr.message == "Not Found") {
-                    throw ResponseError.invalidCollection(desc: "Collection \(self.collectionName) \(responseErr.message)")
-                }
-                throw ResponseError.documentAlreadyExists(desc: responseErr.message)
-            }
-        }
+    public func upsert(document: Data, options: DocumentIndexParameters? = nil) async throws -> (Data?, URLResponse?) {
+        var queryParams = try createURLQuery(forSchema: options)
+        queryParams.append(URLQueryItem(name: "action", value: "upsert"))
+        let (data, response) = try await apiCall.post(endPoint: RESOURCEPATH, body: document, queryParameters: queryParams)
         return (data, response)
     }
 
+    public func update<T: Codable>(document: T, options: DocumentIndexParameters? = nil) async throws -> (T?, URLResponse?) {
+        var queryParams = try createURLQuery(forSchema: options)
+        queryParams.append(URLQueryItem(name: "action", value: "update"))
+        let jsonData = try encoder.encode(document)
+        let (data, response) = try await apiCall.post(endPoint: RESOURCEPATH, body: jsonData, queryParameters: queryParams)
+        if let validData = data {
+            let decodedData = try decoder.decode(T.self, from: validData)
+            return (decodedData, response)
+        }
+        return (nil, response)
+    }
+
+    public func update<T: Encodable>(document: T, options: UpdateDocumentsByFilterParameters) async throws -> (UpdateByFilterResponse?, URLResponse?) {
+        let queryParams = try createURLQuery(forSchema: options)
+        let jsonData = try encoder.encode(document)
+        let (data, response) = try await apiCall.patch(endPoint: RESOURCEPATH, body: jsonData, queryParameters: queryParams)
+        if let validData = data {
+            let decodedData = try decoder.decode(UpdateByFilterResponse.self, from: validData)
+            return (decodedData, response)
+        }
+        return (nil, response)
+    }
+
+    public func delete(options: DeleteDocumentsParameters) async throws -> (DeleteDocumentsResponse?, URLResponse?) {
+        let queryParams = try createURLQuery(forSchema: options)
+        let (data, response) = try await apiCall.delete(endPoint: "\(RESOURCEPATH)", queryParameters: queryParams)
+        if let validData = data {
+            let decodedData = try decoder.decode(DeleteDocumentsResponse.self, from: validData)
+            return (decodedData, response)
+        }
+        return (nil, response)
+    }
+
+    @available(*, deprecated, message: "Use `delete(options: DeleteDocumentsParameters)` instead!")
     public func delete(filter: String, batchSize: Int? = nil) async throws -> (Data?, URLResponse?) {
         var deleteQueryParams: [URLQueryItem] =
         [
@@ -53,6 +73,11 @@ public struct Documents {
         let (data, response) = try await apiCall.delete(endPoint: "\(RESOURCEPATH)", queryParameters: deleteQueryParams)
         return (data, response)
 
+    }
+
+    public func search(_ searchParameters: SearchParameters) async throws -> (Data?, URLResponse?) {
+        let queryParams = try createURLQuery(forSchema: searchParameters)
+        return try await apiCall.get(endPoint: "\(RESOURCEPATH)/search", queryParameters: queryParams)
     }
 
     public func search<T>(_ searchParameters: SearchParameters, for: T.Type) async throws -> (SearchResult<T>?, URLResponse?) {
@@ -136,6 +161,10 @@ public struct Documents {
 
         if let groupLimit = searchParameters.groupLimit {
             searchQueryParams.append(URLQueryItem(name: "group_limit", value: String(groupLimit)))
+        }
+
+        if let groupMissingValues = searchParameters.groupMissingValues {
+            searchQueryParams.append(URLQueryItem(name: "group_missing_values", value: String(groupMissingValues)))
         }
 
         if let includeFields = searchParameters.includeFields {
@@ -288,6 +317,13 @@ public struct Documents {
         return (nil, response)
     }
 
+    public func importBatch(_ documents: Data, options: ImportDocumentsParameters) async throws -> (Data?, URLResponse?) {
+        let queryParams = try createURLQuery(forSchema: options)
+        let (data, response) = try await apiCall.post(endPoint: "\(RESOURCEPATH)/import", body: documents, queryParameters: queryParams)
+        return (data, response)
+    }
+
+    @available(*, deprecated, message: "Use `importBatch(_ documents: Data, options: ImportDocumentsParameters)` instead!")
     public func importBatch(_ documents: Data, action: ActionModes? = ActionModes.create) async throws -> (Data?, URLResponse?) {
         var importAction = URLQueryItem(name: "action", value: "create")
         if let specifiedAction = action {
@@ -297,8 +333,9 @@ public struct Documents {
         return (data, response)
     }
 
-    public func export() async throws -> (Data?, URLResponse?) {
-        let (data, response) = try await apiCall.get(endPoint: "\(RESOURCEPATH)/export")
+    public func export(options: ExportDocumentsParameters? = nil) async throws -> (Data?, URLResponse?) {
+        let searchQueryParams = try createURLQuery(forSchema: options)
+        let (data, response) = try await apiCall.get(endPoint: "\(RESOURCEPATH)/export", queryParameters: searchQueryParams)
         return (data, response)
     }
 }

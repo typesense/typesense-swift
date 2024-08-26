@@ -11,18 +11,21 @@ import Foundation
 
 public struct DeleteDocumentsParameters: Codable {
 
-    public var filterBy: String?
+    public var filterBy: String
     /** Batch size parameter controls the number of documents that should be deleted at a time. A larger value will speed up deletions, but will impact performance of other operations running on the server. */
     public var batchSize: Int?
+    public var ignoreNotFound: Bool?
 
-    public init(filterBy: String? = nil, batchSize: Int? = nil) {
+    public init(filterBy: String, batchSize: Int? = nil, ignoreNotFound: Bool? = nil) {
         self.filterBy = filterBy
         self.batchSize = batchSize
+        self.ignoreNotFound = ignoreNotFound
     }
 
-    public enum CodingKeys: String, CodingKey { 
+    public enum CodingKeys: String, CodingKey {
         case filterBy = "filter_by"
         case batchSize = "batch_size"
+        case ignoreNotFound = "ignore_not_found"
     }
 
 }

@@ -19,9 +19,6 @@ public struct Overrides {
         let (data, response) = try await self.apiCall.put(endPoint: endpointPath(overrideId), body: schemaData)
 
         if let result = data {
-            if let error = try? decoder.decode(ApiResponse.self, from: result) {
-                throw ResponseError.requestMalformed(desc: "Overrides \(error.message)")
-            }
             let override = try decoder.decode(SearchOverride<T>.self, from: result)
             return (override, response)
         }

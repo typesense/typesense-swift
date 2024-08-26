@@ -8,8 +8,8 @@ public struct Operations {
     var apiCall: ApiCall
     var RESOURCEPATH = "operations"
 
-    public init(config: Configuration) {
-        apiCall = ApiCall(config: config)
+    init(apiCall: ApiCall) {
+        self.apiCall = apiCall
     }
 
     public func getHealth() async throws -> (HealthStatus?, URLResponse?) {

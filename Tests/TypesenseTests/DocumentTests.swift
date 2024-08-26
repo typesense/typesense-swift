@@ -2,15 +2,12 @@ import XCTest
 @testable import Typesense
 
 final class DocumentTests: XCTestCase {
-    override func tearDown() async throws {
-        try! await tearDownCollections()
+    override func setUp() async throws {
+        try await createCollection()
     }
-    //Example Struct to match the Companies Collection
-    struct Company: Codable {
-        var id: String
-        var company_name: String
-        var num_employees: Int
-        var country: String
+
+    override func tearDown() async throws {
+        try await tearDownCollections()
     }
 
     //Partial data format to be used in update() method
@@ -22,15 +19,11 @@ final class DocumentTests: XCTestCase {
     }
 
     func testDocumentCreate() async {
-        let config = Configuration(nodes: [Node(host: "localhost", port: "8108", nodeProtocol: "http")], apiKey: "xyz", logger: Logger(debugMode: true))
-
-        let client = Client(config: config)
-
         let document = Company(id: "125", company_name: "Stark Industries", num_employees: 5215, country: "USA")
 
         do {
             let docuData = try encoder.encode(document)
-            let (data, _) = try await client.collection(name: "companies").documents().create(document: docuData)
+            let (data, _) = try await client.collection(name: "companies").documents().create(document: docuData, options: DocumentIndexParameters(dirtyValues: DirtyValues.coerceOrDrop))
             XCTAssertNotNil(data)
             guard let validResp = data else {
                 throw DataError.dataNotFound
@@ -42,13 +35,6 @@ final class DocumentTests: XCTestCase {
             XCTAssertEqual(docuResp.country, "USA")
             print(docuResp)
 
-        } catch ResponseError.documentAlreadyExists(let desc), ResponseError.invalidCollection(let desc) {
-            print(desc)
-            XCTAssertTrue(true)
-        } catch HTTPError.serverError(let code, let desc) {
-            print(desc)
-            print("The response status code is \(code)")
-            XCTAssertTrue(false)
         } catch (let error) {
             print(error.localizedDescription)
             XCTAssertTrue(false)
@@ -56,16 +42,12 @@ final class DocumentTests: XCTestCase {
     }
 
     func testDocumentUpsert() async {
-        let config = Configuration(nodes: [Node(host: "localhost", port: "8108", nodeProtocol: "http")], apiKey: "xyz", logger: Logger(debugMode: true))
-
-        let client = Client(config: config)
-
         let document = Company(id: "124", company_name: "Stark Industries", num_employees: 5215, country: "USA")
 
         do {
             let docuData = try encoder.encode(document)
             print(String(data: docuData, encoding: .utf8)!)
-            let (data, _) = try await client.collection(name: "companies").documents().upsert(document: docuData)
+            let (data, _) = try await client.collection(name: "companies").documents().upsert(document: docuData, options: DocumentIndexParameters(dirtyValues: DirtyValues.coerceOrDrop))
             XCTAssertNotNil(data)
             guard let validResp = data else {
                 throw DataError.dataNotFound
@@ -75,14 +57,40 @@ final class DocumentTests: XCTestCase {
             XCTAssertEqual(docuResp.num_employees, 5215)
             XCTAssertEqual(docuResp.id, "124")
             XCTAssertEqual(docuResp.country, "USA")
-            print(docuResp)
-        } catch ResponseError.documentAlreadyExists(let desc), ResponseError.invalidCollection(let desc) {
-            print(desc)
-            XCTAssertTrue(true)
-        } catch HTTPError.serverError(let code, let desc) {
-            print(desc)
-            print("The response status code is \(code)")
+        } catch (let error) {
+            print(error.localizedDescription)
             XCTAssertTrue(false)
+        }
+    }
+
+    func testDocumentsUpdate() async {
+        do {
+            try await createDocument()
+            let (data, _) = try await client.collection(name: "companies").documents().update(
+                document: Company(id: "test-id", company_name: "Stark Industries", num_employees: 5215, country: "Spain"),
+                options: DocumentIndexParameters(dirtyValues: DirtyValues.coerceOrDrop
+            ))
+            guard let validData = data else {
+                throw DataError.dataNotFound
+            }
+            XCTAssertEqual(validData.country, "Spain")
+        } catch (let error) {
+            print(error.localizedDescription)
+            XCTAssertTrue(false)
+        }
+    }
+
+    func testDocumentsUpdateByFilter() async {
+        do {
+            try await createDocument()
+            let (data, _) = try await client.collection(name: "companies").documents().update(
+                document: ["country": "Spain"],
+                options: UpdateDocumentsByFilterParameters(filterBy: "num_employees:>1000")
+            )
+            guard let validData = data else {
+                throw DataError.dataNotFound
+            }
+            XCTAssertEqual(validData.numUpdated, 1)
         } catch (let error) {
             print(error.localizedDescription)
             XCTAssertTrue(false)
@@ -90,12 +98,9 @@ final class DocumentTests: XCTestCase {
     }
 
     func testDocumentDelete() async {
-        let config = Configuration(nodes: [Node(host: "localhost", port: "8108", nodeProtocol: "http")], apiKey: "xyz", logger: Logger(debugMode: true))
-
-        let client = Client(config: config)
-
         do {
-            let (data, _) = try await client.collection(name: "companies").document(id: "125").delete()
+            try await createDocument()
+            let (data, _) = try await client.collection(name: "companies").document(id: "test-id").delete()
             XCTAssertNotNil(data)
             guard let validResp = data else {
                 throw DataError.dataNotFound
@@ -105,17 +110,10 @@ final class DocumentTests: XCTestCase {
             XCTAssertEqual(docuResp.company_name, "Stark Industries")
             let emps = [5215, 5500]
             XCTAssertTrue(emps.contains(docuResp.num_employees))
-            XCTAssertEqual(docuResp.id, "125")
+            XCTAssertEqual(docuResp.id, "test-id")
             XCTAssertEqual(docuResp.country, "USA")
             print(docuResp)
 
-        } catch ResponseError.documentDoesNotExist(let desc), ResponseError.invalidCollection(let desc) {
-            print(desc)
-            XCTAssertTrue(true)
-        } catch HTTPError.serverError(let code, let desc) {
-            print(desc)
-            print("The response status code is \(code)")
-            XCTAssertTrue(false)
         } catch (let error) {
             print(error.localizedDescription)
             XCTAssertTrue(false)
@@ -123,12 +121,9 @@ final class DocumentTests: XCTestCase {
     }
 
     func testDocumentRetrieve() async {
-        let config = Configuration(nodes: [Node(host: "localhost", port: "8108", nodeProtocol: "http")], apiKey: "xyz", logger: Logger(debugMode: true))
-
-        let client = Client(config: config)
-
         do {
-            let (data, _) = try await client.collection(name: "companies").document(id: "125").retrieve()
+            try await createDocument()
+            let (data, _) = try await client.collection(name: "companies").document(id: "test-id").retrieve()
             XCTAssertNotNil(data)
             guard let validResp = data else {
                 throw DataError.dataNotFound
@@ -138,17 +133,10 @@ final class DocumentTests: XCTestCase {
             XCTAssertEqual(docuResp.company_name, "Stark Industries")
             let emps = [5215, 5500]
             XCTAssertTrue(emps.contains(docuResp.num_employees))
-            XCTAssertEqual(docuResp.id, "125")
+            XCTAssertEqual(docuResp.id, "test-id")
             XCTAssertEqual(docuResp.country, "USA")
             print(docuResp)
 
-        } catch ResponseError.documentDoesNotExist(let desc), ResponseError.invalidCollection(let desc) {
-            print(desc)
-            XCTAssertTrue(true)
-        } catch HTTPError.serverError(let code, let desc) {
-            print(desc)
-            print("The response status code is \(code)")
-            XCTAssertTrue(false)
         } catch (let error) {
             print(error.localizedDescription)
             XCTAssertTrue(false)
@@ -156,15 +144,15 @@ final class DocumentTests: XCTestCase {
     }
 
     func testDocumentUpdate() async {
-        let config = Configuration(nodes: [Node(host: "localhost", port: "8108", nodeProtocol: "http")], apiKey: "xyz", logger: Logger(debugMode: true))
-
-        let client = Client(config: config)
-
         let newDoc = PartialCompany(company_name: "Stark Industries", num_employees: 5500)
 
         do {
+            try await createDocument()
             let docuData = try encoder.encode(newDoc)
-            let (data, _) = try await client.collection(name: "companies").document(id: "125").update(newDocument: docuData)
+            let (data, _) = try await client.collection(name: "companies").document(id: "test-id").update(
+                newDocument: docuData,
+                options: DocumentIndexParameters(dirtyValues: DirtyValues.coerceOrDrop)
+            )
             XCTAssertNotNil(data)
             guard let validResp = data else {
                 throw DataError.dataNotFound
@@ -173,17 +161,10 @@ final class DocumentTests: XCTestCase {
             let docuResp = try decoder.decode(Company.self, from: validResp)
             XCTAssertEqual(docuResp.company_name, "Stark Industries")
             XCTAssertEqual(docuResp.num_employees, 5500)
-            XCTAssertEqual(docuResp.id, "125")
+            XCTAssertEqual(docuResp.id, "test-id")
             XCTAssertEqual(docuResp.country, "USA")
             print(docuResp)
 
-        } catch ResponseError.documentDoesNotExist(let desc), ResponseError.invalidCollection(let desc) {
-            print(desc)
-            XCTAssertTrue(true)
-        } catch HTTPError.serverError(let code, let desc) {
-            print(desc)
-            print("The response status code is \(code)")
-            XCTAssertTrue(false)
         } catch (let error) {
             print(error.localizedDescription)
             XCTAssertTrue(false)
@@ -191,13 +172,10 @@ final class DocumentTests: XCTestCase {
     }
 
     func testDocumentSearch() async {
-        let config = Configuration(nodes: [Node(host: "localhost", port: "8108", nodeProtocol: "http")], apiKey: "xyz", logger: Logger(debugMode: true))
-
-        let client = Client(config: config)
-
         let searchParams = SearchParameters(q: "stark", queryBy: "company_name", filterBy: "num_employees:>100", sortBy: "num_employees:desc")
 
         do {
+            try await createDocument()
             let (data, _) = try await client.collection(name: "companies").documents().search(searchParams, for: Company.self)
             XCTAssertNotNil(data)
             guard let validResp = data else {
@@ -211,10 +189,28 @@ final class DocumentTests: XCTestCase {
                 XCTAssertNotNil(gotSomeHits[0].highlights?[0].matchedTokens)
             }
             print(validResp)
-        } catch HTTPError.serverError(let code, let desc) {
-            print(desc)
-            print("The response status code is \(code)")
+        } catch (let error) {
+            print(error.localizedDescription)
             XCTAssertTrue(false)
+        }
+
+    }
+
+    func testDocumentSearchReturnRawData() async {
+        let searchParams = SearchParameters(q: "stark", queryBy: "company_name", filterBy: "num_employees:>100", sortBy: "num_employees:desc")
+
+        do {
+            try await createDocument()
+            let (data, _) = try await client.collection(name: "companies").documents().search(searchParams)
+            guard let validData = data else {
+                throw DataError.dataNotFound
+            }
+             if let json = try JSONSerialization.jsonObject(with: validData, options: []) as? [String: Any]{
+                XCTAssertNotNil(json["hits"])
+                XCTAssertNotNil(json["found"])
+             } else{
+                XCTAssertTrue(false)
+             }
         } catch (let error) {
             print(error.localizedDescription)
             XCTAssertTrue(false)
@@ -236,15 +232,13 @@ final class DocumentTests: XCTestCase {
             )
         )
 
-        let _ = try! await client.presets().upsert(presetName: "single-collection-search-preset", params: preset)
 
         let product1 = Product(name: "Jordan", price: 70, brand: "Nike", desc: "High quality shoe")
 
         do {
+            let _ = try await client.presets().upsert(presetName: "single-collection-search-preset", params: preset)
             do {
                 let _ = try await client.collections.create(schema: productSchema)
-            } catch ResponseError.collectionAlreadyExists(let desc) {
-                print(desc)
             } catch (let error) {
                 print(error.localizedDescription)
                 XCTAssertTrue(false)
@@ -264,52 +258,40 @@ final class DocumentTests: XCTestCase {
             XCTAssertEqual(validResp.hits?.count, 1)
 
             print(validResp.hits as Any)
-        } catch HTTPError.serverError(let code, let desc) {
-            print(desc)
-            print("The response status code is \(code)")
-            XCTAssertTrue(false)
         } catch (let error) {
             print(error.localizedDescription)
             XCTAssertTrue(false)
         }
-        try! await tearDownPresets()
+        try? await tearDownPresets()
     }
 
     func testDocumentGroupSearch() async {
-        let config = Configuration(nodes: [Node(host: "localhost", port: "8108", nodeProtocol: "http")], apiKey: "xyz", logger: Logger(debugMode: true))
-
-        let client = Client(config: config)
-
-        let searchParams = SearchParameters(q: "*", queryBy: "company_name", groupBy: "num_employees")
+        let searchParams = SearchParameters(q: "*", queryBy: "company_name", groupBy: "num_employees,country,metadata")
 
         do {
+            try await createDocument()
             let (data, _) =  try await client.collection(name: "companies").documents().search(searchParams, for: Company.self)
-
             XCTAssertNotNil(data)
-            guard let validResp = data else {
+            guard let validData = data else {
                 throw DataError.dataNotFound
             }
-            if let gotSomeGroupedHits = validResp.groupedHits {
-                XCTAssertNotNil(validResp.groupedHits)
-                XCTAssertNotNil(validResp.found)
+            print(validData)
+            if let gotSomeGroupedHits = validData.groupedHits {
+                XCTAssertEqual(gotSomeGroupedHits.first?.groupKey[0].value as! Int, 5215)
+                XCTAssertEqual(gotSomeGroupedHits.first?.groupKey[1].value as! String, "USA")
+                XCTAssertEqual(gotSomeGroupedHits.first?.groupKey[2].value as! Bool, false)
+                XCTAssertNotNil(validData.groupedHits)
+                XCTAssertNotNil(validData.found)
                 XCTAssertNotNil(gotSomeGroupedHits.first)
                 XCTAssertNotNil(gotSomeGroupedHits.first?.found)
             }
-        } catch HTTPError.serverError(let code, let desc) {
-            print(desc)
-            print("The response status code is \(code)")
-            XCTAssertTrue(false)
         } catch (let error) {
-            print(error.localizedDescription)
+            print(error)
             XCTAssertTrue(false)
         }
     }
 
     func testDocumentImport() async {
-        let config = Configuration(nodes: [Node(host: "localhost", port: "8108", nodeProtocol: "http")], apiKey: "xyz", logger: Logger(debugMode: true))
-
-        let client = Client(config: config)
-
         let documents = [
             Company(id: "124", company_name: "Stark Industries", num_employees: 5125, country: "USA"),
             Company(id: "125", company_name: "Acme Corp", num_employees: 2133, country: "CA")
@@ -334,56 +316,82 @@ final class DocumentTests: XCTestCase {
                 throw DataError.dataNotFound
             }
             print(String(data: validResp, encoding: .utf8) ?? "Unable to Parse JSONL")
-        } catch HTTPError.serverError(let code, let desc) {
-            print(desc)
-            print("The response status code is \(code)")
-            XCTAssertTrue(false)
         } catch (let error) {
-            print(error.localizedDescription)
+            print(error)
             XCTAssertTrue(false)
         }
     }
 
-    func testDocumentExport() async {
-        let config = Configuration(nodes: [Node(host: "localhost", port: "8108", nodeProtocol: "http")], apiKey: "xyz", logger: Logger(debugMode: true))
-
-        let client = Client(config: config)
+    func testDocumentImportWithOptions() async {
+        let documents = [
+            Company(id: "124", company_name: "Stark Industries", num_employees: 5125, country: "USA"),
+            Company(id: "125", company_name: "Acme Corp", num_employees: 2133, country: "CA")
+        ]
 
         do {
+            var jsonLStrings:[String] = []
+            for doc in documents {
+                let data = try encoder.encode(doc)
+                let str = String(data: data, encoding: .utf8)!
+                jsonLStrings.append(str)
+            }
 
-            let (data, _) = try await client.collection(name: "companies").documents().export()
+            let jsonLString = jsonLStrings.joined(separator: "\n")
+            print(jsonLString)
+            let jsonL = Data(jsonLString.utf8)
+
+            let (data, _) = try await client.collection(name: "companies").documents().importBatch(jsonL, options: ImportDocumentsParameters(
+                action: .upsert, batchSize: 10, dirtyValues: .drop, remoteEmbeddingBatchSize: 10, returnDoc: true, returnId: false
+            ))
             XCTAssertNotNil(data)
             guard let validResp = data else {
                 throw DataError.dataNotFound
             }
             print(String(data: validResp, encoding: .utf8) ?? "Unable to Parse JSONL")
-        } catch HTTPError.serverError(let code, let desc) {
-            print(desc)
-            print("The response status code is \(code)")
+        } catch (let error) {
+            print(error)
             XCTAssertTrue(false)
+        }
+    }
+
+    func testDocumentExport() async {
+        do {
+            let (data, _) = try await client.collection(name: "companies").documents().export(options: ExportDocumentsParameters(excludeFields: "country"))
+            XCTAssertNotNil(data)
+            guard let validResp = data else {
+                throw DataError.dataNotFound
+            }
+            print(String(data: validResp, encoding: .utf8) ?? "Unable to Parse JSONL")
         } catch (let error) {
             print(error.localizedDescription)
             XCTAssertTrue(false)
         }
     }
 
-    func testDocumentDeleteByQuery() async {
-        let config = Configuration(nodes: [Node(host: "localhost", port: "8108", nodeProtocol: "http")], apiKey: "xyz", logger: Logger(debugMode: true))
-
-        let client = Client(config: config)
-
+    func testDocumentsDeleteByQuery() async {
         do {
-
             let (data, _) = try await client.collection(name: "companies").documents().delete(filter: "num_employees:>100", batchSize: 100)
             XCTAssertNotNil(data)
             guard let validResp = data else {
                 throw DataError.dataNotFound
             }
             print(String(data: validResp, encoding: .utf8) ?? "Unable to Parse JSON")
-        } catch HTTPError.serverError(let code, let desc) {
-            print(desc)
-            print("The response status code is \(code)")
+        } catch (let error) {
+            print(error.localizedDescription)
             XCTAssertTrue(false)
+        }
+    }
+
+    func testDocumentsDeleteByQueryWithOptions() async {
+        do {
+            try await createDocument()
+            let (data, _) = try await client.collection(name: "companies").documents().delete(
+                options: DeleteDocumentsParameters(filterBy: "num_employees:>100", batchSize: 10, ignoreNotFound: true
+            ))
+            guard let validData = data else {
+                throw DataError.dataNotFound
+            }
+            XCTAssertEqual(validData.numDeleted, 1)
         } catch (let error) {
             print(error.localizedDescription)
             XCTAssertTrue(false)

@@ -3,11 +3,11 @@ import XCTest
 
 final class OverridesTests: XCTestCase {
     override func setUp() async throws {
-        try? await setUpCollection()
+        try await createCollection()
     }
 
     override func tearDown() async throws  {
-       try! await tearDownCollections()
+        try await tearDownCollections()
     }
 
     func testOverridesUpsert() async {
@@ -26,7 +26,7 @@ final class OverridesTests: XCTestCase {
             stopProcessing: false
         )
         do {
-            let (result, _) = try await client.collection(name: "test-utils-collection").overrides().upsert(overrideId: "test-id", params: schema)
+            let (result, _) = try await client.collection(name: "companies").overrides().upsert(overrideId: "test-id", params: schema)
             XCTAssertNotNil(result)
             guard let validOverride = result else {
                 throw DataError.dataNotFound
@@ -45,9 +45,6 @@ final class OverridesTests: XCTestCase {
             XCTAssertEqual(123, validOverride.effectiveFromTs)
             XCTAssertEqual(456, validOverride.effectiveToTs)
             XCTAssertEqual(false, validOverride.stopProcessing)
-        } catch ResponseError.requestMalformed( let desc) {
-            print(desc)
-            XCTAssertTrue(false)
         } catch (let error) {
             print(error.localizedDescription)
             XCTAssertTrue(false)
@@ -55,10 +52,9 @@ final class OverridesTests: XCTestCase {
     }
 
     func testOverridesRetrieve() async {
-         try! await createAnOverride()
-
         do {
-            let (overrides, _) = try await client.collection(name: "test-utils-collection").overrides().retrieve(metadataType: SearchOverrideExclude.self )
+            try await createAnOverride()
+            let (overrides, _) = try await client.collection(name: "companies").overrides().retrieve(metadataType: SearchOverrideExclude.self )
             guard let validOverrides = overrides else {
                 throw DataError.dataNotFound
             }

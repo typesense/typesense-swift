@@ -166,4 +166,29 @@ final class A_ApiCallTests: XCTestCase {
         }
     }
 
+
+    func testApiCallThrowClientError() async {
+        let apiCall = ApiCall(config: Configuration(nodes: [Node(host: "localhost", port: "8108", nodeProtocol: "http")], apiKey: "xyz", logger: Logger(debugMode: true)))
+        do {
+            let _ = try await apiCall.delete(endPoint: "health") // will response a 404
+        } catch HTTPError.clientError(let code, _) {
+            XCTAssertEqual(404, code)
+        } catch (let error) {
+            print(error)
+            XCTAssertTrue(false)
+        }
+    }
+
+    func testApiCallThrowServerError() async {
+        // using an invalid url to force an error
+        let apiCall = ApiCall(config: Configuration(nodes: [Node(host: "localhost", port: "12345678910", nodeProtocol: "http")], apiKey: "xyz", logger: Logger(debugMode: true)))
+        do {
+            let _ = try await apiCall.delete(endPoint: "health")
+            XCTAssertTrue(false)
+        } catch (let error) {
+            print(error)
+            XCTAssertTrue(true)
+        }
+    }
+
 }

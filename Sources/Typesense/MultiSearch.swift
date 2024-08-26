@@ -7,8 +7,15 @@ public struct MultiSearch {
     var apiCall: ApiCall
     let RESOURCEPATH = "multi_search"
 
-    public init(config: Configuration) {
-        apiCall = ApiCall(config: config)
+    init(apiCall: ApiCall) {
+        self.apiCall = apiCall
+    }
+
+    public func perform(searchRequests: [MultiSearchCollectionParameters], commonParameters: MultiSearchParameters) async throws -> (Data?, URLResponse?) {
+        let queryParams = try createURLQuery(forSchema: commonParameters)
+        let searchesData = try encoder.encode(MultiSearchSearchesParameter(searches: searchRequests))
+
+        return try await apiCall.post(endPoint: "\(RESOURCEPATH)", body: searchesData, queryParameters: queryParams)
     }
 
     public func perform<T>(searchRequests: [MultiSearchCollectionParameters], commonParameters: MultiSearchParameters, for: T.Type) async throws -> (MultiSearchResult<T>?, URLResponse?) {
@@ -86,13 +93,16 @@ public struct MultiSearch {
             searchQueryParams.append(URLQueryItem(name: "offset", value: String(offset)))
         }
 
-
         if let groupBy = commonParameters.groupBy {
             searchQueryParams.append(URLQueryItem(name: "group_by", value: groupBy))
         }
 
         if let groupLimit = commonParameters.groupLimit {
             searchQueryParams.append(URLQueryItem(name: "group_limit", value: String(groupLimit)))
+        }
+
+        if let groupMissingValues = commonParameters.groupMissingValues {
+            searchQueryParams.append(URLQueryItem(name: "group_missing_values", value: String(groupMissingValues)))
         }
 
         if let includeFields = commonParameters.includeFields {

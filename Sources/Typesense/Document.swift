@@ -10,8 +10,8 @@ public struct Document {
     var id: String
     let RESOURCEPATH: String
 
-    public init(config: Configuration, collectionName: String, id: String) {
-        apiCall = ApiCall(config: config)
+    init(apiCall: ApiCall, collectionName: String, id: String) {
+        self.apiCall = apiCall
         self.collectionName = collectionName
         self.id = id
         self.RESOURCEPATH = "collections/\(collectionName)/documents"
@@ -19,40 +19,17 @@ public struct Document {
 
     public func delete() async throws -> (Data?, URLResponse?) {
         let (data, response) = try await apiCall.delete(endPoint: "\(RESOURCEPATH)/\(self.id)")
-        if let result = data {
-            if let responseErr = try? decoder.decode(ApiResponse.self, from: result) {
-                if (responseErr.message == "Not Found") {
-                    throw ResponseError.invalidCollection(desc: "Collection \(self.collectionName) \(responseErr.message)")
-                }
-                throw ResponseError.documentDoesNotExist(desc: responseErr.message)
-            }
-        }
         return (data, response)
     }
 
     public func retrieve() async throws -> (Data?, URLResponse?) {
         let (data, response) = try await apiCall.get(endPoint: "\(RESOURCEPATH)/\(self.id)")
-        if let result = data {
-            if let responseErr = try? decoder.decode(ApiResponse.self, from: result) {
-                if (responseErr.message == "Not Found") {
-                    throw ResponseError.invalidCollection(desc: "Collection \(self.collectionName) \(responseErr.message)")
-                }
-                throw ResponseError.documentDoesNotExist(desc: responseErr.message)
-            }
-        }
         return (data, response)
     }
 
-    public func update(newDocument: Data) async throws -> (Data?, URLResponse?) {
-        let (data, response) = try await apiCall.patch(endPoint: "\(RESOURCEPATH)/\(self.id)", body: newDocument)
-        if let result = data {
-            if let responseErr = try? decoder.decode(ApiResponse.self, from: result) {
-                if (responseErr.message == "Not Found") {
-                    throw ResponseError.invalidCollection(desc: "Collection \(self.collectionName) \(responseErr.message)")
-                }
-                throw ResponseError.documentDoesNotExist(desc: responseErr.message)
-            }
-        }
+    public func update(newDocument: Data, options: DocumentIndexParameters? = nil) async throws -> (Data?, URLResponse?) {
+        let queryParams = try createURLQuery(forSchema: options)
+        let (data, response) = try await apiCall.patch(endPoint: "\(RESOURCEPATH)/\(self.id)", body: newDocument, queryParameters: queryParams)
         return (data, response)
     }
 

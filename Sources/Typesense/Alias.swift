@@ -6,11 +6,9 @@ import Foundation
 public struct Alias {
     var apiCall: ApiCall
     let RESOURCEPATH = "aliases"
-    var config: Configuration
 
-    public init(config: Configuration) {
-        apiCall = ApiCall(config: config)
-        self.config = config
+    init(apiCall: ApiCall) {
+        self.apiCall = apiCall
     }
 
     public func upsert(name: String, collection: CollectionAliasSchema) async throws -> (CollectionAlias?, URLResponse?) {
@@ -31,9 +29,6 @@ public struct Alias {
     public func retrieve(name: String) async throws -> (CollectionAlias?, URLResponse?) {
         let (data, response) = try await apiCall.get(endPoint: "\(RESOURCEPATH)/\(name)")
         if let result = data {
-            if let notExists = try? decoder.decode(ApiResponse.self, from: result) {
-                throw ResponseError.aliasNotFound(desc: "Alias \(notExists.message)")
-            }
             let alias = try decoder.decode(CollectionAlias.self, from: result)
             return (alias, response)
         }
@@ -52,9 +47,6 @@ public struct Alias {
     public func delete(name: String) async throws -> (CollectionAlias?, URLResponse?) {
         let (data, response) = try await apiCall.delete(endPoint: "\(RESOURCEPATH)/\(name)")
         if let result = data {
-            if let notExists = try? decoder.decode(ApiResponse.self, from: result) {
-                throw ResponseError.aliasNotFound(desc: "Alias \(notExists.message)")
-            }
             let alias = try decoder.decode(CollectionAlias.self, from: result)
             return (alias, response)
         }

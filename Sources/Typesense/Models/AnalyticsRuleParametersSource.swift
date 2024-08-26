@@ -11,10 +11,12 @@ import Foundation
 
 public struct AnalyticsRuleParametersSource: Codable {
 
-    public var collections: [String]?
+    public var collections: [String]
+    public var events: [AnalyticsRuleParametersSourceEvents]?
 
-    public init(collections: [String]? = nil) {
+    public init(collections: [String], events: [AnalyticsRuleParametersSourceEvents]? = nil) {
         self.collections = collections
+        self.events = events
     }
 
 
