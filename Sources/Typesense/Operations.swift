@@ -71,4 +71,13 @@ public struct Operations {
         return (nil, nil)
     }
 
+    public func clearCache() async throws -> (SuccessStatus?, URLResponse?) {
+        let (data, response) = try await apiCall.post(endPoint: "\(RESOURCEPATH)/cache/clear", body: Data())
+        if let result = data {
+            let success = try decoder.decode(SuccessStatus.self, from: result)
+            return (success, response)
+        }
+        return (nil, response)
+    }
+
 }

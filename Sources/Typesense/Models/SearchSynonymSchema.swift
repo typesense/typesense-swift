@@ -15,11 +15,23 @@ public struct SearchSynonymSchema: Codable {
     public var root: String?
     /** Array of words that should be considered as synonyms. */
     public var synonyms: [String]
+    /** Locale for the synonym, leave blank to use the standard tokenizer. */
+    public var locale: String?
+    /** By default, special characters are dropped from synonyms. Use this attribute to specify which special characters should be indexed as is. */
+    public var symbolsToIndex: [String]?
 
-    public init(root: String? = nil, synonyms: [String]) {
+    public init(root: String? = nil, synonyms: [String], locale: String? = nil, symbolsToIndex: [String]? = nil) {
         self.root = root
         self.synonyms = synonyms
+        self.locale = locale
+        self.symbolsToIndex = symbolsToIndex
     }
 
+    public enum CodingKeys: String, CodingKey {
+        case root
+        case synonyms
+        case locale
+        case symbolsToIndex = "symbols_to_index"
+    }
 
 }

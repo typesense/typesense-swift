@@ -150,4 +150,18 @@ final class OperationTests: XCTestCase {
             XCTAssertTrue(false)
         }
     }
+
+    func testOperationClearCache() async {
+        do {
+            let (data, _) = try await client.operations().clearCache()
+            guard let validData = data else {
+                throw DataError.dataNotFound
+            }
+            print(validData)
+            XCTAssertNotNil(validData.success)
+        } catch (let error) {
+            print(error.localizedDescription)
+            XCTAssertTrue(false)
+        }
+    }
 }
