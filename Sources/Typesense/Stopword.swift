@@ -31,8 +31,8 @@ public struct Stopword {
         return (nil, response)
     }
 
-    private func endpointPath() -> String {
-        return "\(Stopwords.RESOURCEPATH)/\(stopwordsSetId)"
+    private func endpointPath() throws -> String {
+        return try "\(Stopwords.RESOURCEPATH)/\(stopwordsSetId.encodeURL())"
     }
 
 

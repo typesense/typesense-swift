@@ -9,13 +9,13 @@ final class CollectionAliasTests: XCTestCase {
     func testAliasUpsert() async {
         do {
             let aliasCollection = CollectionAliasSchema(collectionName: "companies_june")
-            let (data, _) = try await client.aliases().upsert(name: "companies", collection: aliasCollection)
+            let (data, _) = try await client.aliases().upsert(name: "companies-_-~.?test=&123 + # /h/()", collection: aliasCollection)
             XCTAssertNotNil(data)
             guard let validData = data else {
                 throw DataError.dataNotFound
             }
             print(validData)
-            XCTAssertEqual(validData.name, "companies")
+            XCTAssertEqual(validData.name, "companies-_-~.?test=&123 + # /h/()")
             XCTAssertEqual(validData.collectionName, "companies_june")
         }  catch (let error) {
             print(error.localizedDescription)

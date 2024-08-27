@@ -31,10 +31,10 @@ public struct Stopwords {
         return (nil, response)
     }
 
-    private func endpointPath(_ operation: String? = nil) -> String {
+    private func endpointPath(_ operation: String? = nil) throws -> String {
         let baseEndpoint = "\(Stopwords.RESOURCEPATH)"
         if let operation = operation {
-            return "\(baseEndpoint)/\(operation)"
+            return try "\(baseEndpoint)/\(operation.encodeURL())"
         } else {
             return baseEndpoint
         }
