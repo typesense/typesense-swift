@@ -21,6 +21,7 @@ extension HTTPError: LocalizedError {
 
 public enum URLError: Error {
     case invalidURL
+    case encodingError(message: String)
 }
 
 public enum DataError: Error {

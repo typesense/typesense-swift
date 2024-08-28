@@ -33,9 +33,9 @@ public struct AnalyticsRules {
         return (nil, response)
     }
 
-    private func endpointPath(_ operation: String? = nil) -> String {
+    private func endpointPath(_ operation: String? = nil) throws -> String {
         if let operation = operation {
-            return "\(AnalyticsRules.resourcePath)/\(operation)"
+            return try "\(AnalyticsRules.resourcePath)/\(operation.encodeURL())"
         } else {
             return AnalyticsRules.resourcePath
         }

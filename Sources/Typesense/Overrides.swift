@@ -35,10 +35,10 @@ public struct Overrides {
         return (nil, nil)
     }
 
-    private func endpointPath(_ operation: String? = nil) -> String {
-        let baseEndpoint = "\(Collections.RESOURCEPATH)/\(collectionName)/\(Overrides.RESOURCEPATH)"
+    private func endpointPath(_ operation: String? = nil) throws -> String {
+        let baseEndpoint = try "\(Collections.RESOURCEPATH)/\(collectionName.encodeURL())/\(Overrides.RESOURCEPATH)"
         if let operation = operation {
-            return "\(baseEndpoint)/\(operation)"
+            return try "\(baseEndpoint)/\(operation.encodeURL())"
         } else {
             return baseEndpoint
         }

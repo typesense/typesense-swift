@@ -7,24 +7,22 @@ import Foundation
 public struct Documents {
     var apiCall: ApiCall
     var collectionName: String
-    let RESOURCEPATH: String
 
     init(apiCall: ApiCall, collectionName: String) {
         self.apiCall = apiCall
         self.collectionName = collectionName
-        self.RESOURCEPATH = "collections/\(collectionName)/documents"
     }
 
     public func create(document: Data, options: DocumentIndexParameters? = nil) async throws -> (Data?, URLResponse?) {
         let queryParams = try createURLQuery(forSchema: options)
-        let (data, response) = try await apiCall.post(endPoint: RESOURCEPATH, body: document, queryParameters: queryParams)
+        let (data, response) = try await apiCall.post(endPoint: endpointPath(), body: document, queryParameters: queryParams)
         return (data, response)
     }
 
     public func upsert(document: Data, options: DocumentIndexParameters? = nil) async throws -> (Data?, URLResponse?) {
         var queryParams = try createURLQuery(forSchema: options)
         queryParams.append(URLQueryItem(name: "action", value: "upsert"))
-        let (data, response) = try await apiCall.post(endPoint: RESOURCEPATH, body: document, queryParameters: queryParams)
+        let (data, response) = try await apiCall.post(endPoint: endpointPath(), body: document, queryParameters: queryParams)
         return (data, response)
     }
 
@@ -32,7 +30,7 @@ public struct Documents {
         var queryParams = try createURLQuery(forSchema: options)
         queryParams.append(URLQueryItem(name: "action", value: "update"))
         let jsonData = try encoder.encode(document)
-        let (data, response) = try await apiCall.post(endPoint: RESOURCEPATH, body: jsonData, queryParameters: queryParams)
+        let (data, response) = try await apiCall.post(endPoint: endpointPath(), body: jsonData, queryParameters: queryParams)
         if let validData = data {
             let decodedData = try decoder.decode(T.self, from: validData)
             return (decodedData, response)
@@ -43,7 +41,7 @@ public struct Documents {
     public func update<T: Encodable>(document: T, options: UpdateDocumentsByFilterParameters) async throws -> (UpdateByFilterResponse?, URLResponse?) {
         let queryParams = try createURLQuery(forSchema: options)
         let jsonData = try encoder.encode(document)
-        let (data, response) = try await apiCall.patch(endPoint: RESOURCEPATH, body: jsonData, queryParameters: queryParams)
+        let (data, response) = try await apiCall.patch(endPoint: endpointPath(), body: jsonData, queryParameters: queryParams)
         if let validData = data {
             let decodedData = try decoder.decode(UpdateByFilterResponse.self, from: validData)
             return (decodedData, response)
@@ -53,7 +51,7 @@ public struct Documents {
 
     public func delete(options: DeleteDocumentsParameters) async throws -> (DeleteDocumentsResponse?, URLResponse?) {
         let queryParams = try createURLQuery(forSchema: options)
-        let (data, response) = try await apiCall.delete(endPoint: "\(RESOURCEPATH)", queryParameters: queryParams)
+        let (data, response) = try await apiCall.delete(endPoint: endpointPath(), queryParameters: queryParams)
         if let validData = data {
             let decodedData = try decoder.decode(DeleteDocumentsResponse.self, from: validData)
             return (decodedData, response)
@@ -70,14 +68,14 @@ public struct Documents {
         if let givenBatchSize = batchSize {
             deleteQueryParams.append(URLQueryItem(name: "batch_size", value: String(givenBatchSize)))
         }
-        let (data, response) = try await apiCall.delete(endPoint: "\(RESOURCEPATH)", queryParameters: deleteQueryParams)
+        let (data, response) = try await apiCall.delete(endPoint: endpointPath(), queryParameters: deleteQueryParams)
         return (data, response)
 
     }
 
     public func search(_ searchParameters: SearchParameters) async throws -> (Data?, URLResponse?) {
         let queryParams = try createURLQuery(forSchema: searchParameters)
-        return try await apiCall.get(endPoint: "\(RESOURCEPATH)/search", queryParameters: queryParams)
+        return try await apiCall.get(endPoint: endpointPath("search"), queryParameters: queryParams)
     }
 
     public func search<T>(_ searchParameters: SearchParameters, for: T.Type) async throws -> (SearchResult<T>?, URLResponse?) {
@@ -307,7 +305,7 @@ public struct Documents {
             searchQueryParams.append(URLQueryItem(name: "facet_strategy", value: facetReturnParent))
         }
 
-        let (data, response) = try await apiCall.get(endPoint: "\(RESOURCEPATH)/search", queryParameters: searchQueryParams)
+        let (data, response) = try await apiCall.get(endPoint: endpointPath("search"), queryParameters: searchQueryParams)
 
         if let validData = data {
             let searchRes = try decoder.decode(SearchResult<T>.self, from: validData)
@@ -319,7 +317,7 @@ public struct Documents {
 
     public func importBatch(_ documents: Data, options: ImportDocumentsParameters) async throws -> (Data?, URLResponse?) {
         let queryParams = try createURLQuery(forSchema: options)
-        let (data, response) = try await apiCall.post(endPoint: "\(RESOURCEPATH)/import", body: documents, queryParameters: queryParams)
+        let (data, response) = try await apiCall.post(endPoint: endpointPath("import"), body: documents, queryParameters: queryParams)
         return (data, response)
     }
 
@@ -329,13 +327,22 @@ public struct Documents {
         if let specifiedAction = action {
             importAction.value = specifiedAction.rawValue
         }
-        let (data, response) = try await apiCall.post(endPoint: "\(RESOURCEPATH)/import", body: documents, queryParameters: [importAction])
+        let (data, response) = try await apiCall.post(endPoint: endpointPath("import"), body: documents, queryParameters: [importAction])
         return (data, response)
     }
 
     public func export(options: ExportDocumentsParameters? = nil) async throws -> (Data?, URLResponse?) {
         let searchQueryParams = try createURLQuery(forSchema: options)
-        let (data, response) = try await apiCall.get(endPoint: "\(RESOURCEPATH)/export", queryParameters: searchQueryParams)
+        let (data, response) = try await apiCall.get(endPoint: endpointPath("export"), queryParameters: searchQueryParams)
         return (data, response)
+    }
+
+    private func endpointPath(_ operation: String? = nil) throws -> String {
+        let baseEndpoint = try "collections/\(collectionName.encodeURL())/documents"
+        if let operation: String = operation {
+            return "\(baseEndpoint)/\(operation)"
+        } else {
+            return baseEndpoint
+        }
     }
 }

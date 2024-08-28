@@ -6,8 +6,6 @@ import Foundation
 
 public struct Collection {
     var apiCall: ApiCall
-    let RESOURCEPATH = "collections"
-
     var collectionName: String
 
     init(apiCall: ApiCall, collectionName: String) {
@@ -24,7 +22,7 @@ public struct Collection {
     }
 
     public func delete() async throws -> (CollectionResponse?, URLResponse?) {
-        let (data, response) = try await apiCall.delete(endPoint: "\(RESOURCEPATH)/\(collectionName)")
+        let (data, response) = try await apiCall.delete(endPoint: endpointPath())
         if let result = data {
             let fetchedCollection = try decoder.decode(CollectionResponse.self, from: result)
             return (fetchedCollection, response)
@@ -33,7 +31,7 @@ public struct Collection {
     }
 
     public func retrieve() async throws -> (CollectionResponse?, URLResponse?) {
-        let (data, response) = try await apiCall.get(endPoint: "\(RESOURCEPATH)/\(collectionName)")
+        let (data, response) = try await apiCall.get(endPoint: endpointPath())
         if let result = data {
             let fetchedCollection = try decoder.decode(CollectionResponse.self, from: result)
             return (fetchedCollection, response)
@@ -51,5 +49,9 @@ public struct Collection {
 
     public func override(_ overrideId: String) -> Override{
         return Override(apiCall: self.apiCall, collectionName: self.collectionName, overrideId: overrideId)
+    }
+
+    private func endpointPath() throws -> String {
+        return "\(Collections.RESOURCEPATH)/\(try collectionName.encodeURL())"
     }
 }

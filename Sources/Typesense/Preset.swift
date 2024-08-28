@@ -31,8 +31,8 @@ public struct Preset {
         return (nil, response)
     }
 
-    private func endpointPath() -> String {
-        return "\(Presets.RESOURCEPATH)/\(presetName)"
+    private func endpointPath() throws -> String {
+        return try "\(Presets.RESOURCEPATH)/\(presetName.encodeURL())"
     }
 
 

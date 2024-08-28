@@ -29,7 +29,7 @@ public struct AnalyticsRule {
         return (nil, response)
     }
 
-    private func endpointPath() -> String {
-        return "\(AnalyticsRules.resourcePath)/\(name)"
+    private func endpointPath() throws -> String {
+        return try "\(AnalyticsRules.resourcePath)/\(name.encodeURL())"
     }
 }

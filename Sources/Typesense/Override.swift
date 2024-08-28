@@ -34,8 +34,8 @@ public struct Override {
         return (nil, response)
     }
 
-    private func endpointPath() -> String {
-        return "\(Collections.RESOURCEPATH)/\(collectionName)/\(Overrides.RESOURCEPATH)/\(overrideId)"
+    private func endpointPath() throws -> String {
+        return try "\(Collections.RESOURCEPATH)/\(collectionName.encodeURL())/\(Overrides.RESOURCEPATH)/\(overrideId.encodeURL())"
     }
 
 
