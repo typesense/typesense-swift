@@ -76,7 +76,7 @@ You can perform CRUD actions to `Collections` and `Documents` that belong to a c
 
 ### Searching
 
-Define your [search parameters](https://typesense.org/docs/0.22.1/api/documents.html#arguments) clearly and then perform the search operation by mentioning your Document Type:
+Define your [search parameters](https://typesense.org/docs/27.0/api/search.html#search-parameters) clearly and then perform the search operation by mentioning your Document Type:
 
 ```swift
 let searchParameters = SearchParameters(q: "hog", queryBy: "school_name", filterBy: "num_students:>500", sortBy: "num_students:desc")
