@@ -9,7 +9,7 @@ Add `Typesense Swift` Swift Package to your project. You can refer [Apple's Docu
 ```swift
 ...
 dependencies: [
-           .package(url: "https://github.com/typesense/typesense-swift", .upToNextMajor(from: "0.2.0"),
+           .package(url: "https://github.com/typesense/typesense-swift", .upToNextMajor(from: "1.0.0"),
 ],
 ...
 ```
