@@ -12,9 +12,11 @@ import Foundation
 public struct MultiSearchResult<T: Codable>: Codable {
 
     public var results: [SearchResult<T>]
+    public var conversation: SearchResultConversation?
 
-    public init(results: [SearchResult<T>]) {
+    public init(results: [SearchResult<T>], conversation: SearchResultConversation? = nil) {
         self.results = results
+        self.conversation = conversation
     }
 
 

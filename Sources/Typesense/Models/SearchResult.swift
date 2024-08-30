@@ -26,8 +26,9 @@ public struct SearchResult<T: Codable>: Codable {
     /** The documents that matched the search query */
     public var hits: [SearchResultHit<T>]?
     public var requestParams: SearchResultRequestParams?
+    public var conversation: SearchResultConversation?
 
-    public init(facetCounts: [FacetCounts]? = nil, found: Int? = nil, searchTimeMs: Int? = nil, outOf: Int? = nil, searchCutoff: Bool? = nil, page: Int? = nil, groupedHits: [SearchGroupedHit<T>]? = nil, hits: [SearchResultHit<T>]? = nil, requestParams: SearchResultRequestParams? = nil) {
+    public init(facetCounts: [FacetCounts]? = nil, found: Int? = nil, searchTimeMs: Int? = nil, outOf: Int? = nil, searchCutoff: Bool? = nil, page: Int? = nil, groupedHits: [SearchGroupedHit<T>]? = nil, hits: [SearchResultHit<T>]? = nil, requestParams: SearchResultRequestParams? = nil, conversation: SearchResultConversation? = nil) {
         self.facetCounts = facetCounts
         self.found = found
         self.searchTimeMs = searchTimeMs
@@ -37,9 +38,10 @@ public struct SearchResult<T: Codable>: Codable {
         self.groupedHits = groupedHits
         self.hits = hits
         self.requestParams = requestParams
+        self.conversation = conversation
     }
 
-    public enum CodingKeys: String, CodingKey { 
+    public enum CodingKeys: String, CodingKey {
         case facetCounts = "facet_counts"
         case found
         case searchTimeMs = "search_time_ms"
@@ -49,6 +51,7 @@ public struct SearchResult<T: Codable>: Codable {
         case groupedHits = "grouped_hits"
         case hits
         case requestParams = "request_params"
+        case conversation
     }
 
 }
