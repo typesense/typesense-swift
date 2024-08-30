@@ -16,6 +16,10 @@ public struct Client {
         return Collection(apiCall: apiCall, collectionName: name)
     }
 
+    public func conversations() -> Conversations {
+        return Conversations(apiCall: apiCall)
+    }
+
     public func keys() -> ApiKeys {
         return ApiKeys(apiCall: apiCall)
     }

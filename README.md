@@ -86,6 +86,134 @@ let (data, response) = try await client.collection(name: "schools").documents().
 
 This returns a `SearchResult` object as the data, which can be further parsed as desired.
 
+### Bulk import documents
+
+```swift
+let jsonL = Data("{}".utf8)
+let (data, response) = try await client.collection(name: "companies").documents().importBatch(jsonL, options: ImportDocumentsParameters(
+    action: .upsert,
+    batchSize: 10,
+    dirtyValues: .drop,
+    remoteEmbeddingBatchSize: 10,
+    returnDoc: true,
+    returnId: false
+))
+```
+
+### Update multiple documents by query
+
+```swift
+let (data, response) = try await client.collection(name: "companies").documents().update(
+    document: ["company_size": "large"],
+    options: UpdateDocumentsByFilterParameters(filterBy: "num_employees:>1000")
+)
+```
+
+### Delete multiple documents by query
+
+```swift
+let (data, response) = try await client.collection(name: "companies").documents().delete(
+    options: DeleteDocumentsParameters(filterBy: "num_employees:>100")
+)
+```
+
+### Export documents
+
+```swift
+let (data, response) = try await client.collection(name: "companies").documents().export(options: ExportDocumentsParameters(excludeFields: "country"))
+```
+
+### Create or update a collection alias
+
+```swift
+let schema = CollectionAliasSchema(collectionName: "companies_june")
+let (data, response) = try await client.aliases().upsert(name: "companies", collection: schema)
+```
+
+### Retrieve all aliases
+
+```swift
+let (data, response) = try await client.aliases().retrieve()
+```
+
+### Retrieve an alias
+
+```swift
+let (data, response) = try await client.aliases().retrieve(name: "companies")
+```
+
+### Delete an alias
+
+```swift
+let (data, response) = try await client.aliases().delete(name: "companies")
+```
+
+### Create an API key
+
+```swift
+let adminKey = ApiKeySchema(_description: "Test key with all privileges", actions: ["*"], collections: ["*"])
+let (data, response) = try await client.keys().create(adminKey)
+```
+
+### Retrieve all API keys
+
+```swift
+let (data, response) = try await client.keys().retrieve()
+```
+
+### Retrieve an API key
+
+```swift
+let (data, response) = try await client.keys().retrieve(id: 1)
+```
+
+### Delete an API key
+
+```swift
+let (data, response) = try await client.keys().delete(id: 1)
+```
+
+### Create a conversation model
+
+```swift
+let schema = ConversationModelCreateSchema(
+    _id: "conv-model-1",
+    modelName: "openai/gpt-3.5-turbo",
+    apiKey: "OPENAI_API_KEY",
+    historyCollection: "conversation_store",
+    systemPrompt: "You are an assistant for question-answering...",
+    ttl: 10000,
+    maxBytes: 16384
+)
+let (data, response) = try await client.conversations().models().create(params: schema)
+```
+
+### Retrieve all conversation models
+
+```swift
+let (data, response) = try await client.conversations().models().retrieve()
+```
+
+### Retrieve a conversation model
+
+```swift
+let (data, response) = try await client.conversations().model(modelId: "conv-model-1").retrieve()
+```
+
+### Update a conversation model
+
+```swift
+let (data, response) = try await client.conversations().model(modelId: "conv-model-1").update(params: ConversationModelUpdateSchema(
+    systemPrompt: "..."
+))
+```
+
+### Delete a conversation model
+
+```swift
+let (data, response) = try await client.conversations().model(modelId: "conv-model-1").delete()
+```
+
 ### Create or update an override
 
 ```swift
@@ -187,10 +315,77 @@ let (data, response) = try await client.stopword("stopword_set1").retrieve()
 let (data, response) = try await client.stopword("stopword_set1").delete()
 ```
 
+### Create or update a synonym
+
+```swift
+let schema = SearchSynonymSchema(synonyms: ["blazer", "coat", "jacket"])
+let (data, response) = try await client.collection(name: "products").synonyms().upsert(id: "coat-synonyms", schema)
+```
+
+### Retrieve all synonyms
+
+```swift
+let (data, response) = try await client.collection(name: "products").synonyms().retrieve()
+```
+
+### Retrieve a synonym
+
+```swift
+let (data, response) = try await client.collection(name: "products").synonyms().retrieve(id: "coat-synonyms")
+```
+
+### Delete a synonym
+
+```swift
+let (data, response) = try await myClient.collection(name: "products").synonyms().delete(id: "coat-synonyms")
+```
+
 ### Retrieve debug information
 
 ```swift
 let (data, response) = try await client.operations().getDebug()
+```
+
+### Retrieve health status
+
+```swift
+let (data, response) = try await client.operations().getHealth()
+```
+
+### Retrieve API stats
+
+```swift
+let (data, response) = try await client.operations().getStats()
+```
+
+### Retrieve Cluster Metrics
+
+```swift
+let (data, response) = try await client.operations().getMetrics()
+```
+
+### Re-elect Leader
+
+```swift
+let (data, response) = try await client.operations().vote()
+```
+
+### Toggle Slow Request Log
+
+```swift
+let (data, response) = try await client.operations().toggleSlowRequestLog(seconds: 2)
+```
+
+### Clear cache
+
+```swift
+let (data, response) = try await client.operations().clearCache()
+```
+
+### Create Snapshot (for backups)
+
+```swift
+let (data, response) = try await client.operations().snapshot(path: "/tmp/typesense-data-snapshot")
 ```
 
 ## Contributing
@@ -205,5 +400,4 @@ The generated Models (inside the Models directory) are to be used inside the Mod
 
 ## TODO: Features
 
-- Dealing with Dirty Data
 - Scoped Search Key
