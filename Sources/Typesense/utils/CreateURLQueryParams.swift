@@ -21,7 +21,7 @@ func createURLQuery<T: Codable>(forSchema: T?) throws -> [URLQueryItem]{
         var stringVal = ""
         if let str = val as? String {
             stringVal = str
-        } else if let bool = val as? Bool {
+        } else if type(of: val) == type(of: NSNumber(booleanLiteral: true)) || type(of: val) == type(of: NSNumber(booleanLiteral: false)), let bool = val as? Bool{
             stringVal = String(bool)
         } else if let int = val as? Int {
             stringVal = String(int)

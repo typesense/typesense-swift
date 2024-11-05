@@ -172,7 +172,7 @@ final class DocumentTests: XCTestCase {
     }
 
     func testDocumentSearch() async {
-        let searchParams = SearchParameters(q: "stark", queryBy: "company_name", filterBy: "num_employees:>100", sortBy: "num_employees:desc")
+        let searchParams = SearchParameters(q: "*", queryBy: "company_name", page: 0, groupBy: "country", groupLimit: 1)
 
         do {
             try await createDocument()

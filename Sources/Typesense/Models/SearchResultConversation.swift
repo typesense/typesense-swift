@@ -12,11 +12,11 @@ import Foundation
 public struct SearchResultConversation: Codable {
 
     public var answer: String
-    public var conversationHistory: [String: String]
+    public var conversationHistory: [[String: String]]
     public var conversationId: String
     public var query: String
 
-    public init(answer: String, conversationHistory: [String: String], conversationId: String, query: String) {
+    public init(answer: String, conversationHistory: [[String: String]], conversationId: String, query: String) {
         self.answer = answer
         self.conversationHistory = conversationHistory
         self.conversationId = conversationId

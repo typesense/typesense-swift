@@ -78,4 +78,38 @@ final class ConversationModelTests: XCTestCase {
         }
     }
 
+    func testConversationSearch() async {
+        do {
+            let string = """
+            {
+            "conversation": {
+                "answer": " context information, I' unable to suggest an is information given about specific context action as,, specific titles If a preference for particular genre length of, please that information and I' try my best to suggestions.",
+                "conversation_history": [
+                {
+                    "user": "can you suggest an action series"
+                },
+                {
+                    "assistant": " context information, I' unable to suggest an is information given about specific context action as,, specific titles If a preference for particular genre length of, please that information and I' try my best to suggestions."
+                }
+                ],
+                "conversation_id": "123",
+                "query": "can you suggest an action series"
+            },
+            "results": [
+                {
+                "code": 404,
+                "error": "Not found."
+                }
+            ]
+            }
+            """
+            let data = string.data(using: .utf8)!
+            let _ = try decoder.decode(MultiSearchResult<Never>.self, from: data)
+            XCTAssertTrue(true)
+        }catch (let error) {
+            print(error)
+            XCTAssertTrue(false)
+        }
+    }
+
 }
