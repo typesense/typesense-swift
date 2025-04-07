@@ -8,7 +8,7 @@
 import Foundation
 import AnyCodable
 
-public struct SearchGroupedHit<T: Codable>: Codable {
+public struct SearchGroupedHit<T: Decodable>: Decodable {
 
     public var found: Int?
     public var groupKey: [AnyCodable]

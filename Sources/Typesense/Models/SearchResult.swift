@@ -9,7 +9,7 @@ import Foundation
 
 
 
-public struct SearchResult<T: Codable>: Codable {
+public struct SearchResult<T: Decodable>: Decodable {
 
     public var facetCounts: [FacetCounts]?
     /** The number of documents found */
