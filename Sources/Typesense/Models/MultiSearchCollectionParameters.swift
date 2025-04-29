@@ -121,8 +121,12 @@ public struct MultiSearchCollectionParameters: Codable {
     public var facetReturnParent: String?
     /** The base64 encoded audio file in 16 khz 16-bit WAV format.  */
     public var voiceQuery: String?
+    /** Whether to rerank hybrid matches. */
+    public var rerankHybridMatches: Bool?
+    /** API key for the request. */
+    public var xTypesenseApiKey: String?
 
-    public init(q: String? = nil, queryBy: String? = nil, queryByWeights: String? = nil, textMatchType: String? = nil, _prefix: String? = nil, _infix: String? = nil, maxExtraPrefix: Int? = nil, maxExtraSuffix: Int? = nil, filterBy: String? = nil, sortBy: String? = nil, facetBy: String? = nil, maxFacetValues: Int? = nil, facetQuery: String? = nil, numTypos: String? = nil, page: Int? = nil, perPage: Int? = nil, limit: Int? = nil, offset: Int? = nil, groupBy: String? = nil, groupLimit: Int? = nil, groupMissingValues: Bool? = nil, includeFields: String? = nil, excludeFields: String? = nil, highlightFullFields: String? = nil, highlightAffixNumTokens: Int? = nil, highlightStartTag: String? = nil, highlightEndTag: String? = nil, snippetThreshold: Int? = nil, dropTokensThreshold: Int? = nil, typoTokensThreshold: Int? = nil, pinnedHits: String? = nil, hiddenHits: String? = nil, overrideTags: String? = nil, highlightFields: String? = nil, preSegmentedQuery: Bool? = nil, preset: String? = nil, enableOverrides: Bool? = nil, prioritizeExactMatch: Bool? = nil, prioritizeTokenPosition: Bool? = nil, prioritizeNumMatchingFields: Bool? = nil, enableTyposForNumericalTokens: Bool? = nil, exhaustiveSearch: Bool? = nil, searchCutoffMs: Int? = nil, useCache: Bool? = nil, cacheTtl: Int? = nil, minLen1typo: Int? = nil, minLen2typo: Int? = nil, vectorQuery: String? = nil, remoteEmbeddingTimeoutMs: Int? = nil, remoteEmbeddingNumTries: Int? = nil, collection: String? = nil, facetStrategy: String? = nil, stopwords: String? = nil, facetReturnParent: String? = nil, voiceQuery: String? = nil) {
+    public init(q: String? = nil, queryBy: String? = nil, queryByWeights: String? = nil, textMatchType: String? = nil, _prefix: String? = nil, _infix: String? = nil, maxExtraPrefix: Int? = nil, maxExtraSuffix: Int? = nil, filterBy: String? = nil, sortBy: String? = nil, facetBy: String? = nil, maxFacetValues: Int? = nil, facetQuery: String? = nil, numTypos: String? = nil, page: Int? = nil, perPage: Int? = nil, limit: Int? = nil, offset: Int? = nil, groupBy: String? = nil, groupLimit: Int? = nil, groupMissingValues: Bool? = nil, includeFields: String? = nil, excludeFields: String? = nil, highlightFullFields: String? = nil, highlightAffixNumTokens: Int? = nil, highlightStartTag: String? = nil, highlightEndTag: String? = nil, snippetThreshold: Int? = nil, dropTokensThreshold: Int? = nil, typoTokensThreshold: Int? = nil, pinnedHits: String? = nil, hiddenHits: String? = nil, overrideTags: String? = nil, highlightFields: String? = nil, preSegmentedQuery: Bool? = nil, preset: String? = nil, enableOverrides: Bool? = nil, prioritizeExactMatch: Bool? = nil, prioritizeTokenPosition: Bool? = nil, prioritizeNumMatchingFields: Bool? = nil, enableTyposForNumericalTokens: Bool? = nil, exhaustiveSearch: Bool? = nil, searchCutoffMs: Int? = nil, useCache: Bool? = nil, cacheTtl: Int? = nil, minLen1typo: Int? = nil, minLen2typo: Int? = nil, vectorQuery: String? = nil, remoteEmbeddingTimeoutMs: Int? = nil, remoteEmbeddingNumTries: Int? = nil, collection: String? = nil, facetStrategy: String? = nil, stopwords: String? = nil, facetReturnParent: String? = nil, voiceQuery: String? = nil, rerankHybridMatches: Bool? = nil, xTypesenseApiKey: String? = nil) {
         self.q = q
         self.queryBy = queryBy
         self.queryByWeights = queryByWeights
@@ -178,6 +182,8 @@ public struct MultiSearchCollectionParameters: Codable {
         self.stopwords = stopwords
         self.facetReturnParent = facetReturnParent
         self.voiceQuery = voiceQuery
+        self.rerankHybridMatches = rerankHybridMatches
+        self.xTypesenseApiKey = xTypesenseApiKey
     }
 
     public enum CodingKeys: String, CodingKey {
@@ -236,6 +242,8 @@ public struct MultiSearchCollectionParameters: Codable {
         case stopwords
         case facetReturnParent = "facet_return_parent"
         case voiceQuery = "voice_query"
+        case rerankHybridMatches = "rerank_hybrid_matches"
+        case xTypesenseApiKey = "x-typesense-api-key"
     }
 
 }
