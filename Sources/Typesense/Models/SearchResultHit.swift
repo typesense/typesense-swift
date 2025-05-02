@@ -9,7 +9,7 @@ import Foundation
 
 
 
-public struct SearchResultHit<T: Codable>: Codable {
+public struct SearchResultHit<T: Decodable>: Decodable {
 
     /** (Deprecated) Contains highlighted portions of the search fields */
     public var highlights: [SearchHighlight]?
@@ -35,15 +35,6 @@ public struct SearchResultHit<T: Codable>: Codable {
         self.textMatch = try container.decodeIfPresent(Int64.self, forKey: SearchResultHit<T>.CodingKeys.textMatch)
         self.geoDistanceMeters = try container.decodeIfPresent([String : Int].self, forKey: SearchResultHit<T>.CodingKeys.geoDistanceMeters)
         self.vectorDistance = try container.decodeIfPresent(Float.self, forKey: SearchResultHit<T>.CodingKeys.vectorDistance)
-    }
-    
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(highlights, forKey: CodingKeys.highlights)
-        try container.encode(document, forKey: CodingKeys.document)
-        try container.encode(textMatch, forKey: CodingKeys.textMatch)
-        try container.encode(geoDistanceMeters, forKey: CodingKeys.geoDistanceMeters)
-        try container.encode(vectorDistance, forKey: CodingKeys.vectorDistance)
     }
 
     public enum CodingKeys: String, CodingKey { 

@@ -9,7 +9,7 @@ import Foundation
 
 
 
-public struct MultiSearchResult<T: Codable>: Codable {
+public struct MultiSearchResult<T: Decodable>: Decodable {
 
     public var results: [SearchResult<T>]
     public var conversation: SearchResultConversation?
