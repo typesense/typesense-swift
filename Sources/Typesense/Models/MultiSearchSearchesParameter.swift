@@ -7,15 +7,10 @@
 
 import Foundation
 
-
-
 public struct MultiSearchSearchesParameter: Codable {
-
     public var searches: [MultiSearchCollectionParameters]
 
     public init(searches: [MultiSearchCollectionParameters]) {
         self.searches = searches
     }
-
-
 }
