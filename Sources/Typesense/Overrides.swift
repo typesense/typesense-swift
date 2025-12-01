@@ -14,26 +14,26 @@ public struct Overrides {
         self.collectionName = collectionName
     }
 
-    public func upsert<T: Codable>(overrideId: String, params: SearchOverrideSchema<T>) async throws -> (SearchOverride<T>?, URLResponse?) {
-        let schemaData = try encoder.encode(params)
-        let (data, response) = try await self.apiCall.put(endPoint: endpointPath(overrideId), body: schemaData)
+    // public func upsert<T: Codable>(overrideId: String, params: SearchOverrideSchema<T>) async throws -> (SearchOverride<T>?, URLResponse?) {
+    //     let schemaData = try encoder.encode(params)
+    //     let (data, response) = try await self.apiCall.put(endPoint: endpointPath(overrideId), body: schemaData)
 
-        if let result = data {
-            let override = try decoder.decode(SearchOverride<T>.self, from: result)
-            return (override, response)
-        }
+    //     if let result = data {
+    //         let override = try decoder.decode(SearchOverride<T>.self, from: result)
+    //         return (override, response)
+    //     }
 
-        return (nil, response)
-    }
+    //     return (nil, response)
+    // }
 
-    public func retrieve<T: Codable>(metadataType: T.Type) async throws -> (SearchOverridesResponse<T>?, URLResponse?) {
-        let (data, response) = try await self.apiCall.get(endPoint: endpointPath())
-        if let result = data {
-            let overrides = try decoder.decode(SearchOverridesResponse<T>.self, from: result)
-            return (overrides, response)
-        }
-        return (nil, nil)
-    }
+    // public func retrieve<T: Codable>(metadataType: T.Type) async throws -> (SearchOverridesResponse<T>?, URLResponse?) {
+    //     let (data, response) = try await self.apiCall.get(endPoint: endpointPath())
+    //     if let result = data {
+    //         let overrides = try decoder.decode(SearchOverridesResponse<T>.self, from: result)
+    //         return (overrides, response)
+    //     }
+    //     return (nil, nil)
+    // }
 
     private func endpointPath(_ operation: String? = nil) throws -> String {
         let baseEndpoint = try "\(Collections.RESOURCEPATH)/\(collectionName.encodeURL())/\(Overrides.RESOURCEPATH)"

@@ -13,19 +13,66 @@ final class AnalyticsTests: XCTestCase {
     }
 
     func testAnalyticsRuleCreate() async {
-        let destination = AnalyticsRuleParametersDestination(collection: "product_queries")
-        let source = AnalyticsRuleParametersSource(collections: ["products"])
-        let schema = AnalyticsRuleSchema(name: "product_queries_aggregation", type: .popularQueries, params: AnalyticsRuleParameters(source: source, destination: destination, limit: 1000))
+        let schema = AnalyticsRuleCreate(
+            name: "test_rule",
+            type: .popularQueries,
+            collection: "products",
+            eventType: "search",
+            ruleTag: "homepage",
+            params: AnalyticsRuleCreateParams(
+                destinationCollection: "product_queries",
+                limit: 100,
+            )
+        )
         do {
-            let (rule, _) = try await client.analytics().rules().upsert(params: schema)
+            let (rule, _) = try await utilClient.analytics().rules().create(schema)
             XCTAssertNotNil(rule)
             guard let validRule = rule else {
                 throw DataError.dataNotFound
             }
             print(validRule)
             XCTAssertEqual(validRule.name, schema.name)
-            XCTAssertEqual(validRule.params.limit, schema.params.limit)
-            XCTAssertEqual(validRule.params.destination.collection, schema.params.destination.collection)
+            XCTAssertEqual(validRule.params?.limit, schema.params?.limit)
+            XCTAssertEqual(validRule.params?.destinationCollection, schema.params?.destinationCollection)
+        } catch (let error) {
+            print(error.localizedDescription)
+            XCTAssertTrue(false)
+        }
+    }
+    
+    func testAnalyticsRuleCreateMany() async {
+        let schema1 = AnalyticsRuleCreate(
+            name: "test_rule_1",
+            type: .popularQueries,
+            collection: "products",
+            eventType: "search",
+            ruleTag: "homepage",
+            params: AnalyticsRuleCreateParams(
+                destinationCollection: "product_queries",
+                limit: 100,
+            )
+        )
+        let schema2 = AnalyticsRuleCreate(
+            name: "test_rule_2",
+            type: .popularQueries,
+            collection: "products",
+            eventType: "any",
+            ruleTag: "homepage",
+            params: AnalyticsRuleCreateParams(
+                destinationCollection: "product_queries",
+                limit: 100,
+            )
+        )
+
+        do {
+            let (rules, _) = try await utilClient.analytics().rules().createMany([schema1, schema2])
+            XCTAssertNotNil(rules)
+            guard let validRule = rules else {
+                throw DataError.dataNotFound
+            }
+            print(validRule)
+            XCTAssertEqual(validRule[0].name, schema1.name)
+            XCTAssertEqual(validRule[1].name, schema2.name)
         } catch (let error) {
             print(error.localizedDescription)
             XCTAssertTrue(false)
@@ -34,12 +81,12 @@ final class AnalyticsTests: XCTestCase {
 
     func testAnalyticsRuleRetrieve() async {
         do {
-            let (rule, _) = try await client.analytics().rule(id: "product_queries_aggregation").retrieve()
+            let (rule, _) = try await client.analytics().rule("homepage_popular_queries").retrieve()
             guard let validRule = rule else {
                 throw DataError.dataNotFound
             }
             print(validRule)
-            XCTAssertEqual(validRule.name, "product_queries_aggregation")
+            XCTAssertEqual(validRule.name, "homepage_popular_queries")
         } catch (let error) {
             print(error.localizedDescription)
             XCTAssertTrue(false)
@@ -50,11 +97,11 @@ final class AnalyticsTests: XCTestCase {
         do {
             let (rules, _) = try await client.analytics().rules().retrieveAll()
             XCTAssertNotNil(rules)
-            guard let validRules = rules?.rules else {
+            guard let validRules = rules else {
                 throw DataError.dataNotFound
             }
             print(validRules)
-            XCTAssertEqual(validRules[0].name, "product_queries_aggregation")
+            XCTAssertEqual(validRules[0].name, "homepage_popular_queries")
         }  catch (let error) {
             print(error.localizedDescription)
             XCTAssertTrue(false)
@@ -63,13 +110,13 @@ final class AnalyticsTests: XCTestCase {
 
     func testAnalyticsRuleDelete() async {
         do {
-            let (deletedRule, _) = try await client.analytics().rule(id: "product_queries_aggregation").delete()
+            let (deletedRule, _) = try await client.analytics().rule( "homepage_popular_queries").delete()
             XCTAssertNotNil(deletedRule)
             guard let validRule = deletedRule else {
                 throw DataError.dataNotFound
             }
             print(validRule)
-            XCTAssertEqual(validRule.name, "product_queries_aggregation")
+            XCTAssertEqual(validRule.name, "homepage_popular_queries")
         }  catch (let error) {
             print(error.localizedDescription)
             XCTAssertTrue(false)
@@ -78,14 +125,13 @@ final class AnalyticsTests: XCTestCase {
 
     func testAnalyticsEventsCreate() async {
         do {
-            let (res, _) = try await client.analytics().events().create(params: AnalyticsEventCreateSchema(
-                type: "click",
-                name: "products_click_event",
-                data: [
-                  "q": "nike shoes",
-                  "doc_id": "1024",
-                  "user_id": "111112"
-                ]
+            let (res, _) = try await client.analytics().events().create( AnalyticsEvent(
+                name: "product_queries_aggregation",
+                eventType: "popular_queries",
+                data: AnalyticsEventData(
+                    userId: "111112",
+                    q: "nike shoes",
+                )
             ))
             guard let validRes = res else {
                 throw DataError.dataNotFound

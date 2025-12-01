@@ -19,7 +19,7 @@ final class PresetTests: XCTestCase {
             print(validResult)
             XCTAssertEqual("test-id", validResult.name)
             switch validResult.value {
-            case .singleCollectionSearch(let value):
+            case .typeSearchParameters(let value):
                 XCTAssertEqual("apple", value.q)
             default:
                 XCTAssertTrue(false)

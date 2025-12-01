@@ -3,7 +3,7 @@ import Foundation
     import FoundationNetworking
 #endif
 
-public struct AnalyticsRule {
+public struct AnalyticsRuleAPI {
     var name: String
     private var apiCall: ApiCall
     init(name: String, apiCall: ApiCall) {
@@ -11,19 +11,19 @@ public struct AnalyticsRule {
         self.apiCall = apiCall
     }
 
-    public func retrieve() async throws -> (AnalyticsRuleSchema?, URLResponse?) {
+    public func retrieve() async throws -> (AnalyticsRule?, URLResponse?) {
         let (data, response) = try await self.apiCall.get(endPoint: endpointPath())
         if let result = data {
-            let fetchedRule = try decoder.decode(AnalyticsRuleSchema.self, from: result)
+            let fetchedRule = try decoder.decode(AnalyticsRule.self, from: result)
             return (fetchedRule, response)
         }
         return (nil, response)
     }
 
-    public func delete() async throws -> (AnalyticsRuleDeleteResponse?, URLResponse?) {
+    public func delete() async throws -> (AnalyticsRule?, URLResponse?) {
         let (data, response) = try await self.apiCall.delete(endPoint: endpointPath())
         if let result = data {
-            let deletedRule = try decoder.decode(AnalyticsRuleDeleteResponse.self, from: result)
+            let deletedRule = try decoder.decode(AnalyticsRule.self, from: result)
             return (deletedRule, response)
         }
         return (nil, response)

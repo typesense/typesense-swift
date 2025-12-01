@@ -16,37 +16,37 @@ public struct CurationRule: Codable {
         case exact = "exact"
         case contains = "contains"
     }
-    /** List of tag values to associate with this curation rule. */
-    public var tags: [String]?
-    /** Indicates what search queries should be curated */
-    public var query: String?
-    /** Indicates whether the match on the query term should be `exact` or `contains`. If we want to match all queries that contained the word `apple`, we will use the `contains` match instead.  */
-    public var match: Match?
     /** Indicates that the curation should apply when the filter_by parameter in a search query exactly matches the string specified here (including backticks, spaces, brackets, etc).  */
     public var filterBy: String?
+    /** Indicates whether the match on the query term should be `exact` or `contains`. If we want to match all queries that contained the word `apple`, we will use the `contains` match instead.  */
+    public var match: Match?
+    /** Indicates what search queries should be curated */
+    public var query: String?
+    /** List of tag values to associate with this curation rule. */
+    public var tags: [String]?
 
-    public init(tags: [String]? = nil, query: String? = nil, match: Match? = nil, filterBy: String? = nil) {
-        self.tags = tags
-        self.query = query
-        self.match = match
+    public init(filterBy: String? = nil, match: Match? = nil, query: String? = nil, tags: [String]? = nil) {
         self.filterBy = filterBy
+        self.match = match
+        self.query = query
+        self.tags = tags
     }
 
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case tags
-        case query
-        case match
         case filterBy = "filter_by"
+        case match
+        case query
+        case tags
     }
 
     // Encodable protocol methods
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encodeIfPresent(tags, forKey: .tags)
-        try container.encodeIfPresent(query, forKey: .query)
-        try container.encodeIfPresent(match, forKey: .match)
         try container.encodeIfPresent(filterBy, forKey: .filterBy)
+        try container.encodeIfPresent(match, forKey: .match)
+        try container.encodeIfPresent(query, forKey: .query)
+        try container.encodeIfPresent(tags, forKey: .tags)
     }
 }
 

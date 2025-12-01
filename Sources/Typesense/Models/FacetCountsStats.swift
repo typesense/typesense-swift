@@ -12,37 +12,37 @@ import AnyCodable
 
 public struct FacetCountsStats: Codable {
 
+    public var avg: Double?
     public var max: Double?
     public var min: Double?
     public var sum: Double?
     public var totalValues: Int?
-    public var avg: Double?
 
-    public init(max: Double? = nil, min: Double? = nil, sum: Double? = nil, totalValues: Int? = nil, avg: Double? = nil) {
+    public init(avg: Double? = nil, max: Double? = nil, min: Double? = nil, sum: Double? = nil, totalValues: Int? = nil) {
+        self.avg = avg
         self.max = max
         self.min = min
         self.sum = sum
         self.totalValues = totalValues
-        self.avg = avg
     }
 
     public enum CodingKeys: String, CodingKey, CaseIterable {
+        case avg
         case max
         case min
         case sum
         case totalValues = "total_values"
-        case avg
     }
 
     // Encodable protocol methods
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encodeIfPresent(avg, forKey: .avg)
         try container.encodeIfPresent(max, forKey: .max)
         try container.encodeIfPresent(min, forKey: .min)
         try container.encodeIfPresent(sum, forKey: .sum)
         try container.encodeIfPresent(totalValues, forKey: .totalValues)
-        try container.encodeIfPresent(avg, forKey: .avg)
     }
 }
 

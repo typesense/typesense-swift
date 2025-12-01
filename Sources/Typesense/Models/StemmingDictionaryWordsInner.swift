@@ -12,27 +12,27 @@ import AnyCodable
 
 public struct StemmingDictionaryWordsInner: Codable {
 
-    /** The word form to be stemmed */
-    public var word: String
     /** The root form of the word */
     public var root: String
+    /** The word form to be stemmed */
+    public var word: String
 
-    public init(word: String, root: String) {
-        self.word = word
+    public init(root: String, word: String) {
         self.root = root
+        self.word = word
     }
 
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case word
         case root
+        case word
     }
 
     // Encodable protocol methods
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(word, forKey: .word)
         try container.encode(root, forKey: .root)
+        try container.encode(word, forKey: .word)
     }
 }
 

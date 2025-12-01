@@ -30,17 +30,17 @@ func tearDownStopwords() async throws {
         throw DataError.dataNotFound
     }
     for item in validData {
-        let _ = try await utilClient.stopword(item._id).delete()
+        let _ = try await utilClient.stopword(item.id).delete()
     }
 }
 
 func tearDownAnalyticsRules() async throws {
     let (data, _) = try await utilClient.analytics().rules().retrieveAll()
-    guard let validData = data?.rules else {
+    guard let validData = data else {
         throw DataError.dataNotFound
     }
     for item in validData {
-        let _ = try await utilClient.analytics().rule(id: item.name).delete()
+        let _ = try await utilClient.analytics().rule( item.name).delete()
     }
 }
 
@@ -50,7 +50,7 @@ func tearDownAPIKeys() async throws {
         throw DataError.dataNotFound
     }
     for item in validData {
-        let _ = try await utilClient.keys().delete(id: item._id)
+        let _ = try await utilClient.keys().delete(id: item.id!)
     }
 }
 
@@ -79,18 +79,18 @@ func createDocument() async throws {
     let _ = try await utilClient.collection(name: "companies").documents().create(document: data)
 }
 
-func createAnOverride() async throws {
-    let _ = try await utilClient.collection(name: "companies").overrides().upsert(
-        overrideId: "test-id",
-        params: SearchOverrideSchema<SearchOverrideExclude>(rule: SearchOverrideRule(filterBy: "test"), filterBy: "test:=true", metadata: SearchOverrideExclude(_id: "exclude-id"))
-    )
-}
+// func createAnOverride() async throws {
+//     let _ = try await utilClient.collection(name: "companies").overrides().upsert(
+//         overrideId: "test-id",
+//         params: SearchOverrideSchema<SearchOverrideExclude>(rule: SearchOverrideRule(filterBy: "test"), filterBy: "test:=true", metadata: SearchOverrideExclude(_id: "exclude-id"))
+//     )
+// }
 
 func createSingleCollectionSearchPreset() async throws {
     let _ = try await utilClient.presets().upsert(
         presetName: "test-id",
         params: PresetUpsertSchema(
-            value: .singleCollectionSearch(SearchParameters(q: "apple"))
+            value: PresetUpsertSchemaValue.typeSearchParameters(SearchParameters(q: "apple"))
         )
     )
 }
@@ -99,7 +99,7 @@ func createMultiSearchPreset() async throws {
     let _ = try await utilClient.presets().upsert(
         presetName: "test-id-preset-multi-search",
         params: PresetUpsertSchema(
-            value: .multiSearch(MultiSearchSearchesParameter(searches: [MultiSearchCollectionParameters(q: "banana")]))
+            value: PresetUpsertSchemaValue.typeMultiSearchSearchesParameter(MultiSearchSearchesParameter(searches: [MultiSearchCollectionParameters(q: "banana")]))
         )
     )
 }
@@ -115,20 +115,22 @@ func createStopwordSet() async throws {
 }
 
 func createAnalyticRule() async throws {
-    let _ = try await utilClient.analytics().rules().upsert(params: AnalyticsRuleSchema(
-        name: "product_queries_aggregation",
-        type: .counter,
-        params: AnalyticsRuleParameters(
-            source: AnalyticsRuleParametersSource(collections: ["products"], events: [AnalyticsRuleParametersSourceEvents(type: "click", weight: 1, name: "products_click_event")]),
-            destination: AnalyticsRuleParametersDestination(collection: "companies", counterField: "num_employees"),
-            limit: 1000
-            )
+    let _ = try await utilClient.analytics().rules().create(AnalyticsRuleCreate(
+        name: "homepage_popular_queries",
+        type: .popularQueries,
+        collection: "products",
+        eventType: "search",
+        ruleTag: "homepage",
+        params: AnalyticsRuleCreateParams(
+            destinationCollection: "product_queries",
+            limit: 100,
+            captureSearchRequests: true
         )
-    )
+    ))
 }
 
 func createAPIKey() async throws -> ApiKey {
-    let (data, _) =  try await utilClient.keys().create( ApiKeySchema(_description: "Test key with all privileges", actions: ["*"], collections: ["*"]))
+    let (data, _) =  try await utilClient.keys().create( ApiKeySchema(description: "Test key with all privileges", actions: ["*"], collections: ["*"]))
     return data!
 }
 

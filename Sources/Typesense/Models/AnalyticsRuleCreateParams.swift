@@ -12,31 +12,31 @@ import AnyCodable
 
 public struct AnalyticsRuleCreateParams: Codable {
 
-    public var destinationCollection: String?
-    public var limit: Int?
     public var captureSearchRequests: Bool?
-    public var metaFields: [String]?
-    public var expandQuery: Bool?
     public var counterField: String?
+    public var destinationCollection: String?
+    public var expandQuery: Bool?
+    public var limit: Int?
+    public var metaFields: [String]?
     public var weight: Int?
 
-    public init(destinationCollection: String? = nil, limit: Int? = nil, captureSearchRequests: Bool? = nil, metaFields: [String]? = nil, expandQuery: Bool? = nil, counterField: String? = nil, weight: Int? = nil) {
-        self.destinationCollection = destinationCollection
-        self.limit = limit
+    public init(captureSearchRequests: Bool? = nil, counterField: String? = nil, destinationCollection: String? = nil, expandQuery: Bool? = nil, limit: Int? = nil, metaFields: [String]? = nil, weight: Int? = nil) {
         self.captureSearchRequests = captureSearchRequests
-        self.metaFields = metaFields
-        self.expandQuery = expandQuery
         self.counterField = counterField
+        self.destinationCollection = destinationCollection
+        self.expandQuery = expandQuery
+        self.limit = limit
+        self.metaFields = metaFields
         self.weight = weight
     }
 
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case destinationCollection = "destination_collection"
-        case limit
         case captureSearchRequests = "capture_search_requests"
-        case metaFields = "meta_fields"
-        case expandQuery = "expand_query"
         case counterField = "counter_field"
+        case destinationCollection = "destination_collection"
+        case expandQuery = "expand_query"
+        case limit
+        case metaFields = "meta_fields"
         case weight
     }
 
@@ -44,12 +44,12 @@ public struct AnalyticsRuleCreateParams: Codable {
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encodeIfPresent(destinationCollection, forKey: .destinationCollection)
-        try container.encodeIfPresent(limit, forKey: .limit)
         try container.encodeIfPresent(captureSearchRequests, forKey: .captureSearchRequests)
-        try container.encodeIfPresent(metaFields, forKey: .metaFields)
-        try container.encodeIfPresent(expandQuery, forKey: .expandQuery)
         try container.encodeIfPresent(counterField, forKey: .counterField)
+        try container.encodeIfPresent(destinationCollection, forKey: .destinationCollection)
+        try container.encodeIfPresent(expandQuery, forKey: .expandQuery)
+        try container.encodeIfPresent(limit, forKey: .limit)
+        try container.encodeIfPresent(metaFields, forKey: .metaFields)
         try container.encodeIfPresent(weight, forKey: .weight)
     }
 }

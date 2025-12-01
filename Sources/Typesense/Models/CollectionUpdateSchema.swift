@@ -14,21 +14,21 @@ public struct CollectionUpdateSchema: Codable {
 
     /** A list of fields for querying, filtering and faceting */
     public var fields: [Field]
-    /** List of synonym set names to associate with this collection */
-    public var synonymSets: [String]?
     /** Optional details about the collection, e.g., when it was created, who created it etc.  */
     public var metadata: AnyCodable?
+    /** List of synonym set names to associate with this collection */
+    public var synonymSets: [String]?
 
-    public init(fields: [Field], synonymSets: [String]? = nil, metadata: AnyCodable? = nil) {
+    public init(fields: [Field], metadata: AnyCodable? = nil, synonymSets: [String]? = nil) {
         self.fields = fields
-        self.synonymSets = synonymSets
         self.metadata = metadata
+        self.synonymSets = synonymSets
     }
 
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case fields
-        case synonymSets = "synonym_sets"
         case metadata
+        case synonymSets = "synonym_sets"
     }
 
     // Encodable protocol methods
@@ -36,8 +36,8 @@ public struct CollectionUpdateSchema: Codable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(fields, forKey: .fields)
-        try container.encodeIfPresent(synonymSets, forKey: .synonymSets)
         try container.encodeIfPresent(metadata, forKey: .metadata)
+        try container.encodeIfPresent(synonymSets, forKey: .synonymSets)
     }
 }
 

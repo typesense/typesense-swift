@@ -10,27 +10,27 @@ import Foundation
 import AnyCodable
 #endif
 
-public struct MultiSearchResult<T: Decodable>: Codable {
+public struct MultiSearchResult: Codable {
 
-    public var results: [MultiSearchResultItem]
     public var conversation: SearchResultConversation?
+    public var results: [MultiSearchResultItem]
 
-    public init(results: [MultiSearchResultItem], conversation: SearchResultConversation? = nil) {
-        self.results = results
+    public init(conversation: SearchResultConversation? = nil, results: [MultiSearchResultItem]) {
         self.conversation = conversation
+        self.results = results
     }
 
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case results
         case conversation
+        case results
     }
 
     // Encodable protocol methods
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(results, forKey: .results)
         try container.encodeIfPresent(conversation, forKey: .conversation)
+        try container.encode(results, forKey: .results)
     }
 }
 

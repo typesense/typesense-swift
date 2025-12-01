@@ -70,8 +70,6 @@ extension MultiSearchSearchesParameter {
             collectionParams.stopwords = params.stopwords
             collectionParams.facetReturnParent = params.facetReturnParent
             collectionParams.voiceQuery = params.voiceQuery
-            collectionParams.rerankHybridMatches = params.rerankHybridMatches
-            collectionParams.xTypesenseApiKey = params.xTypesenseApiKey
             return collectionParams
         }
     }

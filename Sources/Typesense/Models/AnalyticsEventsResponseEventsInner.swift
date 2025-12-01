@@ -12,49 +12,49 @@ import AnyCodable
 
 public struct AnalyticsEventsResponseEventsInner: Codable {
 
-    public var name: String?
-    public var eventType: String?
     public var collection: String?
-    public var timestamp: Int64?
-    public var userId: String?
     public var docId: String?
     public var docIds: [String]?
+    public var eventType: String?
+    public var name: String?
     public var query: String?
+    public var timestamp: Int64?
+    public var userId: String?
 
-    public init(name: String? = nil, eventType: String? = nil, collection: String? = nil, timestamp: Int64? = nil, userId: String? = nil, docId: String? = nil, docIds: [String]? = nil, query: String? = nil) {
-        self.name = name
-        self.eventType = eventType
+    public init(collection: String? = nil, docId: String? = nil, docIds: [String]? = nil, eventType: String? = nil, name: String? = nil, query: String? = nil, timestamp: Int64? = nil, userId: String? = nil) {
         self.collection = collection
-        self.timestamp = timestamp
-        self.userId = userId
         self.docId = docId
         self.docIds = docIds
+        self.eventType = eventType
+        self.name = name
         self.query = query
+        self.timestamp = timestamp
+        self.userId = userId
     }
 
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case name
-        case eventType = "event_type"
         case collection
-        case timestamp
-        case userId = "user_id"
         case docId = "doc_id"
         case docIds = "doc_ids"
+        case eventType = "event_type"
+        case name
         case query
+        case timestamp
+        case userId = "user_id"
     }
 
     // Encodable protocol methods
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encodeIfPresent(name, forKey: .name)
-        try container.encodeIfPresent(eventType, forKey: .eventType)
         try container.encodeIfPresent(collection, forKey: .collection)
-        try container.encodeIfPresent(timestamp, forKey: .timestamp)
-        try container.encodeIfPresent(userId, forKey: .userId)
         try container.encodeIfPresent(docId, forKey: .docId)
         try container.encodeIfPresent(docIds, forKey: .docIds)
+        try container.encodeIfPresent(eventType, forKey: .eventType)
+        try container.encodeIfPresent(name, forKey: .name)
         try container.encodeIfPresent(query, forKey: .query)
+        try container.encodeIfPresent(timestamp, forKey: .timestamp)
+        try container.encodeIfPresent(userId, forKey: .userId)
     }
 }
 

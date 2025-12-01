@@ -4,7 +4,7 @@ import XCTest
 final class ConversationModelTests: XCTestCase {
     func testConversationModelsCreate() async {
         let schema = ConversationModelCreateSchema(
-            _id: "conv-model-1",
+            id: "conv-model-1",
             modelName: "test/gpt-3.5-turbo",
             apiKey: "sk",
             historyCollection: "conversation_store",

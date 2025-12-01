@@ -11,7 +11,7 @@ public struct MultiSearch {
         self.apiCall = apiCall
     }
 
-    public func perform(searchRequests: [MultiSearchCollectionParameters], commonParameters: MultiSearchParameters) async throws -> (Data?, URLResponse?) {
+    public func perform(searchRequests: [MultiSearchCollectionParameters], commonParameters: MultiSearchParameters, union: Bool = false) async throws -> (Data?, URLResponse?) {
         let queryParams = try createURLQuery(forSchema: commonParameters)
         let searchesData = try encoder.encode(MultiSearchSearchesParameter(searches: searchRequests))
 

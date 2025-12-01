@@ -18,7 +18,7 @@ final class StopwordsTests: XCTestCase {
                 throw DataError.dataNotFound
             }
             print(validResult)
-            XCTAssertEqual("test-id", validResult._id)
+            XCTAssertEqual("test-id", validResult.id)
             XCTAssertEqual(["states","united"], validResult.stopwords)
             XCTAssertEqual("en", validResult.locale)
         } catch (let error) {
@@ -36,7 +36,7 @@ final class StopwordsTests: XCTestCase {
             }
             print(validResult)
             XCTAssertEqual(1, validResult.count)
-            XCTAssertEqual("test-id-stopword-set", validResult[0]._id)
+            XCTAssertEqual("test-id-stopword-set", validResult[0].id)
         } catch (let error) {
             print(error)
             XCTAssertTrue(false)

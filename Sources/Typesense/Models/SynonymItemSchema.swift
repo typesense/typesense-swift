@@ -14,29 +14,29 @@ public struct SynonymItemSchema: Codable {
 
     /** Unique identifier for the synonym item */
     public var id: String
-    /** Array of words that should be considered as synonyms */
-    public var synonyms: [String]
-    /** For 1-way synonyms, indicates the root word that words in the synonyms parameter map to */
-    public var root: String?
     /** Locale for the synonym, leave blank to use the standard tokenizer */
     public var locale: String?
+    /** For 1-way synonyms, indicates the root word that words in the synonyms parameter map to */
+    public var root: String?
     /** By default, special characters are dropped from synonyms. Use this attribute to specify which special characters should be indexed as is */
     public var symbolsToIndex: [String]?
+    /** Array of words that should be considered as synonyms */
+    public var synonyms: [String]
 
-    public init(id: String, synonyms: [String], root: String? = nil, locale: String? = nil, symbolsToIndex: [String]? = nil) {
+    public init(id: String, locale: String? = nil, root: String? = nil, symbolsToIndex: [String]? = nil, synonyms: [String]) {
         self.id = id
-        self.synonyms = synonyms
-        self.root = root
         self.locale = locale
+        self.root = root
         self.symbolsToIndex = symbolsToIndex
+        self.synonyms = synonyms
     }
 
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case id
-        case synonyms
-        case root
         case locale
+        case root
         case symbolsToIndex = "symbols_to_index"
+        case synonyms
     }
 
     // Encodable protocol methods
@@ -44,10 +44,10 @@ public struct SynonymItemSchema: Codable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(id, forKey: .id)
-        try container.encode(synonyms, forKey: .synonyms)
-        try container.encodeIfPresent(root, forKey: .root)
         try container.encodeIfPresent(locale, forKey: .locale)
+        try container.encodeIfPresent(root, forKey: .root)
         try container.encodeIfPresent(symbolsToIndex, forKey: .symbolsToIndex)
+        try container.encode(synonyms, forKey: .synonyms)
     }
 }
 

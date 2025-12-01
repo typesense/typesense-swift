@@ -10,14 +10,14 @@ import Foundation
 import AnyCodable
 #endif
 
-public struct SearchGroupedHit<T: Decodable>: Codable {
+public struct SearchGroupedHit: Codable {
 
     public var found: Int?
     public var groupKey: [AnyCodable]
     /** The documents that matched the search query */
-    public var hits: [SearchResultHit<T>]
+    public var hits: [SearchResultHit]
 
-    public init(found: Int? = nil, groupKey: [AnyCodable], hits: [SearchResultHit<T>]) {
+    public init(found: Int? = nil, groupKey: [AnyCodable], hits: [SearchResultHit]) {
         self.found = found
         self.groupKey = groupKey
         self.hits = hits

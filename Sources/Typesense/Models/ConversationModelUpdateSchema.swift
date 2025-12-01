@@ -12,46 +12,46 @@ import AnyCodable
 
 public struct ConversationModelUpdateSchema: Codable {
 
-    /** An explicit id for the model, otherwise the API will return a response with an auto-generated conversation model id. */
-    public var id: String?
-    /** Name of the LLM model offered by OpenAI, Cloudflare or vLLM */
-    public var modelName: String?
+    /** LLM service's account ID (only applicable for Cloudflare) */
+    public var accountId: String?
     /** The LLM service's API Key */
     public var apiKey: String?
     /** Typesense collection that stores the historical conversations */
     public var historyCollection: String?
-    /** LLM service's account ID (only applicable for Cloudflare) */
-    public var accountId: String?
+    /** An explicit id for the model, otherwise the API will return a response with an auto-generated conversation model id. */
+    public var id: String?
+    /** The maximum number of bytes to send to the LLM in every API call. Consult the LLM's documentation on the number of bytes supported in the context window.  */
+    public var maxBytes: Int?
+    /** Name of the LLM model offered by OpenAI, Cloudflare or vLLM */
+    public var modelName: String?
     /** The system prompt that contains special instructions to the LLM */
     public var systemPrompt: String?
     /** Time interval in seconds after which the messages would be deleted. Default: 86400 (24 hours)  */
     public var ttl: Int?
-    /** The maximum number of bytes to send to the LLM in every API call. Consult the LLM's documentation on the number of bytes supported in the context window.  */
-    public var maxBytes: Int?
     /** URL of vLLM service */
     public var vllmUrl: String?
 
-    public init(id: String? = nil, modelName: String? = nil, apiKey: String? = nil, historyCollection: String? = nil, accountId: String? = nil, systemPrompt: String? = nil, ttl: Int? = nil, maxBytes: Int? = nil, vllmUrl: String? = nil) {
-        self.id = id
-        self.modelName = modelName
+    public init(accountId: String? = nil, apiKey: String? = nil, historyCollection: String? = nil, id: String? = nil, maxBytes: Int? = nil, modelName: String? = nil, systemPrompt: String? = nil, ttl: Int? = nil, vllmUrl: String? = nil) {
+        self.accountId = accountId
         self.apiKey = apiKey
         self.historyCollection = historyCollection
-        self.accountId = accountId
+        self.id = id
+        self.maxBytes = maxBytes
+        self.modelName = modelName
         self.systemPrompt = systemPrompt
         self.ttl = ttl
-        self.maxBytes = maxBytes
         self.vllmUrl = vllmUrl
     }
 
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case id
-        case modelName = "model_name"
+        case accountId = "account_id"
         case apiKey = "api_key"
         case historyCollection = "history_collection"
-        case accountId = "account_id"
+        case id
+        case maxBytes = "max_bytes"
+        case modelName = "model_name"
         case systemPrompt = "system_prompt"
         case ttl
-        case maxBytes = "max_bytes"
         case vllmUrl = "vllm_url"
     }
 
@@ -59,14 +59,14 @@ public struct ConversationModelUpdateSchema: Codable {
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encodeIfPresent(id, forKey: .id)
-        try container.encodeIfPresent(modelName, forKey: .modelName)
+        try container.encodeIfPresent(accountId, forKey: .accountId)
         try container.encodeIfPresent(apiKey, forKey: .apiKey)
         try container.encodeIfPresent(historyCollection, forKey: .historyCollection)
-        try container.encodeIfPresent(accountId, forKey: .accountId)
+        try container.encodeIfPresent(id, forKey: .id)
+        try container.encodeIfPresent(maxBytes, forKey: .maxBytes)
+        try container.encodeIfPresent(modelName, forKey: .modelName)
         try container.encodeIfPresent(systemPrompt, forKey: .systemPrompt)
         try container.encodeIfPresent(ttl, forKey: .ttl)
-        try container.encodeIfPresent(maxBytes, forKey: .maxBytes)
         try container.encodeIfPresent(vllmUrl, forKey: .vllmUrl)
     }
 }

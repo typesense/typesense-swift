@@ -18,41 +18,41 @@ public struct AnalyticsRuleCreate: Codable {
         case counter = "counter"
         case log = "log"
     }
-    public var name: String
-    public var type: ModelType
     public var collection: String
     public var eventType: String
-    public var ruleTag: String?
+    public var name: String
     public var params: AnalyticsRuleCreateParams?
+    public var ruleTag: String?
+    public var type: ModelType
 
-    public init(name: String, type: ModelType, collection: String, eventType: String, ruleTag: String? = nil, params: AnalyticsRuleCreateParams? = nil) {
-        self.name = name
-        self.type = type
+    public init(collection: String, eventType: String, name: String, params: AnalyticsRuleCreateParams? = nil, ruleTag: String? = nil, type: ModelType) {
         self.collection = collection
         self.eventType = eventType
-        self.ruleTag = ruleTag
+        self.name = name
         self.params = params
+        self.ruleTag = ruleTag
+        self.type = type
     }
 
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case name
-        case type
         case collection
         case eventType = "event_type"
-        case ruleTag = "rule_tag"
+        case name
         case params
+        case ruleTag = "rule_tag"
+        case type
     }
 
     // Encodable protocol methods
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(name, forKey: .name)
-        try container.encode(type, forKey: .type)
         try container.encode(collection, forKey: .collection)
         try container.encode(eventType, forKey: .eventType)
-        try container.encodeIfPresent(ruleTag, forKey: .ruleTag)
+        try container.encode(name, forKey: .name)
         try container.encodeIfPresent(params, forKey: .params)
+        try container.encodeIfPresent(ruleTag, forKey: .ruleTag)
+        try container.encode(type, forKey: .type)
     }
 }
 

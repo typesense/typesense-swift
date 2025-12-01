@@ -20,7 +20,7 @@ final class SynonymTests: XCTestCase {
             print(validData)
             XCTAssertNil(validData.root)
             XCTAssertEqual(validData.synonyms, ["blazer", "coat", "jacket"])
-            XCTAssertEqual(validData._id, "coat-synonyms")
+            XCTAssertEqual(validData.id, "coat-synonyms")
         } catch HTTPError.serverError(let code, let desc) {
             print(desc)
             print("The response status code is \(code)")
@@ -49,7 +49,7 @@ final class SynonymTests: XCTestCase {
             print(validData)
             XCTAssertEqual(validData.root, "smart phone")
             XCTAssertEqual(validData.synonyms, ["iphone", "android"])
-            XCTAssertEqual(validData._id, "smart-phone-synonyms")
+            XCTAssertEqual(validData.id, "smart-phone-synonyms")
         } catch HTTPError.serverError(let code, let desc) {
             print(desc)
             print("The response status code is \(code)")
@@ -78,7 +78,7 @@ final class SynonymTests: XCTestCase {
             print(validData)
             XCTAssertEqual(validData.root, "")
             XCTAssertEqual(validData.synonyms, ["blazer", "coat", "jacket"])
-            XCTAssertEqual(validData._id, "coat-synonyms")
+            XCTAssertEqual(validData.id, "coat-synonyms")
         } catch HTTPError.serverError(let code, let desc) {
             print(desc)
             print("The response status code is \(code)")
@@ -106,7 +106,7 @@ final class SynonymTests: XCTestCase {
             }
             print(validData)
             XCTAssertEqual(validData.synonyms.count, 1)
-            XCTAssertEqual(validData.synonyms[0]._id, "coat-synonyms")
+            XCTAssertEqual(validData.synonyms[0].id, "coat-synonyms")
             XCTAssertEqual(validData.synonyms[0].synonyms, ["blazer", "coat", "jacket"])
         } catch HTTPError.serverError(let code, let desc) {
             print(desc)

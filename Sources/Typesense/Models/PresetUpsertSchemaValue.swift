@@ -10,7 +10,7 @@ import Foundation
 import AnyCodable
 #endif
 
-public enum PresetUpsertSchemaValue: Codable, JSONEncodable {
+public enum PresetUpsertSchemaValue: Codable {
     case typeMultiSearchSearchesParameter(MultiSearchSearchesParameter)
     case typeSearchParameters(SearchParameters)
 

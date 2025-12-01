@@ -12,37 +12,37 @@ import AnyCodable
 
 public struct SearchSynonymSchema: Codable {
 
-    /** For 1-way synonyms, indicates the root word that words in the `synonyms` parameter map to. */
-    public var root: String?
-    /** Array of words that should be considered as synonyms. */
-    public var synonyms: [String]
     /** Locale for the synonym, leave blank to use the standard tokenizer. */
     public var locale: String?
+    /** For 1-way synonyms, indicates the root word that words in the `synonyms` parameter map to. */
+    public var root: String?
     /** By default, special characters are dropped from synonyms. Use this attribute to specify which special characters should be indexed as is. */
     public var symbolsToIndex: [String]?
+    /** Array of words that should be considered as synonyms. */
+    public var synonyms: [String]
 
-    public init(root: String? = nil, synonyms: [String], locale: String? = nil, symbolsToIndex: [String]? = nil) {
-        self.root = root
-        self.synonyms = synonyms
+    public init(locale: String? = nil, root: String? = nil, symbolsToIndex: [String]? = nil, synonyms: [String]) {
         self.locale = locale
+        self.root = root
         self.symbolsToIndex = symbolsToIndex
+        self.synonyms = synonyms
     }
 
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case root
-        case synonyms
         case locale
+        case root
         case symbolsToIndex = "symbols_to_index"
+        case synonyms
     }
 
     // Encodable protocol methods
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encodeIfPresent(root, forKey: .root)
-        try container.encode(synonyms, forKey: .synonyms)
         try container.encodeIfPresent(locale, forKey: .locale)
+        try container.encodeIfPresent(root, forKey: .root)
         try container.encodeIfPresent(symbolsToIndex, forKey: .symbolsToIndex)
+        try container.encode(synonyms, forKey: .synonyms)
     }
 }
 

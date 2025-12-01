@@ -12,31 +12,31 @@ import AnyCodable
 
 public struct AnalyticsEvent: Codable {
 
-    /** Name of the analytics rule this event corresponds to */
-    public var name: String
+    public var data: AnalyticsEventData
     /** Type of event (e.g., click, conversion, query, visit) */
     public var eventType: String
-    public var data: AnalyticsEventData
+    /** Name of the analytics rule this event corresponds to */
+    public var name: String
 
-    public init(name: String, eventType: String, data: AnalyticsEventData) {
-        self.name = name
-        self.eventType = eventType
+    public init(data: AnalyticsEventData, eventType: String, name: String) {
         self.data = data
+        self.eventType = eventType
+        self.name = name
     }
 
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case name
-        case eventType = "event_type"
         case data
+        case eventType = "event_type"
+        case name
     }
 
     // Encodable protocol methods
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(name, forKey: .name)
-        try container.encode(eventType, forKey: .eventType)
         try container.encode(data, forKey: .data)
+        try container.encode(eventType, forKey: .eventType)
+        try container.encode(name, forKey: .name)
     }
 }
 

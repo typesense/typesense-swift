@@ -155,7 +155,7 @@ final class MultiSearchTests: XCTestCase {
         ])
 
         let preset = PresetUpsertSchema(
-            value: .multiSearch(MultiSearchSearchesParameter(
+            value: .typeMultiSearchSearchesParameter(MultiSearchSearchesParameter(
                 searches:[
                     MultiSearchCollectionParameters(q: "shoe", filterBy: "price:=[50..120]", collection: "products"),
                     MultiSearchCollectionParameters(q: "Nike", collection: "brands"),

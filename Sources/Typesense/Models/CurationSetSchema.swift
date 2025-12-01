@@ -12,21 +12,21 @@ import AnyCodable
 
 public struct CurationSetSchema: Codable {
 
-    /** Array of curation items */
-    public var items: [CurationItemCreateSchema]
     /** Optional description for the curation set */
     public var description: String?
+    /** Array of curation items */
+    public var items: [CurationItemCreateSchema]
     public var name: String
 
-    public init(items: [CurationItemCreateSchema], description: String? = nil, name: String) {
-        self.items = items
+    public init(description: String? = nil, items: [CurationItemCreateSchema], name: String) {
         self.description = description
+        self.items = items
         self.name = name
     }
 
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case items
         case description
+        case items
         case name
     }
 
@@ -34,8 +34,8 @@ public struct CurationSetSchema: Codable {
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(items, forKey: .items)
         try container.encodeIfPresent(description, forKey: .description)
+        try container.encode(items, forKey: .items)
         try container.encode(name, forKey: .name)
     }
 }

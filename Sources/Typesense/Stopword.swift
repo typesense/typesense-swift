@@ -22,10 +22,10 @@ public struct Stopword {
         return (nil, response)
     }
 
-    public func delete() async throws -> (StopwordsSetDeleteSchema?, URLResponse?) {
+    public func delete() async throws -> (DeleteStopwordsSet200Response?, URLResponse?) {
         let (data, response) = try await apiCall.delete(endPoint: endpointPath())
         if let result = data {
-            let decodedData = try decoder.decode(StopwordsSetDeleteSchema.self, from: result)
+            let decodedData = try decoder.decode(DeleteStopwordsSet200Response.self, from: result)
             return (decodedData, response)
         }
         return (nil, response)

@@ -12,351 +12,351 @@ import AnyCodable
 
 public struct MultiSearchCollectionParameters: Codable {
 
-    /** The query text to search for in the collection. Use * as the search string to return all documents. This is typically useful when used in conjunction with filter_by. */
-    public var q: String?
-    /** A list of `string` fields that should be queried against. Multiple fields are separated with a comma. */
-    public var queryBy: String?
-    /** The relative weight to give each `query_by` field when ranking results. This can be used to boost fields in priority, when looking for matches. Multiple fields are separated with a comma. */
-    public var queryByWeights: String?
-    /** In a multi-field matching context, this parameter determines how the representative text match score of a record is calculated. Possible values are max_score (default) or max_weight. */
-    public var textMatchType: String?
-    /** Boolean field to indicate that the last word in the query should be treated as a prefix, and not as a whole word. This is used for building autocomplete and instant search interfaces. Defaults to true. */
-    public var _prefix: String?
-    /** If infix index is enabled for this field, infix searching can be done on a per-field basis by sending a comma separated string parameter called infix to the search query. This parameter can have 3 values; `off` infix search is disabled, which is default `always` infix search is performed along with regular search `fallback` infix search is performed if regular search does not produce results */
-    public var _infix: String?
-    /** There are also 2 parameters that allow you to control the extent of infix searching max_extra_prefix and max_extra_suffix which specify the maximum number of symbols before or after the query that can be present in the token. For example query \"K2100\" has 2 extra symbols in \"6PK2100\". By default, any number of prefixes/suffixes can be present for a match. */
-    public var maxExtraPrefix: Int?
-    /** There are also 2 parameters that allow you to control the extent of infix searching max_extra_prefix and max_extra_suffix which specify the maximum number of symbols before or after the query that can be present in the token. For example query \"K2100\" has 2 extra symbols in \"6PK2100\". By default, any number of prefixes/suffixes can be present for a match. */
-    public var maxExtraSuffix: Int?
-    /** Filter conditions for refining youropen api validator search results. Separate multiple conditions with &&. */
-    public var filterBy: String?
-    /** A list of numerical fields and their corresponding sort orders that will be used for ordering your results. Up to 3 sort fields can be specified. The text similarity score is exposed as a special `_text_match` field that you can use in the list of sorting fields. If no `sort_by` parameter is specified, results are sorted by `_text_match:desc,default_sorting_field:desc` */
-    public var sortBy: String?
+    /** The duration (in seconds) that determines how long the search query is cached. This value can be set on a per-query basis. Default: 60.  */
+    public var cacheTtl: Int?
+    /** Enable conversational search.  */
+    public var conversation: Bool?
+    /** The Id of a previous conversation to continue, this tells Typesense to include prior context when communicating with the LLM.  */
+    public var conversationId: String?
+    /** The Id of Conversation Model to be used.  */
+    public var conversationModelId: String?
+    public var dropTokensMode: DropTokensMode?
+    /** If the number of results found for a specific query is less than this number, Typesense will attempt to drop the tokens in the query until enough results are found. Tokens that have the least individual hits are dropped first. Set to 0 to disable. Default: 10  */
+    public var dropTokensThreshold: Int?
+    /** Flag for enabling/disabling analytics aggregation for specific search queries (for e.g. those originating from a test script).  */
+    public var enableAnalytics: Bool? = true
+    /** If you have some overrides defined but want to disable all of them during query time, you can do that by setting this parameter to false  */
+    public var enableOverrides: Bool? = false
+    /** If you have some synonyms defined but want to disable all of them for a particular search query, set enable_synonyms to false. Default: true  */
+    public var enableSynonyms: Bool?
+    /** Set this parameter to false to disable typos on alphanumerical query tokens. Default: true.  */
+    public var enableTyposForAlphaNumericalTokens: Bool?
+    /** Make Typesense disable typos for numerical tokens.  */
+    public var enableTyposForNumericalTokens: Bool? = true
+    /** List of fields from the document to exclude in the search result */
+    public var excludeFields: String?
+    /** Setting this to true will make Typesense consider all prefixes and typo corrections of the words in the query without stopping early when enough results are found (drop_tokens_threshold and typo_tokens_threshold configurations are ignored).  */
+    public var exhaustiveSearch: Bool?
     /** A list of fields that will be used for faceting your results on. Separate multiple fields with a comma. */
     public var facetBy: String?
-    /** Maximum number of facet values to be returned. */
-    public var maxFacetValues: Int?
     /** Facet values that are returned can now be filtered via this parameter. The matching facet text is also highlighted. For example, when faceting by `category`, you can set `facet_query=category:shoe` to return only facet values that contain the prefix \"shoe\". */
     public var facetQuery: String?
-    /** The number of typographical errors (1 or 2) that would be tolerated. Default: 2  */
-    public var numTypos: String?
-    /** Results from this specific page number would be fetched. */
-    public var page: Int?
-    /** Number of results to fetch per page. Default: 10 */
-    public var perPage: Int?
-    /** Number of hits to fetch. Can be used as an alternative to the per_page parameter. Default: 10.  */
-    public var limit: Int?
-    /** Identifies the starting point to return hits from a result set. Can be used as an alternative to the page parameter. */
-    public var offset: Int?
+    /** Comma separated string of nested facet fields whose parent object should be returned in facet response.  */
+    public var facetReturnParent: String?
+    /** Choose the underlying faceting strategy used. Comma separated string of allows values: exhaustive, top_values or automatic (default).  */
+    public var facetStrategy: String?
+    /** Filter conditions for refining youropen api validator search results. Separate multiple conditions with &&. */
+    public var filterBy: String?
+    /** Whether the filter_by condition of the search query should be applicable to curated results (override definitions, pinned hits, hidden hits, etc.). Default: false  */
+    public var filterCuratedHits: Bool?
     /** You can aggregate search results into groups or buckets by specify one or more `group_by` fields. Separate multiple fields with a comma. To group on a particular field, it must be a faceted field. */
     public var groupBy: String?
     /** Maximum number of hits to be returned for every group. If the `group_limit` is set as `K` then only the top K hits in each group are returned in the response. Default: 3  */
     public var groupLimit: Int?
     /** Setting this parameter to true will place all documents that have a null value in the group_by field, into a single group. Setting this parameter to false, will cause each document with a null value in the group_by field to not be grouped with other documents. Default: true  */
     public var groupMissingValues: Bool?
-    /** List of fields from the document to include in the search result */
-    public var includeFields: String?
-    /** List of fields from the document to exclude in the search result */
-    public var excludeFields: String?
-    /** List of fields which should be highlighted fully without snippeting */
-    public var highlightFullFields: String?
-    /** The number of tokens that should surround the highlighted text on each side. Default: 4  */
-    public var highlightAffixNumTokens: Int?
-    /** The start tag used for the highlighted snippets. Default: `<mark>`  */
-    public var highlightStartTag: String?
-    /** The end tag used for the highlighted snippets. Default: `</mark>`  */
-    public var highlightEndTag: String?
-    /** Field values under this length will be fully highlighted, instead of showing a snippet of relevant portion. Default: 30  */
-    public var snippetThreshold: Int?
-    /** If the number of results found for a specific query is less than this number, Typesense will attempt to drop the tokens in the query until enough results are found. Tokens that have the least individual hits are dropped first. Set to 0 to disable. Default: 10  */
-    public var dropTokensThreshold: Int?
-    public var dropTokensMode: DropTokensMode?
-    /** If the number of results found for a specific query is less than this number, Typesense will attempt to look for tokens with more typos until enough results are found. Default: 100  */
-    public var typoTokensThreshold: Int?
-    /** Set this parameter to false to disable typos on alphanumerical query tokens. Default: true.  */
-    public var enableTyposForAlphaNumericalTokens: Bool?
-    /** Whether the filter_by condition of the search query should be applicable to curated results (override definitions, pinned hits, hidden hits, etc.). Default: false  */
-    public var filterCuratedHits: Bool?
-    /** If you have some synonyms defined but want to disable all of them for a particular search query, set enable_synonyms to false. Default: true  */
-    public var enableSynonyms: Bool?
-    /** Flag for enabling/disabling analytics aggregation for specific search queries (for e.g. those originating from a test script).  */
-    public var enableAnalytics: Bool? = true
-    /** Allow synonym resolution on word prefixes in the query. Default: false  */
-    public var synonymPrefix: Bool?
-    /** Allow synonym resolution on typo-corrected words in the query. Default: 0  */
-    public var synonymNumTypos: Int?
-    /** A list of records to unconditionally include in the search results at specific positions. An example use case would be to feature or promote certain items on the top of search results. A list of `record_id:hit_position`. Eg: to include a record with ID 123 at Position 1 and another record with ID 456 at Position 5, you'd specify `123:1,456:5`. You could also use the Overrides feature to override search results based on rules. Overrides are applied first, followed by `pinned_hits` and finally `hidden_hits`.  */
-    public var pinnedHits: String?
     /** A list of records to unconditionally hide from search results. A list of `record_id`s to hide. Eg: to hide records with IDs 123 and 456, you'd specify `123,456`. You could also use the Overrides feature to override search results based on rules. Overrides are applied first, followed by `pinned_hits` and finally `hidden_hits`.  */
     public var hiddenHits: String?
-    /** Comma separated list of tags to trigger the curations rules that match the tags. */
-    public var overrideTags: String?
+    /** The number of tokens that should surround the highlighted text on each side. Default: 4  */
+    public var highlightAffixNumTokens: Int?
+    /** The end tag used for the highlighted snippets. Default: `</mark>`  */
+    public var highlightEndTag: String?
     /** A list of custom fields that must be highlighted even if you don't query for them  */
     public var highlightFields: String?
-    /** You can index content from any logographic language into Typesense if you are able to segment / split the text into space-separated words yourself before indexing and querying. Set this parameter to true to do the same  */
-    public var preSegmentedQuery: Bool? = false
-    /** Search using a bunch of search parameters by setting this parameter to the name of the existing Preset.  */
-    public var preset: String?
-    /** If you have some overrides defined but want to disable all of them during query time, you can do that by setting this parameter to false  */
-    public var enableOverrides: Bool? = false
-    /** Set this parameter to true to ensure that an exact match is ranked above the others  */
-    public var prioritizeExactMatch: Bool? = true
-    /** Make Typesense prioritize documents where the query words appear earlier in the text.  */
-    public var prioritizeTokenPosition: Bool? = false
-    /** Make Typesense prioritize documents where the query words appear in more number of fields.  */
-    public var prioritizeNumMatchingFields: Bool? = true
-    /** Make Typesense disable typos for numerical tokens.  */
-    public var enableTyposForNumericalTokens: Bool? = true
-    /** Setting this to true will make Typesense consider all prefixes and typo corrections of the words in the query without stopping early when enough results are found (drop_tokens_threshold and typo_tokens_threshold configurations are ignored).  */
-    public var exhaustiveSearch: Bool?
-    /** Typesense will attempt to return results early if the cutoff time has elapsed. This is not a strict guarantee and facet computation is not bound by this parameter.  */
-    public var searchCutoffMs: Int?
-    /** Enable server side caching of search query results. By default, caching is disabled.  */
-    public var useCache: Bool?
-    /** The duration (in seconds) that determines how long the search query is cached. This value can be set on a per-query basis. Default: 60.  */
-    public var cacheTtl: Int?
+    /** List of fields which should be highlighted fully without snippeting */
+    public var highlightFullFields: String?
+    /** The start tag used for the highlighted snippets. Default: `<mark>`  */
+    public var highlightStartTag: String?
+    /** List of fields from the document to include in the search result */
+    public var includeFields: String?
+    /** If infix index is enabled for this field, infix searching can be done on a per-field basis by sending a comma separated string parameter called infix to the search query. This parameter can have 3 values; `off` infix search is disabled, which is default `always` infix search is performed along with regular search `fallback` infix search is performed if regular search does not produce results */
+    public var _infix: String?
+    /** Number of hits to fetch. Can be used as an alternative to the per_page parameter. Default: 10.  */
+    public var limit: Int?
+    /** There are also 2 parameters that allow you to control the extent of infix searching max_extra_prefix and max_extra_suffix which specify the maximum number of symbols before or after the query that can be present in the token. For example query \"K2100\" has 2 extra symbols in \"6PK2100\". By default, any number of prefixes/suffixes can be present for a match. */
+    public var maxExtraPrefix: Int?
+    /** There are also 2 parameters that allow you to control the extent of infix searching max_extra_prefix and max_extra_suffix which specify the maximum number of symbols before or after the query that can be present in the token. For example query \"K2100\" has 2 extra symbols in \"6PK2100\". By default, any number of prefixes/suffixes can be present for a match. */
+    public var maxExtraSuffix: Int?
+    /** Maximum number of facet values to be returned. */
+    public var maxFacetValues: Int?
     /** Minimum word length for 1-typo correction to be applied. The value of num_typos is still treated as the maximum allowed typos.  */
     public var minLen1typo: Int?
     /** Minimum word length for 2-typo correction to be applied. The value of num_typos is still treated as the maximum allowed typos.  */
     public var minLen2typo: Int?
-    /** Vector query expression for fetching documents \"closest\" to a given query/document vector.  */
-    public var vectorQuery: String?
-    /** Timeout (in milliseconds) for fetching remote embeddings.  */
-    public var remoteEmbeddingTimeoutMs: Int?
+    /** The number of typographical errors (1 or 2) that would be tolerated. Default: 2  */
+    public var numTypos: String?
+    /** Identifies the starting point to return hits from a result set. Can be used as an alternative to the page parameter. */
+    public var offset: Int?
+    /** Comma separated list of tags to trigger the curations rules that match the tags. */
+    public var overrideTags: String?
+    /** Results from this specific page number would be fetched. */
+    public var page: Int?
+    /** Number of results to fetch per page. Default: 10 */
+    public var perPage: Int?
+    /** A list of records to unconditionally include in the search results at specific positions. An example use case would be to feature or promote certain items on the top of search results. A list of `record_id:hit_position`. Eg: to include a record with ID 123 at Position 1 and another record with ID 456 at Position 5, you'd specify `123:1,456:5`. You could also use the Overrides feature to override search results based on rules. Overrides are applied first, followed by `pinned_hits` and finally `hidden_hits`.  */
+    public var pinnedHits: String?
+    /** You can index content from any logographic language into Typesense if you are able to segment / split the text into space-separated words yourself before indexing and querying. Set this parameter to true to do the same  */
+    public var preSegmentedQuery: Bool? = false
+    /** Boolean field to indicate that the last word in the query should be treated as a prefix, and not as a whole word. This is used for building autocomplete and instant search interfaces. Defaults to true. */
+    public var _prefix: String?
+    /** Search using a bunch of search parameters by setting this parameter to the name of the existing Preset.  */
+    public var preset: String?
+    /** Set this parameter to true to ensure that an exact match is ranked above the others  */
+    public var prioritizeExactMatch: Bool? = true
+    /** Make Typesense prioritize documents where the query words appear in more number of fields.  */
+    public var prioritizeNumMatchingFields: Bool? = true
+    /** Make Typesense prioritize documents where the query words appear earlier in the text.  */
+    public var prioritizeTokenPosition: Bool? = false
+    /** The query text to search for in the collection. Use * as the search string to return all documents. This is typically useful when used in conjunction with filter_by. */
+    public var q: String?
+    /** A list of `string` fields that should be queried against. Multiple fields are separated with a comma. */
+    public var queryBy: String?
+    /** The relative weight to give each `query_by` field when ranking results. This can be used to boost fields in priority, when looking for matches. Multiple fields are separated with a comma. */
+    public var queryByWeights: String?
     /** Number of times to retry fetching remote embeddings.  */
     public var remoteEmbeddingNumTries: Int?
-    /** Choose the underlying faceting strategy used. Comma separated string of allows values: exhaustive, top_values or automatic (default).  */
-    public var facetStrategy: String?
+    /** Timeout (in milliseconds) for fetching remote embeddings.  */
+    public var remoteEmbeddingTimeoutMs: Int?
+    /** Typesense will attempt to return results early if the cutoff time has elapsed. This is not a strict guarantee and facet computation is not bound by this parameter.  */
+    public var searchCutoffMs: Int?
+    /** Field values under this length will be fully highlighted, instead of showing a snippet of relevant portion. Default: 30  */
+    public var snippetThreshold: Int?
+    /** A list of numerical fields and their corresponding sort orders that will be used for ordering your results. Up to 3 sort fields can be specified. The text similarity score is exposed as a special `_text_match` field that you can use in the list of sorting fields. If no `sort_by` parameter is specified, results are sorted by `_text_match:desc,default_sorting_field:desc` */
+    public var sortBy: String?
     /** Name of the stopwords set to apply for this search, the keywords present in the set will be removed from the search query.  */
     public var stopwords: String?
-    /** Comma separated string of nested facet fields whose parent object should be returned in facet response.  */
-    public var facetReturnParent: String?
+    /** Allow synonym resolution on typo-corrected words in the query. Default: 0  */
+    public var synonymNumTypos: Int?
+    /** Allow synonym resolution on word prefixes in the query. Default: false  */
+    public var synonymPrefix: Bool?
+    /** In a multi-field matching context, this parameter determines how the representative text match score of a record is calculated. Possible values are max_score (default) or max_weight. */
+    public var textMatchType: String?
+    /** If the number of results found for a specific query is less than this number, Typesense will attempt to look for tokens with more typos until enough results are found. Default: 100  */
+    public var typoTokensThreshold: Int?
+    /** Enable server side caching of search query results. By default, caching is disabled.  */
+    public var useCache: Bool?
+    /** Vector query expression for fetching documents \"closest\" to a given query/document vector.  */
+    public var vectorQuery: String?
     /** The base64 encoded audio file in 16 khz 16-bit WAV format.  */
     public var voiceQuery: String?
-    /** Enable conversational search.  */
-    public var conversation: Bool?
-    /** The Id of Conversation Model to be used.  */
-    public var conversationModelId: String?
-    /** The Id of a previous conversation to continue, this tells Typesense to include prior context when communicating with the LLM.  */
-    public var conversationId: String?
     /** The collection to search in.  */
     public var collection: String?
-    /** A separate search API key for each search within a multi_search request */
-    public var xTypesenseApiKey: String?
     /** When true, computes both text match and vector distance scores for all matches in hybrid search. Documents found only through keyword search will get a vector distance score, and documents found only through vector search will get a text match score.  */
     public var rerankHybridMatches: Bool? = false
+    /** A separate search API key for each search within a multi_search request */
+    public var xTypesenseApiKey: String?
 
-    public init(q: String? = nil, queryBy: String? = nil, queryByWeights: String? = nil, textMatchType: String? = nil, _prefix: String? = nil, _infix: String? = nil, maxExtraPrefix: Int? = nil, maxExtraSuffix: Int? = nil, filterBy: String? = nil, sortBy: String? = nil, facetBy: String? = nil, maxFacetValues: Int? = nil, facetQuery: String? = nil, numTypos: String? = nil, page: Int? = nil, perPage: Int? = nil, limit: Int? = nil, offset: Int? = nil, groupBy: String? = nil, groupLimit: Int? = nil, groupMissingValues: Bool? = nil, includeFields: String? = nil, excludeFields: String? = nil, highlightFullFields: String? = nil, highlightAffixNumTokens: Int? = nil, highlightStartTag: String? = nil, highlightEndTag: String? = nil, snippetThreshold: Int? = nil, dropTokensThreshold: Int? = nil, dropTokensMode: DropTokensMode? = nil, typoTokensThreshold: Int? = nil, enableTyposForAlphaNumericalTokens: Bool? = nil, filterCuratedHits: Bool? = nil, enableSynonyms: Bool? = nil, enableAnalytics: Bool? = true, synonymPrefix: Bool? = nil, synonymNumTypos: Int? = nil, pinnedHits: String? = nil, hiddenHits: String? = nil, overrideTags: String? = nil, highlightFields: String? = nil, preSegmentedQuery: Bool? = false, preset: String? = nil, enableOverrides: Bool? = false, prioritizeExactMatch: Bool? = true, prioritizeTokenPosition: Bool? = false, prioritizeNumMatchingFields: Bool? = true, enableTyposForNumericalTokens: Bool? = true, exhaustiveSearch: Bool? = nil, searchCutoffMs: Int? = nil, useCache: Bool? = nil, cacheTtl: Int? = nil, minLen1typo: Int? = nil, minLen2typo: Int? = nil, vectorQuery: String? = nil, remoteEmbeddingTimeoutMs: Int? = nil, remoteEmbeddingNumTries: Int? = nil, facetStrategy: String? = nil, stopwords: String? = nil, facetReturnParent: String? = nil, voiceQuery: String? = nil, conversation: Bool? = nil, conversationModelId: String? = nil, conversationId: String? = nil, collection: String? = nil, xTypesenseApiKey: String? = nil, rerankHybridMatches: Bool? = false) {
-        self.q = q
-        self.queryBy = queryBy
-        self.queryByWeights = queryByWeights
-        self.textMatchType = textMatchType
-        self._prefix = _prefix
-        self._infix = _infix
-        self.maxExtraPrefix = maxExtraPrefix
-        self.maxExtraSuffix = maxExtraSuffix
-        self.filterBy = filterBy
-        self.sortBy = sortBy
+    public init(cacheTtl: Int? = nil, conversation: Bool? = nil, conversationId: String? = nil, conversationModelId: String? = nil, dropTokensMode: DropTokensMode? = nil, dropTokensThreshold: Int? = nil, enableAnalytics: Bool? = true, enableOverrides: Bool? = false, enableSynonyms: Bool? = nil, enableTyposForAlphaNumericalTokens: Bool? = nil, enableTyposForNumericalTokens: Bool? = true, excludeFields: String? = nil, exhaustiveSearch: Bool? = nil, facetBy: String? = nil, facetQuery: String? = nil, facetReturnParent: String? = nil, facetStrategy: String? = nil, filterBy: String? = nil, filterCuratedHits: Bool? = nil, groupBy: String? = nil, groupLimit: Int? = nil, groupMissingValues: Bool? = nil, hiddenHits: String? = nil, highlightAffixNumTokens: Int? = nil, highlightEndTag: String? = nil, highlightFields: String? = nil, highlightFullFields: String? = nil, highlightStartTag: String? = nil, includeFields: String? = nil, _infix: String? = nil, limit: Int? = nil, maxExtraPrefix: Int? = nil, maxExtraSuffix: Int? = nil, maxFacetValues: Int? = nil, minLen1typo: Int? = nil, minLen2typo: Int? = nil, numTypos: String? = nil, offset: Int? = nil, overrideTags: String? = nil, page: Int? = nil, perPage: Int? = nil, pinnedHits: String? = nil, preSegmentedQuery: Bool? = false, _prefix: String? = nil, preset: String? = nil, prioritizeExactMatch: Bool? = true, prioritizeNumMatchingFields: Bool? = true, prioritizeTokenPosition: Bool? = false, q: String? = nil, queryBy: String? = nil, queryByWeights: String? = nil, remoteEmbeddingNumTries: Int? = nil, remoteEmbeddingTimeoutMs: Int? = nil, searchCutoffMs: Int? = nil, snippetThreshold: Int? = nil, sortBy: String? = nil, stopwords: String? = nil, synonymNumTypos: Int? = nil, synonymPrefix: Bool? = nil, textMatchType: String? = nil, typoTokensThreshold: Int? = nil, useCache: Bool? = nil, vectorQuery: String? = nil, voiceQuery: String? = nil, collection: String? = nil, rerankHybridMatches: Bool? = false, xTypesenseApiKey: String? = nil) {
+        self.cacheTtl = cacheTtl
+        self.conversation = conversation
+        self.conversationId = conversationId
+        self.conversationModelId = conversationModelId
+        self.dropTokensMode = dropTokensMode
+        self.dropTokensThreshold = dropTokensThreshold
+        self.enableAnalytics = enableAnalytics
+        self.enableOverrides = enableOverrides
+        self.enableSynonyms = enableSynonyms
+        self.enableTyposForAlphaNumericalTokens = enableTyposForAlphaNumericalTokens
+        self.enableTyposForNumericalTokens = enableTyposForNumericalTokens
+        self.excludeFields = excludeFields
+        self.exhaustiveSearch = exhaustiveSearch
         self.facetBy = facetBy
-        self.maxFacetValues = maxFacetValues
         self.facetQuery = facetQuery
-        self.numTypos = numTypos
-        self.page = page
-        self.perPage = perPage
-        self.limit = limit
-        self.offset = offset
+        self.facetReturnParent = facetReturnParent
+        self.facetStrategy = facetStrategy
+        self.filterBy = filterBy
+        self.filterCuratedHits = filterCuratedHits
         self.groupBy = groupBy
         self.groupLimit = groupLimit
         self.groupMissingValues = groupMissingValues
-        self.includeFields = includeFields
-        self.excludeFields = excludeFields
-        self.highlightFullFields = highlightFullFields
-        self.highlightAffixNumTokens = highlightAffixNumTokens
-        self.highlightStartTag = highlightStartTag
-        self.highlightEndTag = highlightEndTag
-        self.snippetThreshold = snippetThreshold
-        self.dropTokensThreshold = dropTokensThreshold
-        self.dropTokensMode = dropTokensMode
-        self.typoTokensThreshold = typoTokensThreshold
-        self.enableTyposForAlphaNumericalTokens = enableTyposForAlphaNumericalTokens
-        self.filterCuratedHits = filterCuratedHits
-        self.enableSynonyms = enableSynonyms
-        self.enableAnalytics = enableAnalytics
-        self.synonymPrefix = synonymPrefix
-        self.synonymNumTypos = synonymNumTypos
-        self.pinnedHits = pinnedHits
         self.hiddenHits = hiddenHits
-        self.overrideTags = overrideTags
+        self.highlightAffixNumTokens = highlightAffixNumTokens
+        self.highlightEndTag = highlightEndTag
         self.highlightFields = highlightFields
-        self.preSegmentedQuery = preSegmentedQuery
-        self.preset = preset
-        self.enableOverrides = enableOverrides
-        self.prioritizeExactMatch = prioritizeExactMatch
-        self.prioritizeTokenPosition = prioritizeTokenPosition
-        self.prioritizeNumMatchingFields = prioritizeNumMatchingFields
-        self.enableTyposForNumericalTokens = enableTyposForNumericalTokens
-        self.exhaustiveSearch = exhaustiveSearch
-        self.searchCutoffMs = searchCutoffMs
-        self.useCache = useCache
-        self.cacheTtl = cacheTtl
+        self.highlightFullFields = highlightFullFields
+        self.highlightStartTag = highlightStartTag
+        self.includeFields = includeFields
+        self._infix = _infix
+        self.limit = limit
+        self.maxExtraPrefix = maxExtraPrefix
+        self.maxExtraSuffix = maxExtraSuffix
+        self.maxFacetValues = maxFacetValues
         self.minLen1typo = minLen1typo
         self.minLen2typo = minLen2typo
-        self.vectorQuery = vectorQuery
-        self.remoteEmbeddingTimeoutMs = remoteEmbeddingTimeoutMs
+        self.numTypos = numTypos
+        self.offset = offset
+        self.overrideTags = overrideTags
+        self.page = page
+        self.perPage = perPage
+        self.pinnedHits = pinnedHits
+        self.preSegmentedQuery = preSegmentedQuery
+        self._prefix = _prefix
+        self.preset = preset
+        self.prioritizeExactMatch = prioritizeExactMatch
+        self.prioritizeNumMatchingFields = prioritizeNumMatchingFields
+        self.prioritizeTokenPosition = prioritizeTokenPosition
+        self.q = q
+        self.queryBy = queryBy
+        self.queryByWeights = queryByWeights
         self.remoteEmbeddingNumTries = remoteEmbeddingNumTries
-        self.facetStrategy = facetStrategy
+        self.remoteEmbeddingTimeoutMs = remoteEmbeddingTimeoutMs
+        self.searchCutoffMs = searchCutoffMs
+        self.snippetThreshold = snippetThreshold
+        self.sortBy = sortBy
         self.stopwords = stopwords
-        self.facetReturnParent = facetReturnParent
+        self.synonymNumTypos = synonymNumTypos
+        self.synonymPrefix = synonymPrefix
+        self.textMatchType = textMatchType
+        self.typoTokensThreshold = typoTokensThreshold
+        self.useCache = useCache
+        self.vectorQuery = vectorQuery
         self.voiceQuery = voiceQuery
-        self.conversation = conversation
-        self.conversationModelId = conversationModelId
-        self.conversationId = conversationId
         self.collection = collection
-        self.xTypesenseApiKey = xTypesenseApiKey
         self.rerankHybridMatches = rerankHybridMatches
+        self.xTypesenseApiKey = xTypesenseApiKey
     }
 
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case q
-        case queryBy = "query_by"
-        case queryByWeights = "query_by_weights"
-        case textMatchType = "text_match_type"
-        case _prefix = "prefix"
-        case _infix = "infix"
-        case maxExtraPrefix = "max_extra_prefix"
-        case maxExtraSuffix = "max_extra_suffix"
-        case filterBy = "filter_by"
-        case sortBy = "sort_by"
+        case cacheTtl = "cache_ttl"
+        case conversation
+        case conversationId = "conversation_id"
+        case conversationModelId = "conversation_model_id"
+        case dropTokensMode = "drop_tokens_mode"
+        case dropTokensThreshold = "drop_tokens_threshold"
+        case enableAnalytics = "enable_analytics"
+        case enableOverrides = "enable_overrides"
+        case enableSynonyms = "enable_synonyms"
+        case enableTyposForAlphaNumericalTokens = "enable_typos_for_alpha_numerical_tokens"
+        case enableTyposForNumericalTokens = "enable_typos_for_numerical_tokens"
+        case excludeFields = "exclude_fields"
+        case exhaustiveSearch = "exhaustive_search"
         case facetBy = "facet_by"
-        case maxFacetValues = "max_facet_values"
         case facetQuery = "facet_query"
-        case numTypos = "num_typos"
-        case page
-        case perPage = "per_page"
-        case limit
-        case offset
+        case facetReturnParent = "facet_return_parent"
+        case facetStrategy = "facet_strategy"
+        case filterBy = "filter_by"
+        case filterCuratedHits = "filter_curated_hits"
         case groupBy = "group_by"
         case groupLimit = "group_limit"
         case groupMissingValues = "group_missing_values"
-        case includeFields = "include_fields"
-        case excludeFields = "exclude_fields"
-        case highlightFullFields = "highlight_full_fields"
-        case highlightAffixNumTokens = "highlight_affix_num_tokens"
-        case highlightStartTag = "highlight_start_tag"
-        case highlightEndTag = "highlight_end_tag"
-        case snippetThreshold = "snippet_threshold"
-        case dropTokensThreshold = "drop_tokens_threshold"
-        case dropTokensMode = "drop_tokens_mode"
-        case typoTokensThreshold = "typo_tokens_threshold"
-        case enableTyposForAlphaNumericalTokens = "enable_typos_for_alpha_numerical_tokens"
-        case filterCuratedHits = "filter_curated_hits"
-        case enableSynonyms = "enable_synonyms"
-        case enableAnalytics = "enable_analytics"
-        case synonymPrefix = "synonym_prefix"
-        case synonymNumTypos = "synonym_num_typos"
-        case pinnedHits = "pinned_hits"
         case hiddenHits = "hidden_hits"
-        case overrideTags = "override_tags"
+        case highlightAffixNumTokens = "highlight_affix_num_tokens"
+        case highlightEndTag = "highlight_end_tag"
         case highlightFields = "highlight_fields"
-        case preSegmentedQuery = "pre_segmented_query"
-        case preset
-        case enableOverrides = "enable_overrides"
-        case prioritizeExactMatch = "prioritize_exact_match"
-        case prioritizeTokenPosition = "prioritize_token_position"
-        case prioritizeNumMatchingFields = "prioritize_num_matching_fields"
-        case enableTyposForNumericalTokens = "enable_typos_for_numerical_tokens"
-        case exhaustiveSearch = "exhaustive_search"
-        case searchCutoffMs = "search_cutoff_ms"
-        case useCache = "use_cache"
-        case cacheTtl = "cache_ttl"
+        case highlightFullFields = "highlight_full_fields"
+        case highlightStartTag = "highlight_start_tag"
+        case includeFields = "include_fields"
+        case _infix = "infix"
+        case limit
+        case maxExtraPrefix = "max_extra_prefix"
+        case maxExtraSuffix = "max_extra_suffix"
+        case maxFacetValues = "max_facet_values"
         case minLen1typo = "min_len_1typo"
         case minLen2typo = "min_len_2typo"
-        case vectorQuery = "vector_query"
-        case remoteEmbeddingTimeoutMs = "remote_embedding_timeout_ms"
+        case numTypos = "num_typos"
+        case offset
+        case overrideTags = "override_tags"
+        case page
+        case perPage = "per_page"
+        case pinnedHits = "pinned_hits"
+        case preSegmentedQuery = "pre_segmented_query"
+        case _prefix = "prefix"
+        case preset
+        case prioritizeExactMatch = "prioritize_exact_match"
+        case prioritizeNumMatchingFields = "prioritize_num_matching_fields"
+        case prioritizeTokenPosition = "prioritize_token_position"
+        case q
+        case queryBy = "query_by"
+        case queryByWeights = "query_by_weights"
         case remoteEmbeddingNumTries = "remote_embedding_num_tries"
-        case facetStrategy = "facet_strategy"
+        case remoteEmbeddingTimeoutMs = "remote_embedding_timeout_ms"
+        case searchCutoffMs = "search_cutoff_ms"
+        case snippetThreshold = "snippet_threshold"
+        case sortBy = "sort_by"
         case stopwords
-        case facetReturnParent = "facet_return_parent"
+        case synonymNumTypos = "synonym_num_typos"
+        case synonymPrefix = "synonym_prefix"
+        case textMatchType = "text_match_type"
+        case typoTokensThreshold = "typo_tokens_threshold"
+        case useCache = "use_cache"
+        case vectorQuery = "vector_query"
         case voiceQuery = "voice_query"
-        case conversation
-        case conversationModelId = "conversation_model_id"
-        case conversationId = "conversation_id"
         case collection
-        case xTypesenseApiKey = "x-typesense-api-key"
         case rerankHybridMatches = "rerank_hybrid_matches"
+        case xTypesenseApiKey = "x-typesense-api-key"
     }
 
     // Encodable protocol methods
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encodeIfPresent(q, forKey: .q)
-        try container.encodeIfPresent(queryBy, forKey: .queryBy)
-        try container.encodeIfPresent(queryByWeights, forKey: .queryByWeights)
-        try container.encodeIfPresent(textMatchType, forKey: .textMatchType)
-        try container.encodeIfPresent(_prefix, forKey: ._prefix)
-        try container.encodeIfPresent(_infix, forKey: ._infix)
-        try container.encodeIfPresent(maxExtraPrefix, forKey: .maxExtraPrefix)
-        try container.encodeIfPresent(maxExtraSuffix, forKey: .maxExtraSuffix)
-        try container.encodeIfPresent(filterBy, forKey: .filterBy)
-        try container.encodeIfPresent(sortBy, forKey: .sortBy)
+        try container.encodeIfPresent(cacheTtl, forKey: .cacheTtl)
+        try container.encodeIfPresent(conversation, forKey: .conversation)
+        try container.encodeIfPresent(conversationId, forKey: .conversationId)
+        try container.encodeIfPresent(conversationModelId, forKey: .conversationModelId)
+        try container.encodeIfPresent(dropTokensMode, forKey: .dropTokensMode)
+        try container.encodeIfPresent(dropTokensThreshold, forKey: .dropTokensThreshold)
+        try container.encodeIfPresent(enableAnalytics, forKey: .enableAnalytics)
+        try container.encodeIfPresent(enableOverrides, forKey: .enableOverrides)
+        try container.encodeIfPresent(enableSynonyms, forKey: .enableSynonyms)
+        try container.encodeIfPresent(enableTyposForAlphaNumericalTokens, forKey: .enableTyposForAlphaNumericalTokens)
+        try container.encodeIfPresent(enableTyposForNumericalTokens, forKey: .enableTyposForNumericalTokens)
+        try container.encodeIfPresent(excludeFields, forKey: .excludeFields)
+        try container.encodeIfPresent(exhaustiveSearch, forKey: .exhaustiveSearch)
         try container.encodeIfPresent(facetBy, forKey: .facetBy)
-        try container.encodeIfPresent(maxFacetValues, forKey: .maxFacetValues)
         try container.encodeIfPresent(facetQuery, forKey: .facetQuery)
-        try container.encodeIfPresent(numTypos, forKey: .numTypos)
-        try container.encodeIfPresent(page, forKey: .page)
-        try container.encodeIfPresent(perPage, forKey: .perPage)
-        try container.encodeIfPresent(limit, forKey: .limit)
-        try container.encodeIfPresent(offset, forKey: .offset)
+        try container.encodeIfPresent(facetReturnParent, forKey: .facetReturnParent)
+        try container.encodeIfPresent(facetStrategy, forKey: .facetStrategy)
+        try container.encodeIfPresent(filterBy, forKey: .filterBy)
+        try container.encodeIfPresent(filterCuratedHits, forKey: .filterCuratedHits)
         try container.encodeIfPresent(groupBy, forKey: .groupBy)
         try container.encodeIfPresent(groupLimit, forKey: .groupLimit)
         try container.encodeIfPresent(groupMissingValues, forKey: .groupMissingValues)
-        try container.encodeIfPresent(includeFields, forKey: .includeFields)
-        try container.encodeIfPresent(excludeFields, forKey: .excludeFields)
-        try container.encodeIfPresent(highlightFullFields, forKey: .highlightFullFields)
-        try container.encodeIfPresent(highlightAffixNumTokens, forKey: .highlightAffixNumTokens)
-        try container.encodeIfPresent(highlightStartTag, forKey: .highlightStartTag)
-        try container.encodeIfPresent(highlightEndTag, forKey: .highlightEndTag)
-        try container.encodeIfPresent(snippetThreshold, forKey: .snippetThreshold)
-        try container.encodeIfPresent(dropTokensThreshold, forKey: .dropTokensThreshold)
-        try container.encodeIfPresent(dropTokensMode, forKey: .dropTokensMode)
-        try container.encodeIfPresent(typoTokensThreshold, forKey: .typoTokensThreshold)
-        try container.encodeIfPresent(enableTyposForAlphaNumericalTokens, forKey: .enableTyposForAlphaNumericalTokens)
-        try container.encodeIfPresent(filterCuratedHits, forKey: .filterCuratedHits)
-        try container.encodeIfPresent(enableSynonyms, forKey: .enableSynonyms)
-        try container.encodeIfPresent(enableAnalytics, forKey: .enableAnalytics)
-        try container.encodeIfPresent(synonymPrefix, forKey: .synonymPrefix)
-        try container.encodeIfPresent(synonymNumTypos, forKey: .synonymNumTypos)
-        try container.encodeIfPresent(pinnedHits, forKey: .pinnedHits)
         try container.encodeIfPresent(hiddenHits, forKey: .hiddenHits)
-        try container.encodeIfPresent(overrideTags, forKey: .overrideTags)
+        try container.encodeIfPresent(highlightAffixNumTokens, forKey: .highlightAffixNumTokens)
+        try container.encodeIfPresent(highlightEndTag, forKey: .highlightEndTag)
         try container.encodeIfPresent(highlightFields, forKey: .highlightFields)
-        try container.encodeIfPresent(preSegmentedQuery, forKey: .preSegmentedQuery)
-        try container.encodeIfPresent(preset, forKey: .preset)
-        try container.encodeIfPresent(enableOverrides, forKey: .enableOverrides)
-        try container.encodeIfPresent(prioritizeExactMatch, forKey: .prioritizeExactMatch)
-        try container.encodeIfPresent(prioritizeTokenPosition, forKey: .prioritizeTokenPosition)
-        try container.encodeIfPresent(prioritizeNumMatchingFields, forKey: .prioritizeNumMatchingFields)
-        try container.encodeIfPresent(enableTyposForNumericalTokens, forKey: .enableTyposForNumericalTokens)
-        try container.encodeIfPresent(exhaustiveSearch, forKey: .exhaustiveSearch)
-        try container.encodeIfPresent(searchCutoffMs, forKey: .searchCutoffMs)
-        try container.encodeIfPresent(useCache, forKey: .useCache)
-        try container.encodeIfPresent(cacheTtl, forKey: .cacheTtl)
+        try container.encodeIfPresent(highlightFullFields, forKey: .highlightFullFields)
+        try container.encodeIfPresent(highlightStartTag, forKey: .highlightStartTag)
+        try container.encodeIfPresent(includeFields, forKey: .includeFields)
+        try container.encodeIfPresent(_infix, forKey: ._infix)
+        try container.encodeIfPresent(limit, forKey: .limit)
+        try container.encodeIfPresent(maxExtraPrefix, forKey: .maxExtraPrefix)
+        try container.encodeIfPresent(maxExtraSuffix, forKey: .maxExtraSuffix)
+        try container.encodeIfPresent(maxFacetValues, forKey: .maxFacetValues)
         try container.encodeIfPresent(minLen1typo, forKey: .minLen1typo)
         try container.encodeIfPresent(minLen2typo, forKey: .minLen2typo)
-        try container.encodeIfPresent(vectorQuery, forKey: .vectorQuery)
-        try container.encodeIfPresent(remoteEmbeddingTimeoutMs, forKey: .remoteEmbeddingTimeoutMs)
+        try container.encodeIfPresent(numTypos, forKey: .numTypos)
+        try container.encodeIfPresent(offset, forKey: .offset)
+        try container.encodeIfPresent(overrideTags, forKey: .overrideTags)
+        try container.encodeIfPresent(page, forKey: .page)
+        try container.encodeIfPresent(perPage, forKey: .perPage)
+        try container.encodeIfPresent(pinnedHits, forKey: .pinnedHits)
+        try container.encodeIfPresent(preSegmentedQuery, forKey: .preSegmentedQuery)
+        try container.encodeIfPresent(_prefix, forKey: ._prefix)
+        try container.encodeIfPresent(preset, forKey: .preset)
+        try container.encodeIfPresent(prioritizeExactMatch, forKey: .prioritizeExactMatch)
+        try container.encodeIfPresent(prioritizeNumMatchingFields, forKey: .prioritizeNumMatchingFields)
+        try container.encodeIfPresent(prioritizeTokenPosition, forKey: .prioritizeTokenPosition)
+        try container.encodeIfPresent(q, forKey: .q)
+        try container.encodeIfPresent(queryBy, forKey: .queryBy)
+        try container.encodeIfPresent(queryByWeights, forKey: .queryByWeights)
         try container.encodeIfPresent(remoteEmbeddingNumTries, forKey: .remoteEmbeddingNumTries)
-        try container.encodeIfPresent(facetStrategy, forKey: .facetStrategy)
+        try container.encodeIfPresent(remoteEmbeddingTimeoutMs, forKey: .remoteEmbeddingTimeoutMs)
+        try container.encodeIfPresent(searchCutoffMs, forKey: .searchCutoffMs)
+        try container.encodeIfPresent(snippetThreshold, forKey: .snippetThreshold)
+        try container.encodeIfPresent(sortBy, forKey: .sortBy)
         try container.encodeIfPresent(stopwords, forKey: .stopwords)
-        try container.encodeIfPresent(facetReturnParent, forKey: .facetReturnParent)
+        try container.encodeIfPresent(synonymNumTypos, forKey: .synonymNumTypos)
+        try container.encodeIfPresent(synonymPrefix, forKey: .synonymPrefix)
+        try container.encodeIfPresent(textMatchType, forKey: .textMatchType)
+        try container.encodeIfPresent(typoTokensThreshold, forKey: .typoTokensThreshold)
+        try container.encodeIfPresent(useCache, forKey: .useCache)
+        try container.encodeIfPresent(vectorQuery, forKey: .vectorQuery)
         try container.encodeIfPresent(voiceQuery, forKey: .voiceQuery)
-        try container.encodeIfPresent(conversation, forKey: .conversation)
-        try container.encodeIfPresent(conversationModelId, forKey: .conversationModelId)
-        try container.encodeIfPresent(conversationId, forKey: .conversationId)
         try container.encodeIfPresent(collection, forKey: .collection)
-        try container.encodeIfPresent(xTypesenseApiKey, forKey: .xTypesenseApiKey)
         try container.encodeIfPresent(rerankHybridMatches, forKey: .rerankHybridMatches)
+        try container.encodeIfPresent(xTypesenseApiKey, forKey: .xTypesenseApiKey)
     }
 }
 
