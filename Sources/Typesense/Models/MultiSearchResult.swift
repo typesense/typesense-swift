@@ -10,12 +10,12 @@ import Foundation
 import AnyCodable
 #endif
 
-public struct MultiSearchResult: Codable {
+public struct MultiSearchResult<T: Codable>: Codable {
 
     public var conversation: SearchResultConversation?
-    public var results: [MultiSearchResultItem]
+    public var results: [MultiSearchResultItem<T>]?
 
-    public init(conversation: SearchResultConversation? = nil, results: [MultiSearchResultItem]) {
+    public init(conversation: SearchResultConversation? = nil, results: [MultiSearchResultItem<T>]?) {
         self.conversation = conversation
         self.results = results
     }

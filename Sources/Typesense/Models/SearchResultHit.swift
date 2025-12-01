@@ -10,10 +10,10 @@ import Foundation
 import AnyCodable
 #endif
 
-public struct SearchResultHit: Codable {
+public struct SearchResultHit<T: Codable>: Codable {
 
     /** Can be any key-value pair */
-    public var document: [String: AnyCodable]?
+    public var document: T?
     /** Can be any key-value pair */
     public var geoDistanceMeters: [String: Int]?
     /** Highlighted version of the matching document */
@@ -28,7 +28,7 @@ public struct SearchResultHit: Codable {
     /** Distance between the query vector and matching document's vector value */
     public var vectorDistance: Float?
 
-    public init(document: [String: AnyCodable]? = nil, geoDistanceMeters: [String: Int]? = nil, highlight: [String: AnyCodable]? = nil, highlights: [SearchHighlight]? = nil, hybridSearchInfo: SearchResultHitHybridSearchInfo? = nil, searchIndex: Int? = nil, textMatch: Int64? = nil, textMatchInfo: SearchResultHitTextMatchInfo? = nil, vectorDistance: Float? = nil) {
+    public init(document: T? = nil, geoDistanceMeters: [String: Int]? = nil, highlight: [String: AnyCodable]? = nil, highlights: [SearchHighlight]? = nil, hybridSearchInfo: SearchResultHitHybridSearchInfo? = nil, searchIndex: Int? = nil, textMatch: Int64? = nil, textMatchInfo: SearchResultHitTextMatchInfo? = nil, vectorDistance: Float? = nil) {
         self.document = document
         self.geoDistanceMeters = geoDistanceMeters
         self.highlight = highlight

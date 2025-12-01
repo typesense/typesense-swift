@@ -33,6 +33,7 @@ struct CodeGen: ParsableCommand {
             "-v", volumeMount,
             "openapitools/openapi-generator-cli",
             "generate",
+            "-t", "/local/openapi-generator-template",
             "-i", "/local/\(outputPreprocessedFile)",
             "-g", "swift5",
             "-o", "/local/output",

@@ -59,7 +59,7 @@ class VendorAttributes {
                     existingProp["x-swift-type"] = swiftType
                     properties[field] = existingProp
                 } else {
-                    // Create new if missing (matches Rust 'None' branch)
+                    // Create new if missing
                     let newProp: [String: Any] = ["x-swift-type": swiftType]
                     properties[field] = newProp
                 }

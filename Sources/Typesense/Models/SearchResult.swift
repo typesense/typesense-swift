@@ -10,16 +10,16 @@ import Foundation
 import AnyCodable
 #endif
 
-public struct SearchResult<T: Decodable>: Codable {
+public struct SearchResult<T: Codable>: Codable {
 
     public var conversation: SearchResultConversation?
     public var facetCounts: [FacetCounts]?
     /** The number of documents found */
     public var found: Int?
     public var foundDocs: Int?
-    public var groupedHits: [SearchGroupedHit]?
+    public var groupedHits: [SearchGroupedHit<T>]?
     /** The documents that matched the search query */
-    public var hits: [SearchResultHit]?
+    public var hits: [SearchResultHit<T>]?
     /** Custom JSON object that can be returned in the search response */
     public var metadata: [String: AnyCodable]?
     /** The total number of documents in the collection */
@@ -34,7 +34,7 @@ public struct SearchResult<T: Decodable>: Codable {
     /** Returned only for union query response. */
     public var unionRequestParams: [SearchRequestParams]?
 
-    public init(conversation: SearchResultConversation? = nil, facetCounts: [FacetCounts]? = nil, found: Int? = nil, foundDocs: Int? = nil, groupedHits: [SearchGroupedHit]? = nil, hits: [SearchResultHit]? = nil, metadata: [String: AnyCodable]? = nil, outOf: Int? = nil, page: Int? = nil, requestParams: SearchRequestParams? = nil, searchCutoff: Bool? = nil, searchTimeMs: Int? = nil, unionRequestParams: [SearchRequestParams]? = nil) {
+    public init(conversation: SearchResultConversation? = nil, facetCounts: [FacetCounts]? = nil, found: Int? = nil, foundDocs: Int? = nil, groupedHits: [SearchGroupedHit<T>]? = nil, hits: [SearchResultHit<T>]? = nil, metadata: [String: AnyCodable]? = nil, outOf: Int? = nil, page: Int? = nil, requestParams: SearchRequestParams? = nil, searchCutoff: Bool? = nil, searchTimeMs: Int? = nil, unionRequestParams: [SearchRequestParams]? = nil) {
         self.conversation = conversation
         self.facetCounts = facetCounts
         self.found = found
