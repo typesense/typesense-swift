@@ -53,4 +53,3 @@ public struct AnalyticsRuleCreateParams: Codable {
         try container.encodeIfPresent(weight, forKey: .weight)
     }
 }
-

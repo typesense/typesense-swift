@@ -29,4 +29,3 @@ public struct AnalyticsEventCreateResponse: Codable {
         try container.encode(ok, forKey: .ok)
     }
 }
-

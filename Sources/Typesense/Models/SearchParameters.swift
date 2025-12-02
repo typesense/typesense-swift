@@ -379,4 +379,3 @@ public struct SearchParameters: Codable {
         try container.encodeIfPresent(voiceQuery, forKey: .voiceQuery)
     }
 }
-

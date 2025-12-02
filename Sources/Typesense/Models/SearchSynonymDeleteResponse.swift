@@ -30,4 +30,3 @@ public struct SearchSynonymDeleteResponse: Codable {
         try container.encode(id, forKey: .id)
     }
 }
-

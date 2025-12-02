@@ -29,4 +29,3 @@ public struct PresetsRetrieveSchema: Codable {
         try container.encode(presets, forKey: .presets)
     }
 }
-

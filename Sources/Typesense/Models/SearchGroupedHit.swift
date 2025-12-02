@@ -17,7 +17,7 @@ public struct SearchGroupedHit<T: Codable>: Codable {
     /** The documents that matched the search query */
     public var hits: [SearchResultHit<T>]?
 
-    public init(found: Int? = nil, groupKey: [AnyCodable], hits: [SearchResultHit<T>]?) {
+    public init(groupKey: [AnyCodable], hits: [SearchResultHit<T>]?, found: Int? = nil) {
         self.found = found
         self.groupKey = groupKey
         self.hits = hits
@@ -38,4 +38,3 @@ public struct SearchGroupedHit<T: Codable>: Codable {
         try container.encode(hits, forKey: .hits)
     }
 }
-

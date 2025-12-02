@@ -40,7 +40,7 @@ public struct Field: Codable {
     /** The distance metric to be used for vector search. Default: `cosine`. You can also use `ip` for inner product.  */
     public var vecDist: String?
 
-    public init(drop: Bool? = nil, embed: FieldEmbed? = nil, facet: Bool? = nil, index: Bool? = true, _infix: Bool? = false, locale: String? = nil, name: String, numDim: Int? = nil, _optional: Bool? = nil, rangeIndex: Bool? = nil, reference: String? = nil, sort: Bool? = nil, stem: Bool? = nil, stemDictionary: String? = nil, store: Bool? = nil, symbolsToIndex: [String]? = nil, tokenSeparators: [String]? = nil, type: String, vecDist: String? = nil) {
+    public init(name: String, type: String, drop: Bool? = nil, embed: FieldEmbed? = nil, facet: Bool? = nil, index: Bool? = true, _infix: Bool? = false, locale: String? = nil, numDim: Int? = nil, _optional: Bool? = nil, rangeIndex: Bool? = nil, reference: String? = nil, sort: Bool? = nil, stem: Bool? = nil, stemDictionary: String? = nil, store: Bool? = nil, symbolsToIndex: [String]? = nil, tokenSeparators: [String]? = nil, vecDist: String? = nil) {
         self.drop = drop
         self.embed = embed
         self.facet = facet
@@ -109,4 +109,3 @@ public struct Field: Codable {
         try container.encodeIfPresent(vecDist, forKey: .vecDist)
     }
 }
-

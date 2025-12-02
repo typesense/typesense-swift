@@ -40,4 +40,3 @@ public struct GetCollectionsParameters: Codable {
         try container.encodeIfPresent(offset, forKey: .offset)
     }
 }
-

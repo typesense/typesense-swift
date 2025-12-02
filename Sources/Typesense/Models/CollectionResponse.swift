@@ -34,7 +34,7 @@ public struct CollectionResponse: Codable {
     /** Number of documents in the collection */
     public var numDocuments: Int64
 
-    public init(defaultSortingField: String? = "", enableNestedFields: Bool? = false, fields: [Field], metadata: AnyCodable? = nil, name: String, symbolsToIndex: [String]? = nil, synonymSets: [String]? = nil, tokenSeparators: [String]? = nil, voiceQueryModel: VoiceQueryModelCollectionConfig? = nil, createdAt: Int64, numDocuments: Int64) {
+    public init(fields: [Field], name: String, createdAt: Int64, numDocuments: Int64, defaultSortingField: String? = "", enableNestedFields: Bool? = false, metadata: AnyCodable? = nil, symbolsToIndex: [String]? = nil, synonymSets: [String]? = nil, tokenSeparators: [String]? = nil, voiceQueryModel: VoiceQueryModelCollectionConfig? = nil) {
         self.defaultSortingField = defaultSortingField
         self.enableNestedFields = enableNestedFields
         self.fields = fields
@@ -79,4 +79,3 @@ public struct CollectionResponse: Codable {
         try container.encode(numDocuments, forKey: .numDocuments)
     }
 }
-

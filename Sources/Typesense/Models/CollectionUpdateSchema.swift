@@ -40,4 +40,3 @@ public struct CollectionUpdateSchema: Codable {
         try container.encodeIfPresent(synonymSets, forKey: .synonymSets)
     }
 }
-

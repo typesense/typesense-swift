@@ -12,19 +12,19 @@ final class MultiSearchTests: XCTestCase {
 
 
     func testMultiSearch() async {
-        let productSchema = CollectionSchema(name: "products", fields: [
+        let productSchema = CollectionSchema(fields: [
             Field(name: "name", type: "string"),
             Field(name: "price", type: "int32"),
             Field(name: "brand", type: "string"),
             Field(name: "desc", type: "string"),
-        ])
+        ], name: "products")
 
-        let brandSchema = CollectionSchema(name: "brands", fields: [
+        let brandSchema = CollectionSchema(fields: [
             Field(name: "name", type: "string"),
-        ])
+        ], name: "brands")
 
         let searchRequests = [
-            MultiSearchCollectionParameters(q: "shoe", filterBy: "price:=[50..120]", collection: "products"),
+            MultiSearchCollectionParameters(filterBy: "price:=[50..120]", q: "shoe", collection: "products"),
             MultiSearchCollectionParameters(q: "Nike", collection: "brands"),
         ]
 
@@ -35,14 +35,14 @@ final class MultiSearchTests: XCTestCase {
 
         do {
             do {
-                let _ = try await client.collections.create(schema: productSchema)
+                let _ = try await client.collections().create(schema: productSchema)
             } catch (let error) {
                 print(error.localizedDescription)
                 XCTAssertTrue(false)
             }
 
             do {
-                let _ = try await client.collections.create(schema: brandSchema)
+                let _ = try await client.collections().create(schema: brandSchema)
             } catch (let error) {
                 print(error.localizedDescription)
                 XCTAssertTrue(false)
@@ -79,19 +79,19 @@ final class MultiSearchTests: XCTestCase {
     }
 
     func testMultiSearchReturnRawData() async {
-        let productSchema = CollectionSchema(name: "products", fields: [
+        let productSchema = CollectionSchema(fields: [
             Field(name: "name", type: "string"),
             Field(name: "price", type: "int32"),
             Field(name: "brand", type: "string"),
             Field(name: "desc", type: "string"),
-        ])
+        ], name: "products")
 
-        let brandSchema = CollectionSchema(name: "brands", fields: [
+        let brandSchema = CollectionSchema(fields: [
             Field(name: "name", type: "string"),
-        ])
+        ], name: "brands")
 
         let searchRequests = [
-            MultiSearchCollectionParameters(q: "shoe", filterBy: "price:=[50..120]", collection: "products"),
+            MultiSearchCollectionParameters(filterBy: "price:=[50..120]", q: "shoe", collection: "products"),
             MultiSearchCollectionParameters(q: "Nike", collection: "brands"),
         ]
 
@@ -102,14 +102,14 @@ final class MultiSearchTests: XCTestCase {
 
         do {
             do {
-                let _ = try await client.collections.create(schema: productSchema)
+                let _ = try await client.collections().create(schema: productSchema)
             } catch (let error) {
                 print(error.localizedDescription)
                 XCTAssertTrue(false)
             }
 
             do {
-                let _ = try await client.collections.create(schema: brandSchema)
+                let _ = try await client.collections().create(schema: brandSchema)
             } catch (let error) {
                 print(error.localizedDescription)
                 XCTAssertTrue(false)
@@ -143,21 +143,21 @@ final class MultiSearchTests: XCTestCase {
     }
 
     func testMultiSearchWithPreset() async {
-        let productSchema = CollectionSchema(name: "products", fields: [
+        let productSchema = CollectionSchema(fields: [
             Field(name: "name", type: "string"),
             Field(name: "price", type: "int32"),
             Field(name: "brand", type: "string"),
             Field(name: "desc", type: "string"),
-        ])
+        ], name: "products")
 
-        let brandSchema = CollectionSchema(name: "brands", fields: [
+        let brandSchema = CollectionSchema(fields: [
             Field(name: "name", type: "string"),
-        ])
+        ], name: "brands")
 
         let preset = PresetUpsertSchema(
             value: .typeMultiSearchSearchesParameter(MultiSearchSearchesParameter(
                 searches:[
-                    MultiSearchCollectionParameters(q: "shoe", filterBy: "price:=[50..120]", collection: "products"),
+                    MultiSearchCollectionParameters(filterBy: "price:=[50..120]", q: "shoe", collection: "products"),
                     MultiSearchCollectionParameters(q: "Nike", collection: "brands"),
                     ]
             ))
@@ -167,19 +167,19 @@ final class MultiSearchTests: XCTestCase {
         let brand1 = Brand(name: "Nike")
         let product1 = Product(name: "Jordan", price: 70, brand: "Nike", desc: "High quality shoe")
 
-        let commonParams = MultiSearchParameters(queryBy: "name", preset: "test-multi-search")
+        let commonParams = MultiSearchParameters(preset: "test-multi-search", queryBy: "name")
 
         do {
             let _ = try await client.presets().upsert(presetName: "test-multi-search", params: preset)
             do {
-                let _ = try await client.collections.create(schema: productSchema)
+                let _ = try await client.collections().create(schema: productSchema)
             } catch (let error) {
                 print(error.localizedDescription)
                 XCTAssertTrue(false)
             }
 
             do {
-                let _ = try await client.collections.create(schema: brandSchema)
+                let _ = try await client.collections().create(schema: brandSchema)
             } catch (let error) {
                 print(error.localizedDescription)
                 XCTAssertTrue(false)

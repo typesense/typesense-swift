@@ -120,4 +120,3 @@ public struct NLSearchModelCreateSchema: Codable {
         try container.encodeIfPresent(id, forKey: .id)
     }
 }
-

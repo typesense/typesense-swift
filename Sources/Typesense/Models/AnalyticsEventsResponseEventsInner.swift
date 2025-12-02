@@ -57,4 +57,3 @@ public struct AnalyticsEventsResponseEventsInner: Codable {
         try container.encodeIfPresent(userId, forKey: .userId)
     }
 }
-

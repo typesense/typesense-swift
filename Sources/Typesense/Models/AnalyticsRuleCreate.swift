@@ -25,7 +25,7 @@ public struct AnalyticsRuleCreate: Codable {
     public var ruleTag: String?
     public var type: ModelType
 
-    public init(collection: String, eventType: String, name: String, params: AnalyticsRuleCreateParams? = nil, ruleTag: String? = nil, type: ModelType) {
+    public init(collection: String, eventType: String, name: String, type: ModelType, params: AnalyticsRuleCreateParams? = nil, ruleTag: String? = nil) {
         self.collection = collection
         self.eventType = eventType
         self.name = name
@@ -55,4 +55,3 @@ public struct AnalyticsRuleCreate: Codable {
         try container.encode(type, forKey: .type)
     }
 }
-

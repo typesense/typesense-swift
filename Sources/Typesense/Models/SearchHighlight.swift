@@ -58,4 +58,3 @@ public struct SearchHighlight: Codable {
         try container.encodeIfPresent(values, forKey: .values)
     }
 }
-

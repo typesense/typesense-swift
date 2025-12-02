@@ -30,4 +30,3 @@ public struct CurationSetDeleteSchema: Codable {
         try container.encode(name, forKey: .name)
     }
 }
-

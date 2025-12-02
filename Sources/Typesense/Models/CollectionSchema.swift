@@ -30,7 +30,7 @@ public struct CollectionSchema: Codable {
     public var tokenSeparators: [String]?
     public var voiceQueryModel: VoiceQueryModelCollectionConfig?
 
-    public init(defaultSortingField: String? = "", enableNestedFields: Bool? = false, fields: [Field], metadata: AnyCodable? = nil, name: String, symbolsToIndex: [String]? = nil, synonymSets: [String]? = nil, tokenSeparators: [String]? = nil, voiceQueryModel: VoiceQueryModelCollectionConfig? = nil) {
+    public init(fields: [Field], name: String, defaultSortingField: String? = "", enableNestedFields: Bool? = false, metadata: AnyCodable? = nil, symbolsToIndex: [String]? = nil, synonymSets: [String]? = nil, tokenSeparators: [String]? = nil, voiceQueryModel: VoiceQueryModelCollectionConfig? = nil) {
         self.defaultSortingField = defaultSortingField
         self.enableNestedFields = enableNestedFields
         self.fields = fields
@@ -69,4 +69,3 @@ public struct CollectionSchema: Codable {
         try container.encodeIfPresent(voiceQueryModel, forKey: .voiceQueryModel)
     }
 }
-

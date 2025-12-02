@@ -29,4 +29,3 @@ public struct CreateAnalyticsRule200ResponseOneOfInnerAnyOf: Codable {
         try container.encodeIfPresent(error, forKey: .error)
     }
 }
-

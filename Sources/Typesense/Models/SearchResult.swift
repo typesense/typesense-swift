@@ -85,4 +85,3 @@ public struct SearchResult<T: Codable>: Codable {
         try container.encodeIfPresent(unionRequestParams, forKey: .unionRequestParams)
     }
 }
-

@@ -23,7 +23,7 @@ public struct SynonymItemSchema: Codable {
     /** Array of words that should be considered as synonyms */
     public var synonyms: [String]
 
-    public init(id: String, locale: String? = nil, root: String? = nil, symbolsToIndex: [String]? = nil, synonyms: [String]) {
+    public init(id: String, synonyms: [String], locale: String? = nil, root: String? = nil, symbolsToIndex: [String]? = nil) {
         self.id = id
         self.locale = locale
         self.root = root
@@ -50,4 +50,3 @@ public struct SynonymItemSchema: Codable {
         try container.encode(synonyms, forKey: .synonyms)
     }
 }
-

@@ -31,4 +31,3 @@ public struct SearchResultHitHybridSearchInfo: Codable {
         try container.encodeIfPresent(rankFusionScore, forKey: .rankFusionScore)
     }
 }
-

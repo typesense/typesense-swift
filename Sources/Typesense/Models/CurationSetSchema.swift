@@ -18,7 +18,7 @@ public struct CurationSetSchema: Codable {
     public var items: [CurationItemCreateSchema]
     public var name: String
 
-    public init(description: String? = nil, items: [CurationItemCreateSchema], name: String) {
+    public init(items: [CurationItemCreateSchema], name: String, description: String? = nil) {
         self.description = description
         self.items = items
         self.name = name
@@ -39,4 +39,3 @@ public struct CurationSetSchema: Codable {
         try container.encode(name, forKey: .name)
     }
 }
-

@@ -29,4 +29,3 @@ public struct CollectionAliasesResponse: Codable {
         try container.encode(aliases, forKey: .aliases)
     }
 }
-

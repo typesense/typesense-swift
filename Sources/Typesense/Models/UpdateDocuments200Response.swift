@@ -30,4 +30,3 @@ public struct UpdateDocuments200Response: Codable {
         try container.encode(numUpdated, forKey: .numUpdated)
     }
 }
-

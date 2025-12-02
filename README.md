@@ -52,7 +52,7 @@ You can create a collection by first defining a collection schema:
 ```swift
 let myCoolSchema = CollectionSchema(name: "schools", fields: [Field(name: "school_name", type: "string"), Field(name: "num_students", type: "int32"), Field(name: "country", type: "string", facet: true)], defaultSortingField: "num_students")
 
-let (data, response) = try await client.collections.create(schema: myCoolSchema)
+let (data, response) = try await client.collections().create(schema: myCoolSchema)
 ```
 
 Define the structure of your document as per your collection, and index it by inserting/upserting it to the collection:

@@ -25,7 +25,7 @@ public struct AnalyticsRules {
 
     public func create(_ params: AnalyticsRuleCreate) async throws -> (AnalyticsRule?, URLResponse?) {
         let ruleData = try encoder.encode(params)
-        let (data, response) = try await self.apiCall.put(endPoint: endpointPath(), body: ruleData)
+        let (data, response) = try await self.apiCall.post(endPoint: endpointPath(), body: ruleData)
         if let result = data {
             let ruleResult = try decoder.decode(AnalyticsRule.self, from: result)
             return (ruleResult, response)
@@ -36,7 +36,7 @@ public struct AnalyticsRules {
 
     public func createMany(_ params: [AnalyticsRuleCreate]) async throws -> ([AnalyticsRule]?, URLResponse?) {
         let ruleData = try encoder.encode(params)
-        let (data, response) = try await self.apiCall.put(endPoint: endpointPath(), body: ruleData)
+        let (data, response) = try await self.apiCall.post(endPoint: endpointPath(), body: ruleData)
         if let result = data {
             let ruleResult = try decoder.decode([AnalyticsRule].self, from: result)
             return (ruleResult, response)

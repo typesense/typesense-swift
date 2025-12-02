@@ -29,4 +29,3 @@ public struct Debug200Response: Codable {
         try container.encodeIfPresent(version, forKey: .version)
     }
 }
-

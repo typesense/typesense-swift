@@ -77,4 +77,3 @@ public struct APIStatsResponse: Codable {
         try container.encodeIfPresent(writeRequestsPerSecond, forKey: .writeRequestsPerSecond)
     }
 }
-

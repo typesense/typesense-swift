@@ -46,4 +46,3 @@ public struct AnalyticsEventData: Codable {
         try container.encodeIfPresent(userId, forKey: .userId)
     }
 }
-

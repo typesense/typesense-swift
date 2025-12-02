@@ -29,4 +29,3 @@ public struct StopwordsSetRetrieveSchema: Codable {
         try container.encode(stopwords, forKey: .stopwords)
     }
 }
-

@@ -29,4 +29,3 @@ public struct SearchRequestParamsVoiceQuery: Codable {
         try container.encodeIfPresent(transcribedQuery, forKey: .transcribedQuery)
     }
 }
-

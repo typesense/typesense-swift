@@ -29,4 +29,3 @@ public struct DeleteDocuments200Response: Codable {
         try container.encode(numDeleted, forKey: .numDeleted)
     }
 }
-

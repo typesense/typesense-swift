@@ -29,4 +29,3 @@ public struct PresetDeleteSchema: Codable {
         try container.encode(name, forKey: .name)
     }
 }
-

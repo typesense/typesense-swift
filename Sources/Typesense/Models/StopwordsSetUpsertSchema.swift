@@ -15,7 +15,7 @@ public struct StopwordsSetUpsertSchema: Codable {
     public var locale: String?
     public var stopwords: [String]
 
-    public init(locale: String? = nil, stopwords: [String]) {
+    public init(stopwords: [String], locale: String? = nil) {
         self.locale = locale
         self.stopwords = stopwords
     }
@@ -33,4 +33,3 @@ public struct StopwordsSetUpsertSchema: Codable {
         try container.encode(stopwords, forKey: .stopwords)
     }
 }
-

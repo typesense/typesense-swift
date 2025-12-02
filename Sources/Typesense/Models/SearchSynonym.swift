@@ -22,7 +22,7 @@ public struct SearchSynonym: Codable {
     public var synonyms: [String]
     public var id: String
 
-    public init(locale: String? = nil, root: String? = nil, symbolsToIndex: [String]? = nil, synonyms: [String], id: String) {
+    public init(synonyms: [String], id: String, locale: String? = nil, root: String? = nil, symbolsToIndex: [String]? = nil) {
         self.locale = locale
         self.root = root
         self.symbolsToIndex = symbolsToIndex
@@ -49,4 +49,3 @@ public struct SearchSynonym: Codable {
         try container.encode(id, forKey: .id)
     }
 }
-

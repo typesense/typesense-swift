@@ -23,7 +23,7 @@ public struct FieldEmbedModelConfig: Codable {
     public var refreshToken: String?
     public var url: String?
 
-    public init(accessToken: String? = nil, apiKey: String? = nil, clientId: String? = nil, clientSecret: String? = nil, indexingPrefix: String? = nil, modelName: String, projectId: String? = nil, queryPrefix: String? = nil, refreshToken: String? = nil, url: String? = nil) {
+    public init(modelName: String, accessToken: String? = nil, apiKey: String? = nil, clientId: String? = nil, clientSecret: String? = nil, indexingPrefix: String? = nil, projectId: String? = nil, queryPrefix: String? = nil, refreshToken: String? = nil, url: String? = nil) {
         self.accessToken = accessToken
         self.apiKey = apiKey
         self.clientId = clientId
@@ -65,4 +65,3 @@ public struct FieldEmbedModelConfig: Codable {
         try container.encodeIfPresent(url, forKey: .url)
     }
 }
-

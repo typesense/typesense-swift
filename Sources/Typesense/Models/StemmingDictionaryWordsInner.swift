@@ -35,4 +35,3 @@ public struct StemmingDictionaryWordsInner: Codable {
         try container.encode(word, forKey: .word)
     }
 }
-

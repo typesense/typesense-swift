@@ -49,4 +49,3 @@ public struct CurationRule: Codable {
         try container.encodeIfPresent(tags, forKey: .tags)
     }
 }
-

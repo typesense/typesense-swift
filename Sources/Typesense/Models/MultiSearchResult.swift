@@ -13,9 +13,9 @@ import AnyCodable
 public struct MultiSearchResult<T: Codable>: Codable {
 
     public var conversation: SearchResultConversation?
-    public var results: [MultiSearchResultItem<T>]?
+    public var results: [MultiSearchResultItem<T>]
 
-    public init(conversation: SearchResultConversation? = nil, results: [MultiSearchResultItem<T>]?) {
+    public init(results: [MultiSearchResultItem<T>], conversation: SearchResultConversation? = nil) {
         self.conversation = conversation
         self.results = results
     }
@@ -33,4 +33,3 @@ public struct MultiSearchResult<T: Codable>: Codable {
         try container.encode(results, forKey: .results)
     }
 }
-

@@ -95,4 +95,3 @@ public struct MultiSearchResultItem<T: Codable>: Codable {
         try container.encodeIfPresent(error, forKey: .error)
     }
 }
-

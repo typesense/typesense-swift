@@ -67,4 +67,3 @@ public struct SearchResultHit<T: Codable>: Codable {
         try container.encodeIfPresent(vectorDistance, forKey: .vectorDistance)
     }
 }
-

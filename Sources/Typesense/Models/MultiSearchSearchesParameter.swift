@@ -34,4 +34,3 @@ public struct MultiSearchSearchesParameter: Codable {
         try container.encodeIfPresent(union, forKey: .union)
     }
 }
-

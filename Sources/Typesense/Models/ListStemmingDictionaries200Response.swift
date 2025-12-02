@@ -29,4 +29,3 @@ public struct ListStemmingDictionaries200Response: Codable {
         try container.encodeIfPresent(dictionaries, forKey: .dictionaries)
     }
 }
-

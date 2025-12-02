@@ -31,7 +31,7 @@ public struct ConversationModelSchema: Codable {
     /** URL of vLLM service */
     public var vllmUrl: String?
 
-    public init(accountId: String? = nil, apiKey: String? = nil, historyCollection: String, id: String, maxBytes: Int, modelName: String, systemPrompt: String? = nil, ttl: Int? = nil, vllmUrl: String? = nil) {
+    public init(historyCollection: String, id: String, maxBytes: Int, modelName: String, accountId: String? = nil, apiKey: String? = nil, systemPrompt: String? = nil, ttl: Int? = nil, vllmUrl: String? = nil) {
         self.accountId = accountId
         self.apiKey = apiKey
         self.historyCollection = historyCollection
@@ -70,4 +70,3 @@ public struct ConversationModelSchema: Codable {
         try container.encodeIfPresent(vllmUrl, forKey: .vllmUrl)
     }
 }
-

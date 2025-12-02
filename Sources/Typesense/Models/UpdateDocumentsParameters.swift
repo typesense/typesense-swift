@@ -29,4 +29,3 @@ public struct UpdateDocumentsParameters: Codable {
         try container.encodeIfPresent(filterBy, forKey: .filterBy)
     }
 }
-

@@ -30,4 +30,3 @@ public struct CollectionAliasSchema: Codable {
         try container.encode(collectionName, forKey: .collectionName)
     }
 }
-

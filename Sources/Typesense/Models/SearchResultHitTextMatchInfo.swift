@@ -53,4 +53,3 @@ public struct SearchResultHitTextMatchInfo: Codable {
         try container.encodeIfPresent(typoPrefixScore, forKey: .typoPrefixScore)
     }
 }
-

@@ -29,4 +29,3 @@ public struct SearchSynonymsResponse: Codable {
         try container.encode(synonyms, forKey: .synonyms)
     }
 }
-

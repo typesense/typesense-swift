@@ -33,7 +33,7 @@ func addVendorAttributes(_ doc: inout [String: Any]) throws {
 
     try attrs.schemaFieldTypeOverrides(
         schema: "MultiSearchResult",
-        overrides: [("results", "[MultiSearchResultItem<T>]?")]
+        overrides: [("results", "[MultiSearchResultItem<T>]")]
     )
 
     // Save changes back to the inout parameter

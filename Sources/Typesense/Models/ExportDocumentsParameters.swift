@@ -40,4 +40,3 @@ public struct ExportDocumentsParameters: Codable {
         try container.encodeIfPresent(includeFields, forKey: .includeFields)
     }
 }
-

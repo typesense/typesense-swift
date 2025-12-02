@@ -30,4 +30,3 @@ public struct SynonymItemDeleteSchema: Codable {
         try container.encode(id, forKey: .id)
     }
 }
-

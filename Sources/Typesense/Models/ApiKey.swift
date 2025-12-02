@@ -53,4 +53,3 @@ public struct ApiKey: Codable {
         try container.encodeIfPresent(valuePrefix, forKey: .valuePrefix)
     }
 }
-

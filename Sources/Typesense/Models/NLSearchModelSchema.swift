@@ -51,7 +51,7 @@ public struct NLSearchModelSchema: Codable {
     /** ID of the NL search model */
     public var id: String
 
-    public init(accessToken: String? = nil, accountId: String? = nil, apiKey: String? = nil, apiUrl: String? = nil, apiVersion: String? = nil, clientId: String? = nil, clientSecret: String? = nil, maxBytes: Int? = nil, maxOutputTokens: Int? = nil, modelName: String? = nil, projectId: String? = nil, refreshToken: String? = nil, region: String? = nil, stopSequences: [String]? = nil, systemPrompt: String? = nil, temperature: Double? = nil, topK: Int? = nil, topP: Double? = nil, id: String) {
+    public init(id: String, accessToken: String? = nil, accountId: String? = nil, apiKey: String? = nil, apiUrl: String? = nil, apiVersion: String? = nil, clientId: String? = nil, clientSecret: String? = nil, maxBytes: Int? = nil, maxOutputTokens: Int? = nil, modelName: String? = nil, projectId: String? = nil, refreshToken: String? = nil, region: String? = nil, stopSequences: [String]? = nil, systemPrompt: String? = nil, temperature: Double? = nil, topK: Int? = nil, topP: Double? = nil) {
         self.accessToken = accessToken
         self.accountId = accountId
         self.apiKey = apiKey
@@ -120,4 +120,3 @@ public struct NLSearchModelSchema: Codable {
         try container.encode(id, forKey: .id)
     }
 }
-

@@ -33,4 +33,3 @@ public struct FieldEmbed: Codable {
         try container.encode(modelConfig, forKey: .modelConfig)
     }
 }
-

@@ -30,4 +30,3 @@ public struct NLSearchModelDeleteSchema: Codable {
         try container.encode(id, forKey: .id)
     }
 }
-

@@ -29,4 +29,3 @@ public struct ApiResponse: Codable {
         try container.encode(message, forKey: .message)
     }
 }
-

@@ -50,4 +50,3 @@ public struct ImportDocumentsParameters: Codable {
         try container.encodeIfPresent(returnId, forKey: .returnId)
     }
 }
-

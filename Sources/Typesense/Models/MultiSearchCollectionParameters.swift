@@ -359,4 +359,3 @@ public struct MultiSearchCollectionParameters: Codable {
         try container.encodeIfPresent(xTypesenseApiKey, forKey: .xTypesenseApiKey)
     }
 }
-

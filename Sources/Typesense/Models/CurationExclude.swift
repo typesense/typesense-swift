@@ -30,4 +30,3 @@ public struct CurationExclude: Codable {
         try container.encode(id, forKey: .id)
     }
 }
-

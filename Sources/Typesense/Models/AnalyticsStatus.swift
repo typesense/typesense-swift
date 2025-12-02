@@ -53,4 +53,3 @@ public struct AnalyticsStatus: Codable {
         try container.encodeIfPresent(queryLogEvents, forKey: .queryLogEvents)
     }
 }
-

@@ -33,4 +33,3 @@ public struct PresetSchema: Codable {
         try container.encode(name, forKey: .name)
     }
 }
-

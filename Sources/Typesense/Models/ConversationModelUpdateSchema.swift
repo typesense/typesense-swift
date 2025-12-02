@@ -70,4 +70,3 @@ public struct ConversationModelUpdateSchema: Codable {
         try container.encodeIfPresent(vllmUrl, forKey: .vllmUrl)
     }
 }
-

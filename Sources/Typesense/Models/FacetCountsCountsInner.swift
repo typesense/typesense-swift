@@ -41,4 +41,3 @@ public struct FacetCountsCountsInner: Codable {
         try container.encodeIfPresent(value, forKey: .value)
     }
 }
-

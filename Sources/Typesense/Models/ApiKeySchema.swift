@@ -45,4 +45,3 @@ public struct ApiKeySchema: Codable {
         try container.encodeIfPresent(value, forKey: .value)
     }
 }
-

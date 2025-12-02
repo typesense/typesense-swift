@@ -29,4 +29,3 @@ public struct SuccessStatus: Codable {
         try container.encode(success, forKey: .success)
     }
 }
-

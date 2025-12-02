@@ -38,7 +38,7 @@ public struct CurationItemCreateSchema: Codable {
     /** When set to true, curation processing will stop at the first matching rule. When set to false curation processing will continue and multiple curation actions will be triggered in sequence. Curations are processed in the lexical sort order of their id field.  */
     public var stopProcessing: Bool?
 
-    public init(effectiveFromTs: Int? = nil, effectiveToTs: Int? = nil, excludes: [CurationExclude]? = nil, filterBy: String? = nil, filterCuratedHits: Bool? = nil, id: String? = nil, includes: [CurationInclude]? = nil, metadata: AnyCodable? = nil, removeMatchedTokens: Bool? = nil, replaceQuery: String? = nil, rule: CurationRule, sortBy: String? = nil, stopProcessing: Bool? = nil) {
+    public init(rule: CurationRule, effectiveFromTs: Int? = nil, effectiveToTs: Int? = nil, excludes: [CurationExclude]? = nil, filterBy: String? = nil, filterCuratedHits: Bool? = nil, id: String? = nil, includes: [CurationInclude]? = nil, metadata: AnyCodable? = nil, removeMatchedTokens: Bool? = nil, replaceQuery: String? = nil, sortBy: String? = nil, stopProcessing: Bool? = nil) {
         self.effectiveFromTs = effectiveFromTs
         self.effectiveToTs = effectiveToTs
         self.excludes = excludes
@@ -89,4 +89,3 @@ public struct CurationItemCreateSchema: Codable {
         try container.encodeIfPresent(stopProcessing, forKey: .stopProcessing)
     }
 }
-

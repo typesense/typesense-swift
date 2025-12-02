@@ -29,4 +29,3 @@ public struct ToggleSlowRequestLogRequest: Codable {
         try container.encode(logSlowRequestsTimeMs, forKey: .logSlowRequestsTimeMs)
     }
 }
-

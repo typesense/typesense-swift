@@ -39,4 +39,3 @@ public struct AnalyticsEvent: Codable {
         try container.encode(name, forKey: .name)
     }
 }
-

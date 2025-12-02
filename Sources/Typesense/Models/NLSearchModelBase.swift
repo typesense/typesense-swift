@@ -115,4 +115,3 @@ public struct NLSearchModelBase: Codable {
         try container.encodeIfPresent(topP, forKey: .topP)
     }
 }
-

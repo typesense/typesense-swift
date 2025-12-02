@@ -29,4 +29,3 @@ public struct DeleteStopwordsSet200Response: Codable {
         try container.encode(id, forKey: .id)
     }
 }
-

@@ -5,7 +5,7 @@ let client = Client(config: CONFIG)
 let utilClient = Client(config: Configuration(nodes: NODES, apiKey: "xyz"))
 
 func tearDownCollections() async throws {
-    let (collResp, _) = try await utilClient.collections.retrieveAll()
+    let (collResp, _) = try await utilClient.collections().retrieveAll()
     guard let validData = collResp else {
         throw DataError.dataNotFound
     }
@@ -65,13 +65,16 @@ func tearDownAliases() async throws {
 }
 
 func createCollection() async throws {
-    let schema = CollectionSchema(name: "companies", fields: [
+    let schema = CollectionSchema( fields: [
         Field(name: "company_name", type: "string"),
         Field(name: "num_employees", type: "int32", facet: true),
         Field(name: "country", type: "string", facet: true),
-        Field(name: "metadata", type: "object", _optional: true, facet: true)
-    ], defaultSortingField: "num_employees", enableNestedFields: true)
-    let _ = try await utilClient.collections.create(schema: schema)
+        Field(name: "metadata", type: "object", facet: true, _optional: true)
+        ],
+        name: "companies",
+        defaultSortingField: "num_employees",
+        enableNestedFields: true)
+    let _ = try await utilClient.collections().create(schema: schema)
 }
 
 func createDocument() async throws {
@@ -116,21 +119,22 @@ func createStopwordSet() async throws {
 
 func createAnalyticRule() async throws {
     let _ = try await utilClient.analytics().rules().create(AnalyticsRuleCreate(
-        name: "homepage_popular_queries",
-        type: .popularQueries,
         collection: "products",
         eventType: "search",
-        ruleTag: "homepage",
+        name: "homepage_popular_queries",
+        type: .popularQueries,
         params: AnalyticsRuleCreateParams(
+            captureSearchRequests: true,
             destinationCollection: "product_queries",
             limit: 100,
-            captureSearchRequests: true
-        )
+        ),
+        ruleTag: "homepage",
+
     ))
 }
 
 func createAPIKey() async throws -> ApiKey {
-    let (data, _) =  try await utilClient.keys().create( ApiKeySchema(description: "Test key with all privileges", actions: ["*"], collections: ["*"]))
+    let (data, _) =  try await utilClient.keys().create( ApiKeySchema(actions: ["*"], collections: ["*"], description: "Test key with all privileges"))
     return data!
 }
 
@@ -139,14 +143,14 @@ func createAlias() async throws {
 }
 
 func createConversationCollection() async throws {
-    let schema = CollectionSchema(name: "conversation_store", fields: [
+    let schema = CollectionSchema(fields: [
         Field(name: "conversation_id", type: "string"),
         Field(name: "model_id", type: "string"),
         Field(name: "timestamp", type: "int32"),
         Field(name: "role", type: "string", index: false),
         Field(name: "message", type: "string", index: false)
-    ])
-    let _ = try await utilClient.collections.create(schema: schema)
+    ], name: "conversation_store")
+    let _ = try await utilClient.collections().create(schema: schema)
 }
 
 struct Product: Codable, Equatable {

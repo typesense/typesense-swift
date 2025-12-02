@@ -30,4 +30,3 @@ public struct SynonymSetsRetrieveSchema: Codable {
         try container.encode(synonymSets, forKey: .synonymSets)
     }
 }
-

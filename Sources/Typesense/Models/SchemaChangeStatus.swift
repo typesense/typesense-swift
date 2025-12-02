@@ -40,4 +40,3 @@ public struct SchemaChangeStatus: Codable {
         try container.encodeIfPresent(validatedDocs, forKey: .validatedDocs)
     }
 }
-

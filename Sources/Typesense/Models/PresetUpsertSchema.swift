@@ -29,4 +29,3 @@ public struct PresetUpsertSchema: Codable {
         try container.encode(value, forKey: .value)
     }
 }
-

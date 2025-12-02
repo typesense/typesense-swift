@@ -85,7 +85,7 @@ final class DocumentTests: XCTestCase {
             try await createDocument()
             let (data, _) = try await client.collection(name: "companies").documents().update(
                 document: ["country": "Spain"],
-                options: UpdateDocumentsByFilterParameters(filterBy: "num_employees:>1000")
+                options: UpdateDocumentsParameters(filterBy: "num_employees:>1000")
             )
             guard let validData = data else {
                 throw DataError.dataNotFound
@@ -172,7 +172,7 @@ final class DocumentTests: XCTestCase {
     }
 
     func testDocumentSearch() async {
-        let searchParams = SearchParameters(q: "*", queryBy: "company_name", page: 0, groupBy: "country", groupLimit: 1)
+        let searchParams = SearchParameters(groupBy: "country", groupLimit: 1, page: 0, q: "*", queryBy: "company_name")
 
         do {
             try await createDocument()
@@ -197,7 +197,7 @@ final class DocumentTests: XCTestCase {
     }
 
     func testDocumentSearchReturnRawData() async {
-        let searchParams = SearchParameters(q: "stark", queryBy: "company_name", filterBy: "num_employees:>100", sortBy: "num_employees:desc")
+        let searchParams = SearchParameters(filterBy: "num_employees:>100", q: "stark", queryBy: "company_name", sortBy: "num_employees:desc")
 
         do {
             try await createDocument()
@@ -219,16 +219,16 @@ final class DocumentTests: XCTestCase {
     }
 
     func testDocumentSearchWithPreset() async {
-        let productSchema = CollectionSchema(name: "products", fields: [
+        let productSchema = CollectionSchema(fields: [
             Field(name: "name", type: "string"),
             Field(name: "price", type: "int32"),
             Field(name: "brand", type: "string"),
             Field(name: "desc", type: "string"),
-        ])
+        ], name: "products")
 
         let preset = PresetUpsertSchema(
-            value: .singleCollectionSearch(
-                SearchParameters(q: "Jor", queryBy: "name", filterBy: "price:=[50..120]")
+            value: .typeSearchParameters(
+                SearchParameters(filterBy: "price:=[50..120]", q: "Jor", queryBy: "name")
             )
         )
 
@@ -238,7 +238,7 @@ final class DocumentTests: XCTestCase {
         do {
             let _ = try await client.presets().upsert(presetName: "single-collection-search-preset", params: preset)
             do {
-                let _ = try await client.collections.create(schema: productSchema)
+                let _ = try await client.collections().create(schema: productSchema)
             } catch (let error) {
                 print(error.localizedDescription)
                 XCTAssertTrue(false)
@@ -266,7 +266,7 @@ final class DocumentTests: XCTestCase {
     }
 
     func testDocumentGroupSearch() async {
-        let searchParams = SearchParameters(q: "*", queryBy: "company_name", groupBy: "num_employees,country,metadata")
+        let searchParams = SearchParameters(groupBy: "num_employees,country,metadata", q: "*", queryBy: "company_name")
 
         do {
             try await createDocument()

@@ -38,4 +38,3 @@ public struct AnalyticsRuleUpdate: Codable {
         try container.encodeIfPresent(ruleTag, forKey: .ruleTag)
     }
 }
-

@@ -19,7 +19,7 @@ public struct DeleteDocumentsParameters: Codable {
     /** When true, removes all documents from the collection while preserving the collection and its schema. */
     public var truncate: Bool?
 
-    public init(batchSize: Int? = nil, filterBy: String, ignoreNotFound: Bool? = nil, truncate: Bool? = nil) {
+    public init(filterBy: String, batchSize: Int? = nil, ignoreNotFound: Bool? = nil, truncate: Bool? = nil) {
         self.batchSize = batchSize
         self.filterBy = filterBy
         self.ignoreNotFound = ignoreNotFound
@@ -43,4 +43,3 @@ public struct DeleteDocumentsParameters: Codable {
         try container.encodeIfPresent(truncate, forKey: .truncate)
     }
 }
-

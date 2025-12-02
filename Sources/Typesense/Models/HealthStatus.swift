@@ -29,4 +29,3 @@ public struct HealthStatus: Codable {
         try container.encode(ok, forKey: .ok)
     }
 }
-

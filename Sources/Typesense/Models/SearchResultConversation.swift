@@ -41,4 +41,3 @@ public struct SearchResultConversation: Codable {
         try container.encode(query, forKey: .query)
     }
 }
-

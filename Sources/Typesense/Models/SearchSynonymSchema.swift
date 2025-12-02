@@ -21,7 +21,7 @@ public struct SearchSynonymSchema: Codable {
     /** Array of words that should be considered as synonyms. */
     public var synonyms: [String]
 
-    public init(locale: String? = nil, root: String? = nil, symbolsToIndex: [String]? = nil, synonyms: [String]) {
+    public init(synonyms: [String], locale: String? = nil, root: String? = nil, symbolsToIndex: [String]? = nil) {
         self.locale = locale
         self.root = root
         self.symbolsToIndex = symbolsToIndex
@@ -45,4 +45,3 @@ public struct SearchSynonymSchema: Codable {
         try container.encode(synonyms, forKey: .synonyms)
     }
 }
-

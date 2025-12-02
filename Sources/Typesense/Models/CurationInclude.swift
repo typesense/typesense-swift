@@ -35,4 +35,3 @@ public struct CurationInclude: Codable {
         try container.encode(position, forKey: .position)
     }
 }
-

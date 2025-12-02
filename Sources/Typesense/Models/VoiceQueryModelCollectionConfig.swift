@@ -30,4 +30,3 @@ public struct VoiceQueryModelCollectionConfig: Codable {
         try container.encodeIfPresent(modelName, forKey: .modelName)
     }
 }
-

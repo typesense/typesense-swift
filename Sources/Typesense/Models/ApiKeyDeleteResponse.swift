@@ -30,4 +30,3 @@ public struct ApiKeyDeleteResponse: Codable {
         try container.encode(id, forKey: .id)
     }
 }
-

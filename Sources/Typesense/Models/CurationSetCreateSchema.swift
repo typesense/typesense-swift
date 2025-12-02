@@ -17,7 +17,7 @@ public struct CurationSetCreateSchema: Codable {
     /** Array of curation items */
     public var items: [CurationItemCreateSchema]
 
-    public init(description: String? = nil, items: [CurationItemCreateSchema]) {
+    public init(items: [CurationItemCreateSchema], description: String? = nil) {
         self.description = description
         self.items = items
     }
@@ -35,4 +35,3 @@ public struct CurationSetCreateSchema: Codable {
         try container.encode(items, forKey: .items)
     }
 }
-

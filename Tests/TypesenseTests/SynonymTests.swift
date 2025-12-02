@@ -9,7 +9,7 @@ final class SynonymTests: XCTestCase {
         do {
            
             let synonymSchema = SearchSynonymSchema(synonyms: ["blazer", "coat", "jacket"])
-            let (_, _) = try await myClient.collections.create(schema: CollectionSchema(name: "products", fields: [Field(name: "name", type: "string")])) //Creating test collection - Products
+            let (_, _) = try await myClient.collections().create(schema: CollectionSchema(fields: [Field(name: "name", type: "string")],name: "products")) //Creating test collection - Products
         
             let (data, _) = try await myClient.collection(name: "products").synonyms().upsert(id: "coat-synonyms", synonymSchema)
             let (_,_) = try await myClient.collection(name: "products").delete() //Deleting test collection
@@ -37,8 +37,8 @@ final class SynonymTests: XCTestCase {
         
         do {
            
-            let synonymSchema = SearchSynonymSchema(root: "smart phone", synonyms: ["iphone", "android"])
-            let (_, _) = try await myClient.collections.create(schema: CollectionSchema(name: "products", fields: [Field(name: "name", type: "string")])) //Creating test collection - Products
+            let synonymSchema = SearchSynonymSchema( synonyms: ["iphone", "android"],root: "smart phone",)
+            let (_, _) = try await myClient.collections().create(schema: CollectionSchema(fields: [Field(name: "name", type: "string")], name: "products", )) //Creating test collection - Products
         
             let (data, _) = try await myClient.collection(name: "products").synonyms().upsert(id: "smart-phone-synonyms", synonymSchema)
             let (_,_) = try await myClient.collection(name: "products").delete() //Deleting test collection
@@ -67,7 +67,7 @@ final class SynonymTests: XCTestCase {
         do {
            
             let synonymSchema = SearchSynonymSchema(synonyms: ["blazer", "coat", "jacket"])
-            let (_, _) = try await myClient.collections.create(schema: CollectionSchema(name: "products", fields: [Field(name: "name", type: "string")])) //Creating test collection - Products
+            let (_, _) = try await myClient.collections().create(schema: CollectionSchema(fields: [Field(name: "name", type: "string")], name: "products",)) //Creating test collection - Products
             let (_, _) = try await myClient.collection(name: "products").synonyms().upsert(id: "coat-synonyms", synonymSchema) //Feed in the synonym
             let (data,_) = try await myClient.collection(name: "products").synonyms().retrieve(id: "coat-synonyms")
             let (_,_) = try await myClient.collection(name: "products").delete() //Deleting test collection
@@ -96,7 +96,7 @@ final class SynonymTests: XCTestCase {
         do {
            
             let synonymSchema = SearchSynonymSchema(synonyms: ["blazer", "coat", "jacket"])
-            let (_, _) = try await myClient.collections.create(schema: CollectionSchema(name: "products", fields: [Field(name: "name", type: "string")])) //Creating test collection - Products
+            let (_, _) = try await myClient.collections().create(schema: CollectionSchema(fields: [Field(name: "name", type: "string")], name: "products", )) //Creating test collection - Products
             let (_, _) = try await myClient.collection(name: "products").synonyms().upsert(id: "coat-synonyms", synonymSchema) //Feed in the synonym
             let (data,_) = try await myClient.collection(name: "products").synonyms().retrieve()
             let (_,_) = try await myClient.collection(name: "products").delete() //Deleting test collection
@@ -125,7 +125,10 @@ final class SynonymTests: XCTestCase {
         do {
            
             let synonymSchema = SearchSynonymSchema(synonyms: ["blazer", "coat", "jacket"])
-            let (_, _) = try await myClient.collections.create(schema: CollectionSchema(name: "products", fields: [Field(name: "name", type: "string")])) //Creating test collection - Products
+            let (_, _) = try await myClient.collections().create(schema: CollectionSchema(
+                fields: [Field(name: "name", type: "string")],
+                name: "products",
+            )) //Creating test collection - Products
             let (_, _) = try await myClient.collection(name: "products").synonyms().upsert(id: "coat-synonyms", synonymSchema) //Feed in the synonym
             let (data,_) = try await myClient.collection(name: "products").synonyms().delete(id: "coat-synonyms")
             let (_,_) = try await myClient.collection(name: "products").delete() //Deleting test collection
