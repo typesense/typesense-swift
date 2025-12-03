@@ -10,8 +10,20 @@ final class AnalyticsTests: XCTestCase {
         let _ = try await utilClient.collections().create(schema: CollectionSchema(fields: [
             Field(name:"name", type: "string"),
             Field(name:"in_stock", type: "int32")
-        ], name: "products"))
-        try await createAnalyticRule()
+        ], name: "test-products-analytics"))
+        let _ = try await utilClient.analytics().rules().create(AnalyticsRuleCreate(
+            collection: "test-products-analytics",
+            eventType: "search",
+            name: "homepage_popular_queries",
+            type: .popularQueries,
+            params: AnalyticsRuleCreateParams(
+                captureSearchRequests: true,
+                destinationCollection: "product_queries",
+                limit: 100,
+            ),
+            ruleTag: "homepage",
+
+        ))
     }
 
     override func tearDown() async throws  {
@@ -21,7 +33,7 @@ final class AnalyticsTests: XCTestCase {
 
     func testAnalyticsRuleCreate() async {
         let schema = AnalyticsRuleCreate(
-            collection: "products",
+            collection: "test-products-analytics",
             eventType: "search",
             name: "test-rule",
             type: .popularQueries,
@@ -46,12 +58,12 @@ final class AnalyticsTests: XCTestCase {
             XCTAssertTrue(false)
         }
     }
-    
+
     func testAnalyticsRuleCreateMany() async {
         let schema1 = AnalyticsRuleCreate(
-            collection: "test_rule_1",
+            collection: "test-products-analytics",
             eventType: "search",
-            name: "products",
+            name: "test_rule_1",
             type: .popularQueries,
             params: AnalyticsRuleCreateParams(
                 destinationCollection: "product_queries",
@@ -60,8 +72,8 @@ final class AnalyticsTests: XCTestCase {
             ruleTag: "homepage"
         )
         let schema2 = AnalyticsRuleCreate(
-            collection: "products",
-            eventType: "any",
+            collection: "test-products-analytics",
+            eventType: "search",
             name: "test_rule_2",
             type: .popularQueries,
             params: AnalyticsRuleCreateParams(
@@ -70,7 +82,6 @@ final class AnalyticsTests: XCTestCase {
             ),
             ruleTag: "homepage",
         )
-
         do {
             let (rules, _) = try await utilClient.analytics().rules().createMany([schema1, schema2])
             XCTAssertNotNil(rules)
@@ -78,10 +89,14 @@ final class AnalyticsTests: XCTestCase {
                 throw DataError.dataNotFound
             }
             print(validRule)
-            XCTAssertEqual(validRule[0].name, schema1.name)
-            XCTAssertEqual(validRule[1].name, schema2.name)
+            if case let .success(firstRule) = validRule[0], case let .success(secondRule) = validRule[1] {
+                XCTAssertEqual(firstRule.name, schema1.name)
+                XCTAssertEqual(secondRule.name, schema2.name)
+            } else {
+                XCTFail("Both rules should be of type AnalyticsRule")
+            }
         } catch (let error) {
-            print(error.localizedDescription)
+            print(error)
             XCTAssertTrue(false)
         }
     }
@@ -138,7 +153,7 @@ final class AnalyticsTests: XCTestCase {
                     userId: "111112",
                 ),
                 eventType: "popular_queries",
-                name: "product_queries_aggregation",
+                name: "homepage_popular_queries",
             ))
             guard let validRes = res else {
                 throw DataError.dataNotFound
@@ -146,8 +161,24 @@ final class AnalyticsTests: XCTestCase {
             print(validRes)
             XCTAssertTrue(validRes.ok)
         }  catch (let error) {
-            print(error.localizedDescription)
+            print(error)
             XCTAssertTrue(false)
         }
     }
+    
+    func testAnalyticsEventsRetrieve() async {
+        do {
+            let (res, _) = try await client.analytics().events().retrieve(
+                AnalyticsEventsRetrieveParams(n:10, name: "homepage_popular_queries", userId: "123"))
+            guard let validRes = res else {
+                throw DataError.dataNotFound
+            }
+            print(validRes)
+            XCTAssertEqual(validRes.events.count, 0)
+        }  catch (let error) {
+            print(error)
+            XCTAssertTrue(false)
+        }
+    }
+
 }

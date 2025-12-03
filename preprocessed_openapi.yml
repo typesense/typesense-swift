@@ -107,6 +107,21 @@ components:
       required:
       - events
       type: object
+    AnalyticsEventsRetrieveParams:
+      properties:
+        n:
+          description: Number of events to return (max 1000)
+          type: integer
+        name:
+          description: Analytics rule name
+          type: string
+        user_id:
+          type: string
+      required:
+      - user_id
+      - name
+      - n
+      type: object
     AnalyticsRule:
       allOf:
       - $ref: '#/components/schemas/AnalyticsRuleCreate'
@@ -2766,11 +2781,9 @@ paths:
       operationId: getCollections
       parameters:
       - in: query
-        name: limit
+        name: offset
         schema:
-          description: 'Number of collections to fetch. Default: returns all collections.
-
-            '
+          description: Identifies the starting point to return collections when paginating.
           type: integer
       - in: query
         name: exclude_fields
@@ -2779,9 +2792,11 @@ paths:
             from the response
           type: string
       - in: query
-        name: offset
+        name: limit
         schema:
-          description: Identifies the starting point to return collections when paginating.
+          description: 'Number of collections to fetch. Default: returns all collections.
+
+            '
           type: integer
       responses:
         '200':
@@ -2937,6 +2952,12 @@ paths:
         schema:
           type: string
       - in: query
+        name: truncate
+        schema:
+          description: When true, removes all documents from the collection while
+            preserving the collection and its schema.
+          type: boolean
+      - in: query
         name: batch_size
         schema:
           description: Batch size parameter controls the number of documents that
@@ -2944,20 +2965,14 @@ paths:
             will impact performance of other operations running on the server.
           type: integer
       - in: query
-        name: ignore_not_found
-        schema:
-          type: boolean
-      - in: query
-        name: truncate
-        schema:
-          description: When true, removes all documents from the collection while
-            preserving the collection and its schema.
-          type: boolean
-      - in: query
         name: filter_by
         schema:
           example: 'num_employees:>100 && country: [USA, UK]'
           type: string
+      - in: query
+        name: ignore_not_found
+        schema:
+          type: boolean
       responses:
         '200':
           content:
@@ -3103,15 +3118,15 @@ paths:
           description: List of fields from the document to exclude in the search result
           type: string
       - in: query
-        name: include_fields
-        schema:
-          description: List of fields from the document to include in the search result
-          type: string
-      - in: query
         name: filter_by
         schema:
           description: Filter conditions for refining your search results. Separate
             multiple conditions with &&.
+          type: string
+      - in: query
+        name: include_fields
+        schema:
+          description: List of fields from the document to include in the search result
           type: string
       responses:
         '200':
@@ -3153,27 +3168,27 @@ paths:
         schema:
           type: string
       - in: query
+        name: action
+        schema:
+          $ref: '#/components/schemas/IndexAction'
+      - in: query
+        name: remote_embedding_batch_size
+        schema:
+          type: integer
+      - in: query
         name: dirty_values
         schema:
           $ref: '#/components/schemas/DirtyValues'
       - in: query
-        name: action
+        name: return_doc
         schema:
-          $ref: '#/components/schemas/IndexAction'
+          type: boolean
       - in: query
         name: return_id
         schema:
           description: Returning the id of the imported documents. If you want the
             import response to return the ingested document's id in the response,
             you can use the return_id parameter.
-          type: boolean
-      - in: query
-        name: remote_embedding_batch_size
-        schema:
-          type: integer
-      - in: query
-        name: return_doc
-        schema:
           type: boolean
       - in: query
         name: batch_size
@@ -3230,179 +3245,38 @@ paths:
         schema:
           type: string
       - in: query
-        name: min_len_2typo
+        name: synonym_sets
         schema:
-          description: 'Minimum word length for 2-typo correction to be applied. The
-            value of num_typos is still treated as the maximum allowed typos.
-
-            '
-          type: integer
-      - in: query
-        name: max_filter_by_candidates
-        schema:
-          description: Controls the number of similar words that Typesense considers
-            during fuzzy search on filter_by values. Useful for controlling prefix
-            matches like company_name:Acm*.
-          type: integer
-      - in: query
-        name: voice_query
-        schema:
-          description: 'The base64 encoded audio file in 16 khz 16-bit WAV format.
-
-            '
+          description: List of synonym set names to associate with this search query
+          example: synonym_set_1,synonym_set_2
           type: string
       - in: query
-        name: highlight_fields
+        name: filter_curated_hits
         schema:
-          description: 'A list of custom fields that must be highlighted even if you
-            don''t query for them
-
-            '
-          type: string
-      - in: query
-        name: highlight_affix_num_tokens
-        schema:
-          description: 'The number of tokens that should surround the highlighted
-            text on each side. Default: 4
-
-            '
-          type: integer
-      - in: query
-        name: max_extra_suffix
-        schema:
-          description: There are also 2 parameters that allow you to control the extent
-            of infix searching max_extra_prefix and max_extra_suffix which specify
-            the maximum number of symbols before or after the query that can be present
-            in the token. For example query "K2100" has 2 extra symbols in "6PK2100".
-            By default, any number of prefixes/suffixes can be present for a match.
-          type: integer
-      - in: query
-        name: group_by
-        schema:
-          description: You can aggregate search results into groups or buckets by
-            specify one or more `group_by` fields. Separate multiple fields with a
-            comma. To group on a particular field, it must be a faceted field.
-          type: string
-      - in: query
-        name: offset
-        schema:
-          description: Identifies the starting point to return hits from a result
-            set. Can be used as an alternative to the page parameter.
-          type: integer
-      - in: query
-        name: use_cache
-        schema:
-          description: 'Enable server side caching of search query results. By default,
-            caching is disabled.
+          description: 'Whether the filter_by condition of the search query should
+            be applicable to curated results (override definitions, pinned hits, hidden
+            hits, etc.). Default: false
 
             '
           type: boolean
       - in: query
-        name: preset
+        name: highlight_full_fields
         schema:
-          description: 'Search using a bunch of search parameters by setting this
-            parameter to the name of the existing Preset.
-
-            '
+          description: List of fields which should be highlighted fully without snippeting
           type: string
       - in: query
-        name: limit
+        name: include_fields
         schema:
-          description: 'Number of hits to fetch. Can be used as an alternative to
-            the per_page parameter. Default: 10.
+          description: List of fields from the document to include in the search result
+          type: string
+      - in: query
+        name: synonym_num_typos
+        schema:
+          description: 'Allow synonym resolution on typo-corrected words in the query.
+            Default: 0
 
             '
           type: integer
-      - in: query
-        name: drop_tokens_mode
-        schema:
-          $ref: '#/components/schemas/DropTokensMode'
-      - in: query
-        name: query_by_weights
-        schema:
-          description: The relative weight to give each `query_by` field when ranking
-            results. This can be used to boost fields in priority, when looking for
-            matches. Multiple fields are separated with a comma.
-          type: string
-      - in: query
-        name: infix
-        schema:
-          description: If infix index is enabled for this field, infix searching can
-            be done on a per-field basis by sending a comma separated string parameter
-            called infix to the search query. This parameter can have 3 values; `off`
-            infix search is disabled, which is default `always` infix search is performed
-            along with regular search `fallback` infix search is performed if regular
-            search does not produce results
-          type: string
-      - in: query
-        name: highlight_start_tag
-        schema:
-          description: 'The start tag used for the highlighted snippets. Default:
-            `<mark>`
-
-            '
-          type: string
-      - in: query
-        name: query_by
-        schema:
-          description: A list of `string` fields that should be queried against. Multiple
-            fields are separated with a comma.
-          type: string
-      - in: query
-        name: max_candidates
-        schema:
-          description: 'Control the number of words that Typesense considers for typo
-            and prefix searching.
-
-            '
-          type: integer
-      - in: query
-        name: conversation
-        schema:
-          description: 'Enable conversational search.
-
-            '
-          type: boolean
-      - in: query
-        name: q
-        schema:
-          description: The query text to search for in the collection. Use * as the
-            search string to return all documents. This is typically useful when used
-            in conjunction with filter_by.
-          type: string
-      - in: query
-        name: facet_by
-        schema:
-          description: A list of fields that will be used for faceting your results
-            on. Separate multiple fields with a comma.
-          type: string
-      - in: query
-        name: drop_tokens_threshold
-        schema:
-          description: 'If the number of results found for a specific query is less
-            than this number, Typesense will attempt to drop the tokens in the query
-            until enough results are found. Tokens that have the least individual
-            hits are dropped first. Set to 0 to disable. Default: 10
-
-            '
-          type: integer
-      - in: query
-        name: remote_embedding_timeout_ms
-        schema:
-          description: 'Timeout (in milliseconds) for fetching remote embeddings.
-
-            '
-          type: integer
-      - in: query
-        name: enable_overrides
-        schema:
-          default: false
-          description: 'If you have some overrides defined but want to disable all
-            of them during query time, you can do that by setting this parameter to
-            false
-
-            '
-          type: boolean
       - in: query
         name: pinned_hits
         schema:
@@ -3419,22 +3293,6 @@ paths:
             '
           type: string
       - in: query
-        name: pre_segmented_query
-        schema:
-          description: 'You can index content from any logographic language into Typesense
-            if you are able to segment / split the text into space-separated words
-            yourself before indexing and querying.
-
-            Set this parameter to true to do the same
-
-            '
-          type: boolean
-      - in: query
-        name: include_fields
-        schema:
-          description: List of fields from the document to include in the search result
-          type: string
-      - in: query
         name: facet_query
         schema:
           description: Facet values that are returned can now be filtered via this
@@ -3442,6 +3300,16 @@ paths:
             faceting by `category`, you can set `facet_query=category:shoe` to return
             only facet values that contain the prefix "shoe".
           type: string
+      - in: query
+        name: group_missing_values
+        schema:
+          description: 'Setting this parameter to true will place all documents that
+            have a null value in the group_by field, into a single group. Setting
+            this parameter to false, will cause each document with a null value in
+            the group_by field to not be grouped with other documents. Default: true
+
+            '
+          type: boolean
       - in: query
         name: max_extra_prefix
         schema:
@@ -3452,128 +3320,9 @@ paths:
             By default, any number of prefixes/suffixes can be present for a match.
           type: integer
       - in: query
-        name: enable_typos_for_alpha_numerical_tokens
+        name: per_page
         schema:
-          description: 'Set this parameter to false to disable typos on alphanumerical
-            query tokens. Default: true.
-
-            '
-          type: boolean
-      - in: query
-        name: facet_return_parent
-        schema:
-          description: 'Comma separated string of nested facet fields whose parent
-            object should be returned in facet response.
-
-            '
-          type: string
-      - in: query
-        name: prioritize_num_matching_fields
-        schema:
-          default: true
-          description: 'Make Typesense prioritize documents where the query words
-            appear in more number of fields.
-
-            '
-          type: boolean
-      - in: query
-        name: enable_typos_for_numerical_tokens
-        schema:
-          default: true
-          description: 'Make Typesense disable typos for numerical tokens.
-
-            '
-          type: boolean
-      - in: query
-        name: conversation_model_id
-        schema:
-          description: 'The Id of Conversation Model to be used.
-
-            '
-          type: string
-      - in: query
-        name: override_tags
-        schema:
-          description: Comma separated list of tags to trigger the curations rules
-            that match the tags.
-          type: string
-      - in: query
-        name: stopwords
-        schema:
-          description: 'Name of the stopwords set to apply for this search, the keywords
-            present in the set will be removed from the search query.
-
-            '
-          type: string
-      - in: query
-        name: facet_strategy
-        schema:
-          description: 'Choose the underlying faceting strategy used. Comma separated
-            string of allows values: exhaustive, top_values or automatic (default).
-
-            '
-          type: string
-      - in: query
-        name: nl_model_id
-        schema:
-          description: The ID of the natural language model to use.
-          type: string
-      - in: query
-        name: remote_embedding_num_tries
-        schema:
-          description: 'Number of times to retry fetching remote embeddings.
-
-            '
-          type: integer
-      - in: query
-        name: filter_curated_hits
-        schema:
-          description: 'Whether the filter_by condition of the search query should
-            be applicable to curated results (override definitions, pinned hits, hidden
-            hits, etc.). Default: false
-
-            '
-          type: boolean
-      - in: query
-        name: enable_highlight_v1
-        schema:
-          default: true
-          description: 'Flag for enabling/disabling the deprecated, old highlight
-            structure in the response. Default: true
-
-            '
-          type: boolean
-      - in: query
-        name: min_len_1typo
-        schema:
-          description: 'Minimum word length for 1-typo correction to be applied. The
-            value of num_typos is still treated as the maximum allowed typos.
-
-            '
-          type: integer
-      - in: query
-        name: page
-        schema:
-          description: Results from this specific page number would be fetched.
-          type: integer
-      - in: query
-        name: search_cutoff_ms
-        schema:
-          description: 'Typesense will attempt to return results early if the cutoff
-            time has elapsed. This is not a strict guarantee and facet computation
-            is not bound by this parameter.
-
-            '
-          type: integer
-      - in: query
-        name: exclude_fields
-        schema:
-          description: List of fields from the document to exclude in the search result
-          type: string
-      - in: query
-        name: max_facet_values
-        schema:
-          description: Maximum number of facet values to be returned.
+          description: 'Number of results to fetch per page. Default: 10'
           type: integer
       - in: query
         name: snippet_threshold
@@ -3584,52 +3333,49 @@ paths:
             '
           type: integer
       - in: query
-        name: synonym_prefix
+        name: conversation
         schema:
-          description: 'Allow synonym resolution on word prefixes in the query. Default:
-            false
+          description: 'Enable conversational search.
 
             '
           type: boolean
       - in: query
-        name: prefix
+        name: nl_query
         schema:
-          description: Boolean field to indicate that the last word in the query should
-            be treated as a prefix, and not as a whole word. This is used for building
-            autocomplete and instant search interfaces. Defaults to true.
+          description: Whether to use natural language processing to parse the query.
+          type: boolean
+      - in: query
+        name: infix
+        schema:
+          description: If infix index is enabled for this field, infix searching can
+            be done on a per-field basis by sending a comma separated string parameter
+            called infix to the search query. This parameter can have 3 values; `off`
+            infix search is disabled, which is default `always` infix search is performed
+            along with regular search `fallback` infix search is performed if regular
+            search does not produce results
           type: string
       - in: query
-        name: enable_synonyms
+        name: highlight_end_tag
         schema:
-          description: 'If you have some synonyms defined but want to disable all
-            of them for a particular search query, set enable_synonyms to false. Default:
-            true
-
-            '
-          type: boolean
-      - in: query
-        name: num_typos
-        schema:
-          description: 'The number of typographical errors (1 or 2) that would be
-            tolerated. Default: 2
+          description: 'The end tag used for the highlighted snippets. Default: `</mark>`
 
             '
           type: string
       - in: query
-        name: prioritize_exact_match
+        name: highlight_fields
         schema:
-          default: true
-          description: 'Set this parameter to true to ensure that an exact match is
-            ranked above the others
+          description: 'A list of custom fields that must be highlighted even if you
+            don''t query for them
 
             '
-          type: boolean
+          type: string
       - in: query
-        name: filter_by
+        name: vector_query
         schema:
-          description: Filter conditions for refining your open api validator search
-            results. Separate multiple conditions with &&.
-          example: 'num_employees:>100 && country: [USA, UK]'
+          description: 'Vector query expression for fetching documents "closest" to
+            a given query/document vector.
+
+            '
           type: string
       - in: query
         name: hidden_hits
@@ -3645,45 +3391,17 @@ paths:
             '
           type: string
       - in: query
-        name: group_missing_values
+        name: remote_embedding_timeout_ms
         schema:
-          description: 'Setting this parameter to true will place all documents that
-            have a null value in the group_by field, into a single group. Setting
-            this parameter to false, will cause each document with a null value in
-            the group_by field to not be grouped with other documents. Default: true
-
-            '
-          type: boolean
-      - in: query
-        name: highlight_full_fields
-        schema:
-          description: List of fields which should be highlighted fully without snippeting
-          type: string
-      - in: query
-        name: group_limit
-        schema:
-          description: 'Maximum number of hits to be returned for every group. If
-            the `group_limit` is set as `K` then only the top K hits in each group
-            are returned in the response. Default: 3
+          description: 'Timeout (in milliseconds) for fetching remote embeddings.
 
             '
           type: integer
       - in: query
-        name: highlight_end_tag
+        name: query_by
         schema:
-          description: 'The end tag used for the highlighted snippets. Default: `</mark>`
-
-            '
-          type: string
-      - in: query
-        name: split_join_tokens
-        schema:
-          description: 'Treat space as typo: search for q=basket ball if q=basketball
-            is not found or vice-versa. Splitting/joining of tokens will only be attempted
-            if the original query produces no results. To always trigger this behavior,
-            set value to `always``. To disable, set value to `off`. Default is `fallback`.
-
-            '
+          description: A list of `string` fields that should be queried against. Multiple
+            fields are separated with a comma.
           type: string
       - in: query
         name: enable_analytics
@@ -3691,6 +3409,74 @@ paths:
           default: true
           description: 'Flag for enabling/disabling analytics aggregation for specific
             search queries (for e.g. those originating from a test script).
+
+            '
+          type: boolean
+      - in: query
+        name: exhaustive_search
+        schema:
+          description: 'Setting this to true will make Typesense consider all prefixes
+            and typo corrections of the words in the query without stopping early
+            when enough results are found (drop_tokens_threshold and typo_tokens_threshold
+            configurations are ignored).
+
+            '
+          type: boolean
+      - in: query
+        name: enable_synonyms
+        schema:
+          description: 'If you have some synonyms defined but want to disable all
+            of them for a particular search query, set enable_synonyms to false. Default:
+            true
+
+            '
+          type: boolean
+      - in: query
+        name: enable_highlight_v1
+        schema:
+          default: true
+          description: 'Flag for enabling/disabling the deprecated, old highlight
+            structure in the response. Default: true
+
+            '
+          type: boolean
+      - in: query
+        name: page
+        schema:
+          description: Results from this specific page number would be fetched.
+          type: integer
+      - in: query
+        name: enable_typos_for_alpha_numerical_tokens
+        schema:
+          description: 'Set this parameter to false to disable typos on alphanumerical
+            query tokens. Default: true.
+
+            '
+          type: boolean
+      - in: query
+        name: filter_by
+        schema:
+          description: Filter conditions for refining your open api validator search
+            results. Separate multiple conditions with &&.
+          example: 'num_employees:>100 && country: [USA, UK]'
+          type: string
+      - in: query
+        name: prioritize_exact_match
+        schema:
+          default: true
+          description: 'Set this parameter to true to ensure that an exact match is
+            ranked above the others
+
+            '
+          type: boolean
+      - in: query
+        name: pre_segmented_query
+        schema:
+          description: 'You can index content from any logographic language into Typesense
+            if you are able to segment / split the text into space-separated words
+            yourself before indexing and querying.
+
+            Set this parameter to true to do the same
 
             '
           type: boolean
@@ -3713,10 +3499,190 @@ paths:
             '
           type: boolean
       - in: query
-        name: vector_query
+        name: min_len_2typo
         schema:
-          description: 'Vector query expression for fetching documents "closest" to
-            a given query/document vector.
+          description: 'Minimum word length for 2-typo correction to be applied. The
+            value of num_typos is still treated as the maximum allowed typos.
+
+            '
+          type: integer
+      - in: query
+        name: group_by
+        schema:
+          description: You can aggregate search results into groups or buckets by
+            specify one or more `group_by` fields. Separate multiple fields with a
+            comma. To group on a particular field, it must be a faceted field.
+          type: string
+      - in: query
+        name: max_extra_suffix
+        schema:
+          description: There are also 2 parameters that allow you to control the extent
+            of infix searching max_extra_prefix and max_extra_suffix which specify
+            the maximum number of symbols before or after the query that can be present
+            in the token. For example query "K2100" has 2 extra symbols in "6PK2100".
+            By default, any number of prefixes/suffixes can be present for a match.
+          type: integer
+      - in: query
+        name: q
+        schema:
+          description: The query text to search for in the collection. Use * as the
+            search string to return all documents. This is typically useful when used
+            in conjunction with filter_by.
+          type: string
+      - in: query
+        name: conversation_model_id
+        schema:
+          description: 'The Id of Conversation Model to be used.
+
+            '
+          type: string
+      - in: query
+        name: group_limit
+        schema:
+          description: 'Maximum number of hits to be returned for every group. If
+            the `group_limit` is set as `K` then only the top K hits in each group
+            are returned in the response. Default: 3
+
+            '
+          type: integer
+      - in: query
+        name: max_facet_values
+        schema:
+          description: Maximum number of facet values to be returned.
+          type: integer
+      - in: query
+        name: remote_embedding_num_tries
+        schema:
+          description: 'Number of times to retry fetching remote embeddings.
+
+            '
+          type: integer
+      - in: query
+        name: facet_return_parent
+        schema:
+          description: 'Comma separated string of nested facet fields whose parent
+            object should be returned in facet response.
+
+            '
+          type: string
+      - in: query
+        name: enable_overrides
+        schema:
+          default: false
+          description: 'If you have some overrides defined but want to disable all
+            of them during query time, you can do that by setting this parameter to
+            false
+
+            '
+          type: boolean
+      - in: query
+        name: facet_by
+        schema:
+          description: A list of fields that will be used for faceting your results
+            on. Separate multiple fields with a comma.
+          type: string
+      - in: query
+        name: stopwords
+        schema:
+          description: 'Name of the stopwords set to apply for this search, the keywords
+            present in the set will be removed from the search query.
+
+            '
+          type: string
+      - in: query
+        name: exclude_fields
+        schema:
+          description: List of fields from the document to exclude in the search result
+          type: string
+      - in: query
+        name: highlight_start_tag
+        schema:
+          description: 'The start tag used for the highlighted snippets. Default:
+            `<mark>`
+
+            '
+          type: string
+      - in: query
+        name: sort_by
+        schema:
+          description: A list of numerical fields and their corresponding sort orders
+            that will be used for ordering your results. Up to 3 sort fields can be
+            specified. The text similarity score is exposed as a special `_text_match`
+            field that you can use in the list of sorting fields. If no `sort_by`
+            parameter is specified, results are sorted by `_text_match:desc,default_sorting_field:desc`
+          example: num_employees:desc
+          type: string
+      - in: query
+        name: use_cache
+        schema:
+          description: 'Enable server side caching of search query results. By default,
+            caching is disabled.
+
+            '
+          type: boolean
+      - in: query
+        name: min_len_1typo
+        schema:
+          description: 'Minimum word length for 1-typo correction to be applied. The
+            value of num_typos is still treated as the maximum allowed typos.
+
+            '
+          type: integer
+      - in: query
+        name: synonym_prefix
+        schema:
+          description: 'Allow synonym resolution on word prefixes in the query. Default:
+            false
+
+            '
+          type: boolean
+      - in: query
+        name: highlight_affix_num_tokens
+        schema:
+          description: 'The number of tokens that should surround the highlighted
+            text on each side. Default: 4
+
+            '
+          type: integer
+      - in: query
+        name: search_cutoff_ms
+        schema:
+          description: 'Typesense will attempt to return results early if the cutoff
+            time has elapsed. This is not a strict guarantee and facet computation
+            is not bound by this parameter.
+
+            '
+          type: integer
+      - in: query
+        name: nl_model_id
+        schema:
+          description: The ID of the natural language model to use.
+          type: string
+      - in: query
+        name: drop_tokens_mode
+        schema:
+          $ref: '#/components/schemas/DropTokensMode'
+      - in: query
+        name: num_typos
+        schema:
+          description: 'The number of typographical errors (1 or 2) that would be
+            tolerated. Default: 2
+
+            '
+          type: string
+      - in: query
+        name: prioritize_num_matching_fields
+        schema:
+          default: true
+          description: 'Make Typesense prioritize documents where the query words
+            appear in more number of fields.
+
+            '
+          type: boolean
+      - in: query
+        name: voice_query
+        schema:
+          description: 'The base64 encoded audio file in 16 khz 16-bit WAV format.
 
             '
           type: string
@@ -3729,42 +3695,60 @@ paths:
             '
           type: string
       - in: query
-        name: synonym_sets
+        name: max_candidates
         schema:
-          description: List of synonym set names to associate with this search query
-          example: synonym_set_1,synonym_set_2
+          description: 'Control the number of words that Typesense considers for typo
+            and prefix searching.
+
+            '
+          type: integer
+      - in: query
+        name: split_join_tokens
+        schema:
+          description: 'Treat space as typo: search for q=basket ball if q=basketball
+            is not found or vice-versa. Splitting/joining of tokens will only be attempted
+            if the original query produces no results. To always trigger this behavior,
+            set value to `always``. To disable, set value to `off`. Default is `fallback`.
+
+            '
           type: string
       - in: query
-        name: exhaustive_search
+        name: query_by_weights
         schema:
-          description: 'Setting this to true will make Typesense consider all prefixes
-            and typo corrections of the words in the query without stopping early
-            when enough results are found (drop_tokens_threshold and typo_tokens_threshold
-            configurations are ignored).
+          description: The relative weight to give each `query_by` field when ranking
+            results. This can be used to boost fields in priority, when looking for
+            matches. Multiple fields are separated with a comma.
+          type: string
+      - in: query
+        name: prefix
+        schema:
+          description: Boolean field to indicate that the last word in the query should
+            be treated as a prefix, and not as a whole word. This is used for building
+            autocomplete and instant search interfaces. Defaults to true.
+          type: string
+      - in: query
+        name: enable_typos_for_numerical_tokens
+        schema:
+          default: true
+          description: 'Make Typesense disable typos for numerical tokens.
 
             '
           type: boolean
       - in: query
-        name: per_page
+        name: limit
         schema:
-          description: 'Number of results to fetch per page. Default: 10'
+          description: 'Number of hits to fetch. Can be used as an alternative to
+            the per_page parameter. Default: 10.
+
+            '
           type: integer
       - in: query
-        name: sort_by
+        name: drop_tokens_threshold
         schema:
-          description: A list of numerical fields and their corresponding sort orders
-            that will be used for ordering your results. Up to 3 sort fields can be
-            specified. The text similarity score is exposed as a special `_text_match`
-            field that you can use in the list of sorting fields. If no `sort_by`
-            parameter is specified, results are sorted by `_text_match:desc,default_sorting_field:desc`
-          example: num_employees:desc
-          type: string
-      - in: query
-        name: cache_ttl
-        schema:
-          description: 'The duration (in seconds) that determines how long the search
-            query is cached. This value can be set on a per-query basis. Default:
-            60.
+          description: 'If the number of results found for a specific query is less
+            than this number, Typesense will attempt to drop the tokens in the query
+            until enough results are found. Tokens that have the least individual
+            hits are dropped first. Set to 0 to disable. Default: 10
 
             '
           type: integer
@@ -3776,15 +3760,46 @@ paths:
             values are max_score (default) or max_weight.
           type: string
       - in: query
-        name: nl_query
+        name: override_tags
         schema:
-          description: Whether to use natural language processing to parse the query.
-          type: boolean
+          description: Comma separated list of tags to trigger the curations rules
+            that match the tags.
+          type: string
       - in: query
-        name: synonym_num_typos
+        name: preset
         schema:
-          description: 'Allow synonym resolution on typo-corrected words in the query.
-            Default: 0
+          description: 'Search using a bunch of search parameters by setting this
+            parameter to the name of the existing Preset.
+
+            '
+          type: string
+      - in: query
+        name: facet_strategy
+        schema:
+          description: 'Choose the underlying faceting strategy used. Comma separated
+            string of allows values: exhaustive, top_values or automatic (default).
+
+            '
+          type: string
+      - in: query
+        name: offset
+        schema:
+          description: Identifies the starting point to return hits from a result
+            set. Can be used as an alternative to the page parameter.
+          type: integer
+      - in: query
+        name: max_filter_by_candidates
+        schema:
+          description: Controls the number of similar words that Typesense considers
+            during fuzzy search on filter_by values. Useful for controlling prefix
+            matches like company_name:Acm*.
+          type: integer
+      - in: query
+        name: cache_ttl
+        schema:
+          description: 'The duration (in seconds) that determines how long the search
+            query is cached. This value can be set on a per-query basis. Default:
+            60.
 
             '
           type: integer
@@ -4461,164 +4476,32 @@ paths:
       operationId: multiSearch
       parameters:
       - in: query
-        name: min_len_2typo
+        name: filter_curated_hits
         schema:
-          description: 'Minimum word length for 2-typo correction to be applied. The
-            value of num_typos is still treated as the maximum allowed typos.
-
-            '
-          type: integer
-      - in: query
-        name: voice_query
-        schema:
-          description: 'The base64 encoded audio file in 16 khz 16-bit WAV format.
-
-            '
-          type: string
-      - in: query
-        name: highlight_fields
-        schema:
-          description: 'A list of custom fields that must be highlighted even if you
-            don''t query for them
-
-            '
-          type: string
-      - in: query
-        name: highlight_affix_num_tokens
-        schema:
-          description: 'The number of tokens that should surround the highlighted
-            text on each side. Default: 4
-
-            '
-          type: integer
-      - in: query
-        name: max_extra_suffix
-        schema:
-          description: There are also 2 parameters that allow you to control the extent
-            of infix searching max_extra_prefix and max_extra_suffix which specify
-            the maximum number of symbols before or after the query that can be present
-            in the token. For example query "K2100" has 2 extra symbols in "6PK2100".
-            By default, any number of prefixes/suffixes can be present for a match.
-          type: integer
-      - in: query
-        name: group_by
-        schema:
-          description: You can aggregate search results into groups or buckets by
-            specify one or more `group_by` fields. Separate multiple fields with a
-            comma. To group on a particular field, it must be a faceted field.
-          type: string
-      - in: query
-        name: offset
-        schema:
-          description: Identifies the starting point to return hits from a result
-            set. Can be used as an alternative to the page parameter.
-          type: integer
-      - in: query
-        name: preset
-        schema:
-          description: 'Search using a bunch of search parameters by setting this
-            parameter to the name of the existing Preset.
-
-            '
-          type: string
-      - in: query
-        name: use_cache
-        schema:
-          description: 'Enable server side caching of search query results. By default,
-            caching is disabled.
+          description: 'Whether the filter_by condition of the search query should
+            be applicable to curated results (override definitions, pinned hits, hidden
+            hits, etc.). Default: false
 
             '
           type: boolean
       - in: query
-        name: limit
+        name: highlight_full_fields
         schema:
-          description: 'Number of hits to fetch. Can be used as an alternative to
-            the per_page parameter. Default: 10.
+          description: List of fields which should be highlighted fully without snippeting
+          type: string
+      - in: query
+        name: synonym_num_typos
+        schema:
+          description: 'Allow synonym resolution on typo-corrected words in the query.
+            Default: 0
 
             '
           type: integer
       - in: query
-        name: drop_tokens_mode
+        name: include_fields
         schema:
-          $ref: '#/components/schemas/DropTokensMode'
-      - in: query
-        name: query_by_weights
-        schema:
-          description: The relative weight to give each `query_by` field when ranking
-            results. This can be used to boost fields in priority, when looking for
-            matches. Multiple fields are separated with a comma.
+          description: List of fields from the document to include in the search result
           type: string
-      - in: query
-        name: infix
-        schema:
-          description: If infix index is enabled for this field, infix searching can
-            be done on a per-field basis by sending a comma separated string parameter
-            called infix to the search query. This parameter can have 3 values; `off`
-            infix search is disabled, which is default `always` infix search is performed
-            along with regular search `fallback` infix search is performed if regular
-            search does not produce results
-          type: string
-      - in: query
-        name: highlight_start_tag
-        schema:
-          description: 'The start tag used for the highlighted snippets. Default:
-            `<mark>`
-
-            '
-          type: string
-      - in: query
-        name: query_by
-        schema:
-          description: A list of `string` fields that should be queried against. Multiple
-            fields are separated with a comma.
-          type: string
-      - in: query
-        name: conversation
-        schema:
-          description: 'Enable conversational search.
-
-            '
-          type: boolean
-      - in: query
-        name: q
-        schema:
-          description: The query text to search for in the collection. Use * as the
-            search string to return all documents. This is typically useful when used
-            in conjunction with filter_by.
-          type: string
-      - in: query
-        name: facet_by
-        schema:
-          description: A list of fields that will be used for faceting your results
-            on. Separate multiple fields with a comma.
-          type: string
-      - in: query
-        name: drop_tokens_threshold
-        schema:
-          description: 'If the number of results found for a specific query is less
-            than this number, Typesense will attempt to drop the tokens in the query
-            until enough results are found. Tokens that have the least individual
-            hits are dropped first. Set to 0 to disable. Default: 10
-
-            '
-          type: integer
-      - in: query
-        name: remote_embedding_timeout_ms
-        schema:
-          description: 'Timeout (in milliseconds) for fetching remote embeddings.
-
-            '
-          type: integer
-      - in: query
-        name: enable_overrides
-        schema:
-          default: false
-          description: 'If you have some overrides defined but want to disable all
-            of them during query time, you can do that by setting this parameter to
-            false
-
-            '
-          type: boolean
       - in: query
         name: pinned_hits
         schema:
@@ -4643,27 +4526,12 @@ paths:
             only facet values that contain the prefix "shoe".
           type: string
       - in: query
-        name: enable_typos_for_alpha_numerical_tokens
+        name: group_missing_values
         schema:
-          description: 'Set this parameter to false to disable typos on alphanumerical
-            query tokens. Default: true.
-
-            '
-          type: boolean
-      - in: query
-        name: include_fields
-        schema:
-          description: List of fields from the document to include in the search result
-          type: string
-      - in: query
-        name: pre_segmented_query
-        schema:
-          default: false
-          description: 'You can index content from any logographic language into Typesense
-            if you are able to segment / split the text into space-separated words
-            yourself before indexing and querying.
-
-            Set this parameter to true to do the same
+          description: 'Setting this parameter to true will place all documents that
+            have a null value in the group_by field, into a single group. Setting
+            this parameter to false, will cause each document with a null value in
+            the group_by field to not be grouped with other documents. Default: true
 
             '
           type: boolean
@@ -4677,106 +4545,17 @@ paths:
             By default, any number of prefixes/suffixes can be present for a match.
           type: integer
       - in: query
-        name: facet_return_parent
+        name: highlight_fields
         schema:
-          description: 'Comma separated string of nested facet fields whose parent
-            object should be returned in facet response.
+          description: 'A list of custom fields that must be highlighted even if you
+            don''t query for them
 
             '
           type: string
       - in: query
-        name: prioritize_num_matching_fields
+        name: per_page
         schema:
-          default: true
-          description: 'Make Typesense prioritize documents where the query words
-            appear in more number of fields.
-
-            '
-          type: boolean
-      - in: query
-        name: override_tags
-        schema:
-          description: Comma separated list of tags to trigger the curations rules
-            that match the tags.
-          type: string
-      - in: query
-        name: conversation_model_id
-        schema:
-          description: 'The Id of Conversation Model to be used.
-
-            '
-          type: string
-      - in: query
-        name: enable_typos_for_numerical_tokens
-        schema:
-          default: true
-          description: 'Make Typesense disable typos for numerical tokens.
-
-            '
-          type: boolean
-      - in: query
-        name: stopwords
-        schema:
-          description: 'Name of the stopwords set to apply for this search, the keywords
-            present in the set will be removed from the search query.
-
-            '
-          type: string
-      - in: query
-        name: facet_strategy
-        schema:
-          description: 'Choose the underlying faceting strategy used. Comma separated
-            string of allows values: exhaustive, top_values or automatic (default).
-
-            '
-          type: string
-      - in: query
-        name: remote_embedding_num_tries
-        schema:
-          description: 'Number of times to retry fetching remote embeddings.
-
-            '
-          type: integer
-      - in: query
-        name: filter_curated_hits
-        schema:
-          description: 'Whether the filter_by condition of the search query should
-            be applicable to curated results (override definitions, pinned hits, hidden
-            hits, etc.). Default: false
-
-            '
-          type: boolean
-      - in: query
-        name: min_len_1typo
-        schema:
-          description: 'Minimum word length for 1-typo correction to be applied. The
-            value of num_typos is still treated as the maximum allowed typos.
-
-            '
-          type: integer
-      - in: query
-        name: exclude_fields
-        schema:
-          description: List of fields from the document to exclude in the search result
-          type: string
-      - in: query
-        name: max_facet_values
-        schema:
-          description: Maximum number of facet values to be returned.
-          type: integer
-      - in: query
-        name: page
-        schema:
-          description: Results from this specific page number would be fetched.
-          type: integer
-      - in: query
-        name: search_cutoff_ms
-        schema:
-          description: 'Typesense will attempt to return results early if the cutoff
-            time has elapsed. This is not a strict guarantee and facet computation
-            is not bound by this parameter.
-
-            '
+          description: 'Number of results to fetch per page. Default: 10'
           type: integer
       - in: query
         name: snippet_threshold
@@ -4787,52 +4566,36 @@ paths:
             '
           type: integer
       - in: query
-        name: synonym_prefix
+        name: infix
         schema:
-          description: 'Allow synonym resolution on word prefixes in the query. Default:
-            false
-
-            '
-          type: boolean
-      - in: query
-        name: prefix
-        schema:
-          description: Boolean field to indicate that the last word in the query should
-            be treated as a prefix, and not as a whole word. This is used for building
-            autocomplete and instant search interfaces. Defaults to true.
+          description: If infix index is enabled for this field, infix searching can
+            be done on a per-field basis by sending a comma separated string parameter
+            called infix to the search query. This parameter can have 3 values; `off`
+            infix search is disabled, which is default `always` infix search is performed
+            along with regular search `fallback` infix search is performed if regular
+            search does not produce results
           type: string
       - in: query
-        name: num_typos
+        name: conversation
         schema:
-          description: 'The number of typographical errors (1 or 2) that would be
-            tolerated. Default: 2
+          description: 'Enable conversational search.
+
+            '
+          type: boolean
+      - in: query
+        name: highlight_end_tag
+        schema:
+          description: 'The end tag used for the highlighted snippets. Default: `</mark>`
 
             '
           type: string
       - in: query
-        name: enable_synonyms
+        name: vector_query
         schema:
-          description: 'If you have some synonyms defined but want to disable all
-            of them for a particular search query, set enable_synonyms to false. Default:
-            true
+          description: 'Vector query expression for fetching documents "closest" to
+            a given query/document vector.
 
             '
-          type: boolean
-      - in: query
-        name: prioritize_exact_match
-        schema:
-          default: true
-          description: 'Set this parameter to true to ensure that an exact match is
-            ranked above the others
-
-            '
-          type: boolean
-      - in: query
-        name: filter_by
-        schema:
-          description: Filter conditions for refining youropen api validator search
-            results. Separate multiple conditions with &&.
-          example: 'num_employees:>100 && country: [USA, UK]'
           type: string
       - in: query
         name: hidden_hits
@@ -4848,35 +4611,17 @@ paths:
             '
           type: string
       - in: query
-        name: group_missing_values
+        name: remote_embedding_timeout_ms
         schema:
-          description: 'Setting this parameter to true will place all documents that
-            have a null value in the group_by field, into a single group. Setting
-            this parameter to false, will cause each document with a null value in
-            the group_by field to not be grouped with other documents. Default: true
-
-            '
-          type: boolean
-      - in: query
-        name: highlight_full_fields
-        schema:
-          description: List of fields which should be highlighted fully without snippeting
-          type: string
-      - in: query
-        name: group_limit
-        schema:
-          description: 'Maximum number of hits to be returned for every group. If
-            the `group_limit` is set as `K` then only the top K hits in each group
-            are returned in the response. Default: 3
+          description: 'Timeout (in milliseconds) for fetching remote embeddings.
 
             '
           type: integer
       - in: query
-        name: highlight_end_tag
+        name: query_by
         schema:
-          description: 'The end tag used for the highlighted snippets. Default: `</mark>`
-
-            '
+          description: A list of `string` fields that should be queried against. Multiple
+            fields are separated with a comma.
           type: string
       - in: query
         name: enable_analytics
@@ -4884,40 +4629,6 @@ paths:
           default: true
           description: 'Flag for enabling/disabling analytics aggregation for specific
             search queries (for e.g. those originating from a test script).
-
-            '
-          type: boolean
-      - in: query
-        name: typo_tokens_threshold
-        schema:
-          description: 'If the number of results found for a specific query is less
-            than this number, Typesense will attempt to look for tokens with more
-            typos until enough results are found. Default: 100
-
-            '
-          type: integer
-      - in: query
-        name: vector_query
-        schema:
-          description: 'Vector query expression for fetching documents "closest" to
-            a given query/document vector.
-
-            '
-          type: string
-      - in: query
-        name: conversation_id
-        schema:
-          description: 'The Id of a previous conversation to continue, this tells
-            Typesense to include prior context when communicating with the LLM.
-
-            '
-          type: string
-      - in: query
-        name: prioritize_token_position
-        schema:
-          default: false
-          description: 'Make Typesense prioritize documents where the query words
-            appear earlier in the text.
 
             '
           type: boolean
@@ -4932,10 +4643,156 @@ paths:
             '
           type: boolean
       - in: query
-        name: per_page
+        name: enable_synonyms
         schema:
-          description: 'Number of results to fetch per page. Default: 10'
+          description: 'If you have some synonyms defined but want to disable all
+            of them for a particular search query, set enable_synonyms to false. Default:
+            true
+
+            '
+          type: boolean
+      - in: query
+        name: page
+        schema:
+          description: Results from this specific page number would be fetched.
           type: integer
+      - in: query
+        name: enable_typos_for_alpha_numerical_tokens
+        schema:
+          description: 'Set this parameter to false to disable typos on alphanumerical
+            query tokens. Default: true.
+
+            '
+          type: boolean
+      - in: query
+        name: filter_by
+        schema:
+          description: Filter conditions for refining youropen api validator search
+            results. Separate multiple conditions with &&.
+          example: 'num_employees:>100 && country: [USA, UK]'
+          type: string
+      - in: query
+        name: prioritize_exact_match
+        schema:
+          default: true
+          description: 'Set this parameter to true to ensure that an exact match is
+            ranked above the others
+
+            '
+          type: boolean
+      - in: query
+        name: prioritize_token_position
+        schema:
+          default: false
+          description: 'Make Typesense prioritize documents where the query words
+            appear earlier in the text.
+
+            '
+          type: boolean
+      - in: query
+        name: typo_tokens_threshold
+        schema:
+          description: 'If the number of results found for a specific query is less
+            than this number, Typesense will attempt to look for tokens with more
+            typos until enough results are found. Default: 100
+
+            '
+          type: integer
+      - in: query
+        name: group_by
+        schema:
+          description: You can aggregate search results into groups or buckets by
+            specify one or more `group_by` fields. Separate multiple fields with a
+            comma. To group on a particular field, it must be a faceted field.
+          type: string
+      - in: query
+        name: min_len_2typo
+        schema:
+          description: 'Minimum word length for 2-typo correction to be applied. The
+            value of num_typos is still treated as the maximum allowed typos.
+
+            '
+          type: integer
+      - in: query
+        name: pre_segmented_query
+        schema:
+          default: false
+          description: 'You can index content from any logographic language into Typesense
+            if you are able to segment / split the text into space-separated words
+            yourself before indexing and querying.
+
+            Set this parameter to true to do the same
+
+            '
+          type: boolean
+      - in: query
+        name: max_extra_suffix
+        schema:
+          description: There are also 2 parameters that allow you to control the extent
+            of infix searching max_extra_prefix and max_extra_suffix which specify
+            the maximum number of symbols before or after the query that can be present
+            in the token. For example query "K2100" has 2 extra symbols in "6PK2100".
+            By default, any number of prefixes/suffixes can be present for a match.
+          type: integer
+      - in: query
+        name: q
+        schema:
+          description: The query text to search for in the collection. Use * as the
+            search string to return all documents. This is typically useful when used
+            in conjunction with filter_by.
+          type: string
+      - in: query
+        name: conversation_model_id
+        schema:
+          description: 'The Id of Conversation Model to be used.
+
+            '
+          type: string
+      - in: query
+        name: group_limit
+        schema:
+          description: 'Maximum number of hits to be returned for every group. If
+            the `group_limit` is set as `K` then only the top K hits in each group
+            are returned in the response. Default: 3
+
+            '
+          type: integer
+      - in: query
+        name: max_facet_values
+        schema:
+          description: Maximum number of facet values to be returned.
+          type: integer
+      - in: query
+        name: enable_overrides
+        schema:
+          default: false
+          description: 'If you have some overrides defined but want to disable all
+            of them during query time, you can do that by setting this parameter to
+            false
+
+            '
+          type: boolean
+      - in: query
+        name: facet_return_parent
+        schema:
+          description: 'Comma separated string of nested facet fields whose parent
+            object should be returned in facet response.
+
+            '
+          type: string
+      - in: query
+        name: remote_embedding_num_tries
+        schema:
+          description: 'Number of times to retry fetching remote embeddings.
+
+            '
+          type: integer
+      - in: query
+        name: facet_by
+        schema:
+          description: A list of fields that will be used for faceting your results
+            on. Separate multiple fields with a comma.
+          type: string
       - in: query
         name: sort_by
         schema:
@@ -4946,11 +4803,140 @@ paths:
             parameter is specified, results are sorted by `_text_match:desc,default_sorting_field:desc`
           type: string
       - in: query
-        name: cache_ttl
+        name: synonym_prefix
         schema:
-          description: 'The duration (in seconds) that determines how long the search
-            query is cached. This value can be set on a per-query basis. Default:
-            60.
+          description: 'Allow synonym resolution on word prefixes in the query. Default:
+            false
+
+            '
+          type: boolean
+      - in: query
+        name: highlight_start_tag
+        schema:
+          description: 'The start tag used for the highlighted snippets. Default:
+            `<mark>`
+
+            '
+          type: string
+      - in: query
+        name: stopwords
+        schema:
+          description: 'Name of the stopwords set to apply for this search, the keywords
+            present in the set will be removed from the search query.
+
+            '
+          type: string
+      - in: query
+        name: min_len_1typo
+        schema:
+          description: 'Minimum word length for 1-typo correction to be applied. The
+            value of num_typos is still treated as the maximum allowed typos.
+
+            '
+          type: integer
+      - in: query
+        name: exclude_fields
+        schema:
+          description: List of fields from the document to exclude in the search result
+          type: string
+      - in: query
+        name: use_cache
+        schema:
+          description: 'Enable server side caching of search query results. By default,
+            caching is disabled.
+
+            '
+          type: boolean
+      - in: query
+        name: highlight_affix_num_tokens
+        schema:
+          description: 'The number of tokens that should surround the highlighted
+            text on each side. Default: 4
+
+            '
+          type: integer
+      - in: query
+        name: search_cutoff_ms
+        schema:
+          description: 'Typesense will attempt to return results early if the cutoff
+            time has elapsed. This is not a strict guarantee and facet computation
+            is not bound by this parameter.
+
+            '
+          type: integer
+      - in: query
+        name: drop_tokens_mode
+        schema:
+          $ref: '#/components/schemas/DropTokensMode'
+      - in: query
+        name: num_typos
+        schema:
+          description: 'The number of typographical errors (1 or 2) that would be
+            tolerated. Default: 2
+
+            '
+          type: string
+      - in: query
+        name: prioritize_num_matching_fields
+        schema:
+          default: true
+          description: 'Make Typesense prioritize documents where the query words
+            appear in more number of fields.
+
+            '
+          type: boolean
+      - in: query
+        name: prefix
+        schema:
+          description: Boolean field to indicate that the last word in the query should
+            be treated as a prefix, and not as a whole word. This is used for building
+            autocomplete and instant search interfaces. Defaults to true.
+          type: string
+      - in: query
+        name: voice_query
+        schema:
+          description: 'The base64 encoded audio file in 16 khz 16-bit WAV format.
+
+            '
+          type: string
+      - in: query
+        name: conversation_id
+        schema:
+          description: 'The Id of a previous conversation to continue, this tells
+            Typesense to include prior context when communicating with the LLM.
+
+            '
+          type: string
+      - in: query
+        name: query_by_weights
+        schema:
+          description: The relative weight to give each `query_by` field when ranking
+            results. This can be used to boost fields in priority, when looking for
+            matches. Multiple fields are separated with a comma.
+          type: string
+      - in: query
+        name: enable_typos_for_numerical_tokens
+        schema:
+          default: true
+          description: 'Make Typesense disable typos for numerical tokens.
+
+            '
+          type: boolean
+      - in: query
+        name: limit
+        schema:
+          description: 'Number of hits to fetch. Can be used as an alternative to
+            the per_page parameter. Default: 10.
+
+            '
+          type: integer
+      - in: query
+        name: drop_tokens_threshold
+        schema:
+          description: 'If the number of results found for a specific query is less
+            than this number, Typesense will attempt to drop the tokens in the query
+            until enough results are found. Tokens that have the least individual
+            hits are dropped first. Set to 0 to disable. Default: 10
 
             '
           type: integer
@@ -4962,10 +4948,39 @@ paths:
             values are max_score (default) or max_weight.
           type: string
       - in: query
-        name: synonym_num_typos
+        name: preset
         schema:
-          description: 'Allow synonym resolution on typo-corrected words in the query.
-            Default: 0
+          description: 'Search using a bunch of search parameters by setting this
+            parameter to the name of the existing Preset.
+
+            '
+          type: string
+      - in: query
+        name: override_tags
+        schema:
+          description: Comma separated list of tags to trigger the curations rules
+            that match the tags.
+          type: string
+      - in: query
+        name: facet_strategy
+        schema:
+          description: 'Choose the underlying faceting strategy used. Comma separated
+            string of allows values: exhaustive, top_values or automatic (default).
+
+            '
+          type: string
+      - in: query
+        name: offset
+        schema:
+          description: Identifies the starting point to return hits from a result
+            set. Can be used as an alternative to the page parameter.
+          type: integer
+      - in: query
+        name: cache_ttl
+        schema:
+          description: 'The duration (in seconds) that determines how long the search
+            query is cached. This value can be set on a per-query basis. Default:
+            60.
 
             '
           type: integer

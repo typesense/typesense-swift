@@ -20,4 +20,16 @@ public struct AnalyticsEventsAPI {
         }
         return (nil, response)
     }
+
+    public func retrieve(_ params: AnalyticsEventsRetrieveParams) async throws -> (AnalyticsEventsResponse?, URLResponse?) {
+        let queryParams = try createURLQuery(forSchema: params)
+
+        let (data, response) = try await self.apiCall.get(endPoint: AnalyticsEventsAPI.resourcePath, queryParameters: queryParams)
+        if let result = data {
+            let validData = try decoder.decode(AnalyticsEventsResponse.self, from: result)
+            return (validData, response)
+        }
+        return (nil, response)
+    }
+
 }

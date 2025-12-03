@@ -117,22 +117,6 @@ func createStopwordSet() async throws {
     )
 }
 
-func createAnalyticRule() async throws {
-    let _ = try await utilClient.analytics().rules().create(AnalyticsRuleCreate(
-        collection: "products",
-        eventType: "search",
-        name: "homepage_popular_queries",
-        type: .popularQueries,
-        params: AnalyticsRuleCreateParams(
-            captureSearchRequests: true,
-            destinationCollection: "product_queries",
-            limit: 100,
-        ),
-        ruleTag: "homepage",
-
-    ))
-}
-
 func createAPIKey() async throws -> ApiKey {
     let (data, _) =  try await utilClient.keys().create( ApiKeySchema(actions: ["*"], collections: ["*"], description: "Test key with all privileges"))
     return data!

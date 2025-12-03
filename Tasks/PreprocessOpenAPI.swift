@@ -17,6 +17,9 @@ struct PreprocessOpenAPI {
 
         print("Preprocessing the spec...")
 
+        // Create Models from URL Parameters
+        try createUrlParamsSchema(&doc, name: "AnalyticsEventsRetrieveParams", path: "/analytics/events", method: "get")
+
         // Add Vendor Attributes
         try addVendorAttributes(&doc)
 
@@ -157,6 +160,80 @@ struct PreprocessOpenAPI {
         pathItem[method] = operation
         paths[path] = pathItem
         doc["paths"] = paths
+    }
+
+    /// Scans a specific Path/Method, finds all Query parameters, and creates a new Schema Model in Components.
+    static func createUrlParamsSchema(_ doc: inout Node, name: String, path: String, method: String) throws {
+        print("- Extracting URL params from \(method.uppercased()) \(path) into schema '\(name)'...")
+
+        // Navigate to Paths -> Path -> Method -> Parameters
+        guard let paths = doc["paths"] as? Node,
+              let pathItem = paths[path] as? Node,
+              let operation = pathItem[method] as? Node,
+              let parameters = operation["parameters"] as? [Node] else {
+            print("⚠️ Warning: Path or operation not found: \(method) \(path)")
+            return
+        }
+
+        var properties: Node = [:]
+        var requiredFields: [String] = []
+
+        // Iterate over parameters
+        for param in parameters {
+            // We only care about query parameters
+            guard let inLoc = param["in"] as? String, inLoc == "query",
+                  let paramName = param["name"] as? String,
+                  let schema = param["schema"] as? Node else {
+                continue
+            }
+
+            // Build the property definition
+            var propertyDef = schema
+
+            // Copy description
+            if let description = param["description"] as? String {
+                propertyDef["description"] = description
+            }
+
+            // Copy custom x-swift-type if it exists on the param level
+            if let customType = param["x-swift-type"] {
+                propertyDef["x-swift-type"] = customType
+            }
+
+            properties[paramName] = propertyDef
+
+            // Handle Required Status
+            // OpenAPI Params use "required: true", JSON Schema uses a "required" array
+            if let isRequired = param["required"] as? Bool, isRequired {
+                requiredFields.append(paramName)
+            }
+        }
+
+        if properties.isEmpty {
+            print("⚠️ No query parameters found for \(name). Skipping.")
+            return
+        }
+
+        // Construct the new Schema Object
+        var newSchema: Node = [
+            "type": "object",
+            "properties": properties
+        ]
+
+        if !requiredFields.isEmpty {
+            newSchema["required"] = requiredFields
+        }
+
+        // Inject into components.schemas
+        var components = doc["components"] as? Node ?? [:]
+        var schemas = components["schemas"] as? Node ?? [:]
+
+        schemas[name] = newSchema
+
+        components["schemas"] = schemas
+        doc["components"] = components
+
+        print("  ✅ Created schema '\(name)' with \(properties.count) properties.")
     }
 
 }
