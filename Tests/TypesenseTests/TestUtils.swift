@@ -139,7 +139,7 @@ func createConversationCollection() async throws {
 
 struct Product: Codable, Equatable {
     var name: String?
-    var price: Int?
+    var price: Int
     var brand: String?
     var desc: String?
 

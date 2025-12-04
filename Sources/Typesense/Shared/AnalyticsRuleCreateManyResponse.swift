@@ -24,7 +24,7 @@ public enum AnalyticsRuleCreateManyResponseItem: Codable {
         } else if let value = try? container.decode(CreateAnalyticsRuleError.self) {
             self = .error(value)
         } else {
-            throw DecodingError.typeMismatch(Self.Type.self, .init(codingPath: decoder.codingPath, debugDescription: "Unable to decode instance of PresetUpsertSchemaValue"))
+            throw DecodingError.typeMismatch(Self.Type.self, .init(codingPath: decoder.codingPath, debugDescription: "Unable to decode instance of AnalyticsRuleCreateManyResponseItem"))
         }
     }
 }
