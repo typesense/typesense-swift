@@ -9,7 +9,7 @@ public struct Client {
         self.configuration = config
         self.apiCall = ApiCall(config: config)
     }
-    
+
     public func collections() -> Collections {
         return Collections(apiCall: apiCall)
     }
@@ -20,6 +20,14 @@ public struct Client {
 
     public func conversations() -> Conversations {
         return Conversations(apiCall: apiCall)
+    }
+
+    public func curationSets() -> CurationSets {
+        return CurationSets(apiCall: apiCall)
+    }
+
+    public func curationSet(_ name: String) -> CurationSet {
+        return CurationSet(apiCall: apiCall, curationSetName: name)
     }
 
     public func keys() -> ApiKeys {

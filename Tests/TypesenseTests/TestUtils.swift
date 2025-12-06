@@ -64,6 +64,16 @@ func tearDownAliases() async throws {
     }
 }
 
+func tearDownCurationSets() async throws {
+    let (data, _) = try await utilClient.curationSets().retrieve()
+    guard let validData = data else {
+        throw DataError.dataNotFound
+    }
+    for item in validData {
+        let _ = try await utilClient.curationSet(item.name).delete()
+    }
+}
+
 func createCollection() async throws {
     let schema = CollectionSchema( fields: [
         Field(name: "company_name", type: "string"),
@@ -81,13 +91,20 @@ func createDocument() async throws {
     let data = try encoder.encode(Company(id: "test-id", company_name: "Stark Industries", num_employees: 5215, country: "USA", metadata: ["open":false]))
     let _ = try await utilClient.collection(name: "companies").documents().create(document: data)
 }
-
-// func createAnOverride() async throws {
-//     let _ = try await utilClient.collection(name: "companies").overrides().upsert(
-//         overrideId: "test-id",
-//         params: SearchOverrideSchema<SearchOverrideExclude>(rule: SearchOverrideRule(filterBy: "test"), filterBy: "test:=true", metadata: SearchOverrideExclude(_id: "exclude-id"))
-//     )
-// }
+func createCurationSet() async throws {
+    let schema = CurationSetCreateSchema(items: [
+            CurationItemCreateSchema(
+                rule: CurationRule( match: .exact, query: "apple"),
+                excludes: [CurationExclude(id: "287")],
+                id: "customize-apple",
+                includes: [
+                    CurationInclude(id: "422", position: 1),
+                    CurationInclude(id: "54", position: 2),
+                ]
+            )
+        ])
+    let _ = try await client.curationSets().upsert("curate_products", schema)
+}
 
 func createSingleCollectionSearchPreset() async throws {
     let _ = try await utilClient.presets().upsert(
