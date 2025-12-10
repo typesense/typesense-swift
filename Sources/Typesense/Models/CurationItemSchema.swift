@@ -12,79 +12,79 @@ import AnyCodable
 
 public struct CurationItemSchema: Codable {
 
-    /** A Unix timestamp that indicates the date/time from which the curation will be active. You can use this to create rules that start applying from a future point in time.  */
-    public var effectiveFromTs: Int?
-    /** A Unix timestamp that indicates the date/time until which the curation will be active. You can use this to create rules that stop applying after a period of time.  */
-    public var effectiveToTs: Int?
+    public var rule: CurationRule
+    /** List of document `id`s that should be included in the search results with their corresponding `position`s. */
+    public var includes: [CurationInclude]?
     /** List of document `id`s that should be excluded from the search results. */
     public var excludes: [CurationExclude]?
     /** A filter by clause that is applied to any search query that matches the curation rule.  */
     public var filterBy: String?
-    /** When set to true, the filter conditions of the query is applied to the curated records as well. Default: false.  */
-    public var filterCuratedHits: Bool?
-    public var id: String
-    /** List of document `id`s that should be included in the search results with their corresponding `position`s. */
-    public var includes: [CurationInclude]?
-    /** Return a custom JSON object in the Search API response, when this rule is triggered. This can can be used to display a pre-defined message (eg: a promotion banner) on the front-end when a particular rule is triggered.  */
-    public var metadata: AnyCodable?
     /** Indicates whether search query tokens that exist in the curation's rule should be removed from the search query.  */
     public var removeMatchedTokens: Bool?
-    /** Replaces the current search query with this value, when the search query matches the curation rule.  */
-    public var replaceQuery: String?
-    public var rule: CurationRule
+    /** Return a custom JSON object in the Search API response, when this rule is triggered. This can can be used to display a pre-defined message (eg: a promotion banner) on the front-end when a particular rule is triggered.  */
+    public var metadata: AnyCodable?
     /** A sort by clause that is applied to any search query that matches the curation rule.  */
     public var sortBy: String?
+    /** Replaces the current search query with this value, when the search query matches the curation rule.  */
+    public var replaceQuery: String?
+    /** When set to true, the filter conditions of the query is applied to the curated records as well. Default: false.  */
+    public var filterCuratedHits: Bool?
+    /** A Unix timestamp that indicates the date/time from which the curation will be active. You can use this to create rules that start applying from a future point in time.  */
+    public var effectiveFromTs: Int?
+    /** A Unix timestamp that indicates the date/time until which the curation will be active. You can use this to create rules that stop applying after a period of time.  */
+    public var effectiveToTs: Int?
     /** When set to true, curation processing will stop at the first matching rule. When set to false curation processing will continue and multiple curation actions will be triggered in sequence. Curations are processed in the lexical sort order of their id field.  */
     public var stopProcessing: Bool?
+    public var id: String
 
-    public init(id: String, rule: CurationRule, effectiveFromTs: Int? = nil, effectiveToTs: Int? = nil, excludes: [CurationExclude]? = nil, filterBy: String? = nil, filterCuratedHits: Bool? = nil, includes: [CurationInclude]? = nil, metadata: AnyCodable? = nil, removeMatchedTokens: Bool? = nil, replaceQuery: String? = nil, sortBy: String? = nil, stopProcessing: Bool? = nil) {
-        self.effectiveFromTs = effectiveFromTs
-        self.effectiveToTs = effectiveToTs
+    public init(rule: CurationRule, id: String, includes: [CurationInclude]? = nil, excludes: [CurationExclude]? = nil, filterBy: String? = nil, removeMatchedTokens: Bool? = nil, metadata: AnyCodable? = nil, sortBy: String? = nil, replaceQuery: String? = nil, filterCuratedHits: Bool? = nil, effectiveFromTs: Int? = nil, effectiveToTs: Int? = nil, stopProcessing: Bool? = nil) {
+        self.rule = rule
+        self.includes = includes
         self.excludes = excludes
         self.filterBy = filterBy
-        self.filterCuratedHits = filterCuratedHits
-        self.id = id
-        self.includes = includes
-        self.metadata = metadata
         self.removeMatchedTokens = removeMatchedTokens
-        self.replaceQuery = replaceQuery
-        self.rule = rule
+        self.metadata = metadata
         self.sortBy = sortBy
+        self.replaceQuery = replaceQuery
+        self.filterCuratedHits = filterCuratedHits
+        self.effectiveFromTs = effectiveFromTs
+        self.effectiveToTs = effectiveToTs
         self.stopProcessing = stopProcessing
+        self.id = id
     }
 
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case effectiveFromTs = "effective_from_ts"
-        case effectiveToTs = "effective_to_ts"
+        case rule
+        case includes
         case excludes
         case filterBy = "filter_by"
-        case filterCuratedHits = "filter_curated_hits"
-        case id
-        case includes
-        case metadata
         case removeMatchedTokens = "remove_matched_tokens"
-        case replaceQuery = "replace_query"
-        case rule
+        case metadata
         case sortBy = "sort_by"
+        case replaceQuery = "replace_query"
+        case filterCuratedHits = "filter_curated_hits"
+        case effectiveFromTs = "effective_from_ts"
+        case effectiveToTs = "effective_to_ts"
         case stopProcessing = "stop_processing"
+        case id
     }
 
     // Encodable protocol methods
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encodeIfPresent(effectiveFromTs, forKey: .effectiveFromTs)
-        try container.encodeIfPresent(effectiveToTs, forKey: .effectiveToTs)
+        try container.encode(rule, forKey: .rule)
+        try container.encodeIfPresent(includes, forKey: .includes)
         try container.encodeIfPresent(excludes, forKey: .excludes)
         try container.encodeIfPresent(filterBy, forKey: .filterBy)
-        try container.encodeIfPresent(filterCuratedHits, forKey: .filterCuratedHits)
-        try container.encode(id, forKey: .id)
-        try container.encodeIfPresent(includes, forKey: .includes)
-        try container.encodeIfPresent(metadata, forKey: .metadata)
         try container.encodeIfPresent(removeMatchedTokens, forKey: .removeMatchedTokens)
-        try container.encodeIfPresent(replaceQuery, forKey: .replaceQuery)
-        try container.encode(rule, forKey: .rule)
+        try container.encodeIfPresent(metadata, forKey: .metadata)
         try container.encodeIfPresent(sortBy, forKey: .sortBy)
+        try container.encodeIfPresent(replaceQuery, forKey: .replaceQuery)
+        try container.encodeIfPresent(filterCuratedHits, forKey: .filterCuratedHits)
+        try container.encodeIfPresent(effectiveFromTs, forKey: .effectiveFromTs)
+        try container.encodeIfPresent(effectiveToTs, forKey: .effectiveToTs)
         try container.encodeIfPresent(stopProcessing, forKey: .stopProcessing)
+        try container.encode(id, forKey: .id)
     }
 }

@@ -12,44 +12,44 @@ import AnyCodable
 
 public struct AnalyticsStatus: Codable {
 
-    public var docCounterEvents: Int?
-    public var docLogEvents: Int?
-    public var logPrefixQueries: Int?
-    public var nohitsPrefixQueries: Int?
     public var popularPrefixQueries: Int?
-    public var queryCounterEvents: Int?
+    public var nohitsPrefixQueries: Int?
+    public var logPrefixQueries: Int?
     public var queryLogEvents: Int?
+    public var queryCounterEvents: Int?
+    public var docLogEvents: Int?
+    public var docCounterEvents: Int?
 
-    public init(docCounterEvents: Int? = nil, docLogEvents: Int? = nil, logPrefixQueries: Int? = nil, nohitsPrefixQueries: Int? = nil, popularPrefixQueries: Int? = nil, queryCounterEvents: Int? = nil, queryLogEvents: Int? = nil) {
-        self.docCounterEvents = docCounterEvents
-        self.docLogEvents = docLogEvents
-        self.logPrefixQueries = logPrefixQueries
-        self.nohitsPrefixQueries = nohitsPrefixQueries
+    public init(popularPrefixQueries: Int? = nil, nohitsPrefixQueries: Int? = nil, logPrefixQueries: Int? = nil, queryLogEvents: Int? = nil, queryCounterEvents: Int? = nil, docLogEvents: Int? = nil, docCounterEvents: Int? = nil) {
         self.popularPrefixQueries = popularPrefixQueries
-        self.queryCounterEvents = queryCounterEvents
+        self.nohitsPrefixQueries = nohitsPrefixQueries
+        self.logPrefixQueries = logPrefixQueries
         self.queryLogEvents = queryLogEvents
+        self.queryCounterEvents = queryCounterEvents
+        self.docLogEvents = docLogEvents
+        self.docCounterEvents = docCounterEvents
     }
 
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case docCounterEvents = "doc_counter_events"
-        case docLogEvents = "doc_log_events"
-        case logPrefixQueries = "log_prefix_queries"
-        case nohitsPrefixQueries = "nohits_prefix_queries"
         case popularPrefixQueries = "popular_prefix_queries"
-        case queryCounterEvents = "query_counter_events"
+        case nohitsPrefixQueries = "nohits_prefix_queries"
+        case logPrefixQueries = "log_prefix_queries"
         case queryLogEvents = "query_log_events"
+        case queryCounterEvents = "query_counter_events"
+        case docLogEvents = "doc_log_events"
+        case docCounterEvents = "doc_counter_events"
     }
 
     // Encodable protocol methods
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encodeIfPresent(docCounterEvents, forKey: .docCounterEvents)
-        try container.encodeIfPresent(docLogEvents, forKey: .docLogEvents)
-        try container.encodeIfPresent(logPrefixQueries, forKey: .logPrefixQueries)
-        try container.encodeIfPresent(nohitsPrefixQueries, forKey: .nohitsPrefixQueries)
         try container.encodeIfPresent(popularPrefixQueries, forKey: .popularPrefixQueries)
-        try container.encodeIfPresent(queryCounterEvents, forKey: .queryCounterEvents)
+        try container.encodeIfPresent(nohitsPrefixQueries, forKey: .nohitsPrefixQueries)
+        try container.encodeIfPresent(logPrefixQueries, forKey: .logPrefixQueries)
         try container.encodeIfPresent(queryLogEvents, forKey: .queryLogEvents)
+        try container.encodeIfPresent(queryCounterEvents, forKey: .queryCounterEvents)
+        try container.encodeIfPresent(docLogEvents, forKey: .docLogEvents)
+        try container.encodeIfPresent(docCounterEvents, forKey: .docCounterEvents)
     }
 }

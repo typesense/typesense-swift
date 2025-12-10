@@ -12,26 +12,26 @@ import AnyCodable
 
 public struct CollectionAlias: Codable {
 
-    /** Name of the collection the alias mapped to */
-    public var collectionName: String
     /** Name of the collection alias */
     public var name: String
+    /** Name of the collection the alias mapped to */
+    public var collectionName: String
 
-    public init(collectionName: String, name: String) {
-        self.collectionName = collectionName
+    public init(name: String, collectionName: String) {
         self.name = name
+        self.collectionName = collectionName
     }
 
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case collectionName = "collection_name"
         case name
+        case collectionName = "collection_name"
     }
 
     // Encodable protocol methods
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(collectionName, forKey: .collectionName)
         try container.encode(name, forKey: .name)
+        try container.encode(collectionName, forKey: .collectionName)
     }
 }

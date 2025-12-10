@@ -12,24 +12,24 @@ import AnyCodable
 
 public struct StopwordsSetUpsertSchema: Codable {
 
-    public var locale: String?
     public var stopwords: [String]
+    public var locale: String?
 
     public init(stopwords: [String], locale: String? = nil) {
-        self.locale = locale
         self.stopwords = stopwords
+        self.locale = locale
     }
 
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case locale
         case stopwords
+        case locale
     }
 
     // Encodable protocol methods
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encodeIfPresent(locale, forKey: .locale)
         try container.encode(stopwords, forKey: .stopwords)
+        try container.encodeIfPresent(locale, forKey: .locale)
     }
 }

@@ -12,31 +12,31 @@ import AnyCodable
 
 public struct ExportDocumentsParameters: Codable {
 
-    /** List of fields from the document to exclude in the search result */
-    public var excludeFields: String?
     /** Filter conditions for refining your search results. Separate multiple conditions with &&. */
     public var filterBy: String?
     /** List of fields from the document to include in the search result */
     public var includeFields: String?
+    /** List of fields from the document to exclude in the search result */
+    public var excludeFields: String?
 
-    public init(excludeFields: String? = nil, filterBy: String? = nil, includeFields: String? = nil) {
-        self.excludeFields = excludeFields
+    public init(filterBy: String? = nil, includeFields: String? = nil, excludeFields: String? = nil) {
         self.filterBy = filterBy
         self.includeFields = includeFields
+        self.excludeFields = excludeFields
     }
 
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case excludeFields = "exclude_fields"
         case filterBy = "filter_by"
         case includeFields = "include_fields"
+        case excludeFields = "exclude_fields"
     }
 
     // Encodable protocol methods
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encodeIfPresent(excludeFields, forKey: .excludeFields)
         try container.encodeIfPresent(filterBy, forKey: .filterBy)
         try container.encodeIfPresent(includeFields, forKey: .includeFields)
+        try container.encodeIfPresent(excludeFields, forKey: .excludeFields)
     }
 }

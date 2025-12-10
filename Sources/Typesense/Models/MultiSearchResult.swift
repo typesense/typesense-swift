@@ -12,24 +12,24 @@ import AnyCodable
 
 public struct MultiSearchResult<T: Codable>: Codable {
 
-    public var conversation: SearchResultConversation?
     public var results: [MultiSearchResultItem<T>]
+    public var conversation: SearchResultConversation?
 
     public init(results: [MultiSearchResultItem<T>], conversation: SearchResultConversation? = nil) {
-        self.conversation = conversation
         self.results = results
+        self.conversation = conversation
     }
 
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case conversation
         case results
+        case conversation
     }
 
     // Encodable protocol methods
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encodeIfPresent(conversation, forKey: .conversation)
         try container.encode(results, forKey: .results)
+        try container.encodeIfPresent(conversation, forKey: .conversation)
     }
 }

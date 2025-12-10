@@ -13,19 +13,19 @@ import AnyCodable
 public struct StopwordsSetSchema: Codable {
 
     public var id: String
-    public var locale: String?
     public var stopwords: [String]
+    public var locale: String?
 
     public init(id: String, stopwords: [String], locale: String? = nil) {
         self.id = id
-        self.locale = locale
         self.stopwords = stopwords
+        self.locale = locale
     }
 
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case id
-        case locale
         case stopwords
+        case locale
     }
 
     // Encodable protocol methods
@@ -33,7 +33,7 @@ public struct StopwordsSetSchema: Codable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(id, forKey: .id)
-        try container.encodeIfPresent(locale, forKey: .locale)
         try container.encode(stopwords, forKey: .stopwords)
+        try container.encodeIfPresent(locale, forKey: .locale)
     }
 }

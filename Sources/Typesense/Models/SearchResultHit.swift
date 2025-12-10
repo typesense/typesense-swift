@@ -12,58 +12,58 @@ import AnyCodable
 
 public struct SearchResultHit<T: Codable>: Codable {
 
-    /** Can be any key-value pair */
-    public var document: T?
-    /** Can be any key-value pair */
-    public var geoDistanceMeters: [String: Int]?
-    /** Highlighted version of the matching document */
-    public var highlight: [String: AnyCodable]?
     /** (Deprecated) Contains highlighted portions of the search fields */
     public var highlights: [SearchHighlight]?
+    /** Highlighted version of the matching document */
+    public var highlight: [String: AnyCodable]?
+    /** Can be any key-value pair */
+    public var document: T?
+    public var textMatch: Int64?
+    public var textMatchInfo: SearchResultHitTextMatchInfo?
+    /** Can be any key-value pair */
+    public var geoDistanceMeters: [String: Int]?
+    /** Distance between the query vector and matching document's vector value */
+    public var vectorDistance: Float?
     public var hybridSearchInfo: SearchResultHitHybridSearchInfo?
     /** Returned only for union query response. Indicates the index of the query which this document matched to. */
     public var searchIndex: Int?
-    public var textMatch: Int64?
-    public var textMatchInfo: SearchResultHitTextMatchInfo?
-    /** Distance between the query vector and matching document's vector value */
-    public var vectorDistance: Float?
 
-    public init(document: T? = nil, geoDistanceMeters: [String: Int]? = nil, highlight: [String: AnyCodable]? = nil, highlights: [SearchHighlight]? = nil, hybridSearchInfo: SearchResultHitHybridSearchInfo? = nil, searchIndex: Int? = nil, textMatch: Int64? = nil, textMatchInfo: SearchResultHitTextMatchInfo? = nil, vectorDistance: Float? = nil) {
-        self.document = document
-        self.geoDistanceMeters = geoDistanceMeters
-        self.highlight = highlight
+    public init(highlights: [SearchHighlight]? = nil, highlight: [String: AnyCodable]? = nil, document: T? = nil, textMatch: Int64? = nil, textMatchInfo: SearchResultHitTextMatchInfo? = nil, geoDistanceMeters: [String: Int]? = nil, vectorDistance: Float? = nil, hybridSearchInfo: SearchResultHitHybridSearchInfo? = nil, searchIndex: Int? = nil) {
         self.highlights = highlights
-        self.hybridSearchInfo = hybridSearchInfo
-        self.searchIndex = searchIndex
+        self.highlight = highlight
+        self.document = document
         self.textMatch = textMatch
         self.textMatchInfo = textMatchInfo
+        self.geoDistanceMeters = geoDistanceMeters
         self.vectorDistance = vectorDistance
+        self.hybridSearchInfo = hybridSearchInfo
+        self.searchIndex = searchIndex
     }
 
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case document
-        case geoDistanceMeters = "geo_distance_meters"
-        case highlight
         case highlights
-        case hybridSearchInfo = "hybrid_search_info"
-        case searchIndex = "search_index"
+        case highlight
+        case document
         case textMatch = "text_match"
         case textMatchInfo = "text_match_info"
+        case geoDistanceMeters = "geo_distance_meters"
         case vectorDistance = "vector_distance"
+        case hybridSearchInfo = "hybrid_search_info"
+        case searchIndex = "search_index"
     }
 
     // Encodable protocol methods
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encodeIfPresent(document, forKey: .document)
-        try container.encodeIfPresent(geoDistanceMeters, forKey: .geoDistanceMeters)
-        try container.encodeIfPresent(highlight, forKey: .highlight)
         try container.encodeIfPresent(highlights, forKey: .highlights)
-        try container.encodeIfPresent(hybridSearchInfo, forKey: .hybridSearchInfo)
-        try container.encodeIfPresent(searchIndex, forKey: .searchIndex)
+        try container.encodeIfPresent(highlight, forKey: .highlight)
+        try container.encodeIfPresent(document, forKey: .document)
         try container.encodeIfPresent(textMatch, forKey: .textMatch)
         try container.encodeIfPresent(textMatchInfo, forKey: .textMatchInfo)
+        try container.encodeIfPresent(geoDistanceMeters, forKey: .geoDistanceMeters)
         try container.encodeIfPresent(vectorDistance, forKey: .vectorDistance)
+        try container.encodeIfPresent(hybridSearchInfo, forKey: .hybridSearchInfo)
+        try container.encodeIfPresent(searchIndex, forKey: .searchIndex)
     }
 }

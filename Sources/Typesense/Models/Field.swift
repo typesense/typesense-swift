@@ -12,100 +12,100 @@ import AnyCodable
 
 public struct Field: Codable {
 
-    public var drop: Bool?
-    public var embed: FieldEmbed?
+    public var name: String
+    public var type: String
+    public var _optional: Bool?
     public var facet: Bool?
     public var index: Bool? = true
-    public var _infix: Bool? = false
     public var locale: String?
-    public var name: String
-    public var numDim: Int?
-    public var _optional: Bool?
-    /** Enables an index optimized for range filtering on numerical fields (e.g. rating:>3.5). Default: false.  */
-    public var rangeIndex: Bool?
+    public var sort: Bool?
+    public var _infix: Bool? = false
     /** Name of a field in another collection that should be linked to this collection so that it can be joined during query.  */
     public var reference: String?
-    public var sort: Bool?
+    public var numDim: Int?
+    public var drop: Bool?
+    /** When set to false, the field value will not be stored on disk. Default: true.  */
+    public var store: Bool?
+    /** The distance metric to be used for vector search. Default: `cosine`. You can also use `ip` for inner product.  */
+    public var vecDist: String?
+    /** Enables an index optimized for range filtering on numerical fields (e.g. rating:>3.5). Default: false.  */
+    public var rangeIndex: Bool?
     /** Values are stemmed before indexing in-memory. Default: false.  */
     public var stem: Bool?
     /** Name of the stemming dictionary to use for this field */
     public var stemDictionary: String?
-    /** When set to false, the field value will not be stored on disk. Default: true.  */
-    public var store: Bool?
-    /** List of symbols or special characters to be indexed.  */
-    public var symbolsToIndex: [String]?
     /** List of symbols or special characters to be used for splitting the text into individual words in addition to space and new-line characters.  */
     public var tokenSeparators: [String]?
-    public var type: String
-    /** The distance metric to be used for vector search. Default: `cosine`. You can also use `ip` for inner product.  */
-    public var vecDist: String?
+    /** List of symbols or special characters to be indexed.  */
+    public var symbolsToIndex: [String]?
+    public var embed: FieldEmbed?
 
-    public init(name: String, type: String, drop: Bool? = nil, embed: FieldEmbed? = nil, facet: Bool? = nil, index: Bool? = true, _infix: Bool? = false, locale: String? = nil, numDim: Int? = nil, _optional: Bool? = nil, rangeIndex: Bool? = nil, reference: String? = nil, sort: Bool? = nil, stem: Bool? = nil, stemDictionary: String? = nil, store: Bool? = nil, symbolsToIndex: [String]? = nil, tokenSeparators: [String]? = nil, vecDist: String? = nil) {
-        self.drop = drop
-        self.embed = embed
+    public init(name: String, type: String, _optional: Bool? = nil, facet: Bool? = nil, index: Bool? = true, locale: String? = nil, sort: Bool? = nil, _infix: Bool? = false, reference: String? = nil, numDim: Int? = nil, drop: Bool? = nil, store: Bool? = nil, vecDist: String? = nil, rangeIndex: Bool? = nil, stem: Bool? = nil, stemDictionary: String? = nil, tokenSeparators: [String]? = nil, symbolsToIndex: [String]? = nil, embed: FieldEmbed? = nil) {
+        self.name = name
+        self.type = type
+        self._optional = _optional
         self.facet = facet
         self.index = index
-        self._infix = _infix
         self.locale = locale
-        self.name = name
-        self.numDim = numDim
-        self._optional = _optional
-        self.rangeIndex = rangeIndex
-        self.reference = reference
         self.sort = sort
+        self._infix = _infix
+        self.reference = reference
+        self.numDim = numDim
+        self.drop = drop
+        self.store = store
+        self.vecDist = vecDist
+        self.rangeIndex = rangeIndex
         self.stem = stem
         self.stemDictionary = stemDictionary
-        self.store = store
-        self.symbolsToIndex = symbolsToIndex
         self.tokenSeparators = tokenSeparators
-        self.type = type
-        self.vecDist = vecDist
+        self.symbolsToIndex = symbolsToIndex
+        self.embed = embed
     }
 
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case drop
-        case embed
+        case name
+        case type
+        case _optional = "optional"
         case facet
         case index
-        case _infix = "infix"
         case locale
-        case name
-        case numDim = "num_dim"
-        case _optional = "optional"
-        case rangeIndex = "range_index"
-        case reference
         case sort
+        case _infix = "infix"
+        case reference
+        case numDim = "num_dim"
+        case drop
+        case store
+        case vecDist = "vec_dist"
+        case rangeIndex = "range_index"
         case stem
         case stemDictionary = "stem_dictionary"
-        case store
-        case symbolsToIndex = "symbols_to_index"
         case tokenSeparators = "token_separators"
-        case type
-        case vecDist = "vec_dist"
+        case symbolsToIndex = "symbols_to_index"
+        case embed
     }
 
     // Encodable protocol methods
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encodeIfPresent(drop, forKey: .drop)
-        try container.encodeIfPresent(embed, forKey: .embed)
+        try container.encode(name, forKey: .name)
+        try container.encode(type, forKey: .type)
+        try container.encodeIfPresent(_optional, forKey: ._optional)
         try container.encodeIfPresent(facet, forKey: .facet)
         try container.encodeIfPresent(index, forKey: .index)
-        try container.encodeIfPresent(_infix, forKey: ._infix)
         try container.encodeIfPresent(locale, forKey: .locale)
-        try container.encode(name, forKey: .name)
-        try container.encodeIfPresent(numDim, forKey: .numDim)
-        try container.encodeIfPresent(_optional, forKey: ._optional)
-        try container.encodeIfPresent(rangeIndex, forKey: .rangeIndex)
-        try container.encodeIfPresent(reference, forKey: .reference)
         try container.encodeIfPresent(sort, forKey: .sort)
+        try container.encodeIfPresent(_infix, forKey: ._infix)
+        try container.encodeIfPresent(reference, forKey: .reference)
+        try container.encodeIfPresent(numDim, forKey: .numDim)
+        try container.encodeIfPresent(drop, forKey: .drop)
+        try container.encodeIfPresent(store, forKey: .store)
+        try container.encodeIfPresent(vecDist, forKey: .vecDist)
+        try container.encodeIfPresent(rangeIndex, forKey: .rangeIndex)
         try container.encodeIfPresent(stem, forKey: .stem)
         try container.encodeIfPresent(stemDictionary, forKey: .stemDictionary)
-        try container.encodeIfPresent(store, forKey: .store)
-        try container.encodeIfPresent(symbolsToIndex, forKey: .symbolsToIndex)
         try container.encodeIfPresent(tokenSeparators, forKey: .tokenSeparators)
-        try container.encode(type, forKey: .type)
-        try container.encodeIfPresent(vecDist, forKey: .vecDist)
+        try container.encodeIfPresent(symbolsToIndex, forKey: .symbolsToIndex)
+        try container.encodeIfPresent(embed, forKey: .embed)
     }
 }

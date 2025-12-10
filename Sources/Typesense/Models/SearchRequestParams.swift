@@ -13,21 +13,21 @@ import AnyCodable
 public struct SearchRequestParams: Codable {
 
     public var collectionName: String
-    public var perPage: Int
     public var q: String
+    public var perPage: Int
     public var voiceQuery: SearchRequestParamsVoiceQuery?
 
-    public init(collectionName: String, perPage: Int, q: String, voiceQuery: SearchRequestParamsVoiceQuery? = nil) {
+    public init(collectionName: String, q: String, perPage: Int, voiceQuery: SearchRequestParamsVoiceQuery? = nil) {
         self.collectionName = collectionName
-        self.perPage = perPage
         self.q = q
+        self.perPage = perPage
         self.voiceQuery = voiceQuery
     }
 
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case collectionName = "collection_name"
-        case perPage = "per_page"
         case q
+        case perPage = "per_page"
         case voiceQuery = "voice_query"
     }
 
@@ -36,8 +36,8 @@ public struct SearchRequestParams: Codable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(collectionName, forKey: .collectionName)
-        try container.encode(perPage, forKey: .perPage)
         try container.encode(q, forKey: .q)
+        try container.encode(perPage, forKey: .perPage)
         try container.encodeIfPresent(voiceQuery, forKey: .voiceQuery)
     }
 }

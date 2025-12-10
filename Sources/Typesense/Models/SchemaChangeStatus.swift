@@ -12,31 +12,31 @@ import AnyCodable
 
 public struct SchemaChangeStatus: Codable {
 
-    /** Number of documents that have been altered */
-    public var alteredDocs: Int?
     /** Name of the collection being modified */
     public var collection: String?
     /** Number of documents that have been validated */
     public var validatedDocs: Int?
+    /** Number of documents that have been altered */
+    public var alteredDocs: Int?
 
-    public init(alteredDocs: Int? = nil, collection: String? = nil, validatedDocs: Int? = nil) {
-        self.alteredDocs = alteredDocs
+    public init(collection: String? = nil, validatedDocs: Int? = nil, alteredDocs: Int? = nil) {
         self.collection = collection
         self.validatedDocs = validatedDocs
+        self.alteredDocs = alteredDocs
     }
 
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case alteredDocs = "altered_docs"
         case collection
         case validatedDocs = "validated_docs"
+        case alteredDocs = "altered_docs"
     }
 
     // Encodable protocol methods
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encodeIfPresent(alteredDocs, forKey: .alteredDocs)
         try container.encodeIfPresent(collection, forKey: .collection)
         try container.encodeIfPresent(validatedDocs, forKey: .validatedDocs)
+        try container.encodeIfPresent(alteredDocs, forKey: .alteredDocs)
     }
 }

@@ -1,4 +1,6 @@
-func addVendorAttributes(_ doc: inout [String: Any]) throws {
+import Yams
+
+func addVendorAttributes(_ doc: inout Node) throws {
     print("Adding custom x-* vendor attributes...")
     let attrs = VendorAttributes(doc: doc)
 

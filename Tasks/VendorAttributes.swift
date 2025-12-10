@@ -1,71 +1,62 @@
 import Foundation
 import Yams
 
-/// Helper class to manipulate the nested Dictionary structure
 class VendorAttributes {
-    var doc: [String: Any]
+    var doc: Node
 
-    // Quick accessors for Components -> Schemas
-    var schemas: [String: Any] {
-        get {
-            guard let components = doc["components"] as? [String: Any],
-                  let schemas = components["schemas"] as? [String: Any] else {
-                return [:]
-            }
-            return schemas
-        }
-        set {
-            var components = doc["components"] as? [String: Any] ?? [:]
-            components["schemas"] = newValue
-            doc["components"] = components
-        }
-    }
-
-    init(doc: [String: Any]) {
+    init(doc: Node) {
         self.doc = doc
     }
 
     /// Helper to modify a specific schema in place
-    private func modifySchema(_ name: String, closure: (inout [String: Any]) -> Void) throws {
-        var currentSchemas = self.schemas
+    private func modifySchema(_ name: String, closure: (inout Node) -> Void) throws {
+        guard var components = doc["components"],
+              var schemas = components["schemas"] else {
+             return
+        }
 
-        guard var schema = currentSchemas[name] as? [String: Any] else {
+        guard var schema = schemas[name] else {
             throw StringError( "Schema not found: \(name)")
         }
 
         closure(&schema)
 
-        currentSchemas[name] = schema
-        self.schemas = currentSchemas
+        // Write back up the tree
+        schemas[name] = schema
+        components["schemas"] = schemas
+        doc["components"] = components
     }
 
     /// Adds x-swift-generic-parameter to the schema
     func schemaGenericParameter(_ items: [(String, String)]) throws {
         for (schemaName, generic) in items {
             try modifySchema(schemaName) { schema in
-                schema["x-swift-generic-parameter"] = generic
+                schema["x-swift-generic-parameter"] = Node(generic)
             }
         }
     }
 
-    /// Overrides field types in a schema
+    /// Overrides field types in a schema "x-swift-type"
     func schemaFieldTypeOverrides(schema: String, overrides: [(String, String)]) throws {
-        try modifySchema(schema) { schemaDict in
-            var properties = schemaDict["properties"] as? [String: Any] ?? [:]
+        try modifySchema(schema) { schemaNode in
+            guard var properties = schemaNode["properties"] else { return }
 
             for (field, swiftType) in overrides {
-                if var existingProp = properties[field] as? [String: Any] {
+                if var existingProp = properties[field] {
                     // Update existing
-                    existingProp["x-swift-type"] = swiftType
+                    existingProp["x-swift-type"] = Node(swiftType)
                     properties[field] = existingProp
                 } else {
-                    // Create new if missing
-                    let newProp: [String: Any] = ["x-swift-type": swiftType]
+                    // Create new
+                    let newPropPairs: [(Node, Node)] = [
+                        (Node("x-swift-type"), Node(swiftType))
+                    ]
+                    let newProp = Node(newPropPairs, .implicit, Node.Mapping.Style.any)
                     properties[field] = newProp
                 }
             }
 
-            schemaDict["properties"] = properties
+            schemaNode["properties"] = properties
         }
     }
 }

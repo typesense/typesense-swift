@@ -12,70 +12,70 @@ import AnyCodable
 
 public struct CollectionResponse: Codable {
 
-    /** The name of an int32 / float field that determines the order in which the search results are ranked when a sort_by clause is not provided during searching. This field must indicate some kind of popularity. */
-    public var defaultSortingField: String? = ""
-    /** Enables experimental support at a collection level for nested object or object array fields. This field is only available if the Typesense server is version `0.24.0.rcn34` or later. */
-    public var enableNestedFields: Bool? = false
-    /** A list of fields for querying, filtering and faceting */
-    public var fields: [Field]
-    /** Optional details about the collection, e.g., when it was created, who created it etc.  */
-    public var metadata: AnyCodable?
     /** Name of the collection */
     public var name: String
-    /** List of symbols or special characters to be indexed.  */
-    public var symbolsToIndex: [String]?
-    /** List of synonym set names to associate with this collection */
-    public var synonymSets: [String]?
+    /** A list of fields for querying, filtering and faceting */
+    public var fields: [Field]
+    /** The name of an int32 / float field that determines the order in which the search results are ranked when a sort_by clause is not provided during searching. This field must indicate some kind of popularity. */
+    public var defaultSortingField: String? = ""
     /** List of symbols or special characters to be used for splitting the text into individual words in addition to space and new-line characters.  */
     public var tokenSeparators: [String]?
+    /** List of synonym set names to associate with this collection */
+    public var synonymSets: [String]?
+    /** Enables experimental support at a collection level for nested object or object array fields. This field is only available if the Typesense server is version `0.24.0.rcn34` or later. */
+    public var enableNestedFields: Bool? = false
+    /** List of symbols or special characters to be indexed.  */
+    public var symbolsToIndex: [String]?
     public var voiceQueryModel: VoiceQueryModelCollectionConfig?
-    /** Timestamp of when the collection was created (Unix epoch in seconds) */
-    public var createdAt: Int64
+    /** Optional details about the collection, e.g., when it was created, who created it etc.  */
+    public var metadata: AnyCodable?
     /** Number of documents in the collection */
     public var numDocuments: Int64
+    /** Timestamp of when the collection was created (Unix epoch in seconds) */
+    public var createdAt: Int64
 
-    public init(fields: [Field], name: String, createdAt: Int64, numDocuments: Int64, defaultSortingField: String? = "", enableNestedFields: Bool? = false, metadata: AnyCodable? = nil, symbolsToIndex: [String]? = nil, synonymSets: [String]? = nil, tokenSeparators: [String]? = nil, voiceQueryModel: VoiceQueryModelCollectionConfig? = nil) {
-        self.defaultSortingField = defaultSortingField
-        self.enableNestedFields = enableNestedFields
-        self.fields = fields
-        self.metadata = metadata
+    public init(name: String, fields: [Field], numDocuments: Int64, createdAt: Int64, defaultSortingField: String? = "", tokenSeparators: [String]? = nil, synonymSets: [String]? = nil, enableNestedFields: Bool? = false, symbolsToIndex: [String]? = nil, voiceQueryModel: VoiceQueryModelCollectionConfig? = nil, metadata: AnyCodable? = nil) {
         self.name = name
-        self.symbolsToIndex = symbolsToIndex
-        self.synonymSets = synonymSets
+        self.fields = fields
+        self.defaultSortingField = defaultSortingField
         self.tokenSeparators = tokenSeparators
+        self.synonymSets = synonymSets
+        self.enableNestedFields = enableNestedFields
+        self.symbolsToIndex = symbolsToIndex
         self.voiceQueryModel = voiceQueryModel
-        self.createdAt = createdAt
+        self.metadata = metadata
         self.numDocuments = numDocuments
+        self.createdAt = createdAt
     }
 
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case defaultSortingField = "default_sorting_field"
-        case enableNestedFields = "enable_nested_fields"
-        case fields
-        case metadata
         case name
-        case symbolsToIndex = "symbols_to_index"
-        case synonymSets = "synonym_sets"
+        case fields
+        case defaultSortingField = "default_sorting_field"
         case tokenSeparators = "token_separators"
+        case synonymSets = "synonym_sets"
+        case enableNestedFields = "enable_nested_fields"
+        case symbolsToIndex = "symbols_to_index"
         case voiceQueryModel = "voice_query_model"
-        case createdAt = "created_at"
+        case metadata
         case numDocuments = "num_documents"
+        case createdAt = "created_at"
     }
 
     // Encodable protocol methods
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encodeIfPresent(defaultSortingField, forKey: .defaultSortingField)
-        try container.encodeIfPresent(enableNestedFields, forKey: .enableNestedFields)
-        try container.encode(fields, forKey: .fields)
-        try container.encodeIfPresent(metadata, forKey: .metadata)
         try container.encode(name, forKey: .name)
-        try container.encodeIfPresent(symbolsToIndex, forKey: .symbolsToIndex)
-        try container.encodeIfPresent(synonymSets, forKey: .synonymSets)
+        try container.encode(fields, forKey: .fields)
+        try container.encodeIfPresent(defaultSortingField, forKey: .defaultSortingField)
         try container.encodeIfPresent(tokenSeparators, forKey: .tokenSeparators)
+        try container.encodeIfPresent(synonymSets, forKey: .synonymSets)
+        try container.encodeIfPresent(enableNestedFields, forKey: .enableNestedFields)
+        try container.encodeIfPresent(symbolsToIndex, forKey: .symbolsToIndex)
         try container.encodeIfPresent(voiceQueryModel, forKey: .voiceQueryModel)
-        try container.encode(createdAt, forKey: .createdAt)
+        try container.encodeIfPresent(metadata, forKey: .metadata)
         try container.encode(numDocuments, forKey: .numDocuments)
+        try container.encode(createdAt, forKey: .createdAt)
     }
 }

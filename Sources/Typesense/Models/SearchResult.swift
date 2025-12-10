@@ -12,76 +12,76 @@ import AnyCodable
 
 public struct SearchResult<T: Codable>: Codable {
 
-    public var conversation: SearchResultConversation?
     public var facetCounts: [FacetCounts]?
     /** The number of documents found */
     public var found: Int?
     public var foundDocs: Int?
+    /** The number of milliseconds the search took */
+    public var searchTimeMs: Int?
+    /** The total number of documents in the collection */
+    public var outOf: Int?
+    /** Whether the search was cut off */
+    public var searchCutoff: Bool?
+    /** The search result page number */
+    public var page: Int?
     public var groupedHits: [SearchGroupedHit<T>]?
     /** The documents that matched the search query */
     public var hits: [SearchResultHit<T>]?
-    /** Custom JSON object that can be returned in the search response */
-    public var metadata: [String: AnyCodable]?
-    /** The total number of documents in the collection */
-    public var outOf: Int?
-    /** The search result page number */
-    public var page: Int?
     public var requestParams: SearchRequestParams?
-    /** Whether the search was cut off */
-    public var searchCutoff: Bool?
-    /** The number of milliseconds the search took */
-    public var searchTimeMs: Int?
+    public var conversation: SearchResultConversation?
     /** Returned only for union query response. */
     public var unionRequestParams: [SearchRequestParams]?
+    /** Custom JSON object that can be returned in the search response */
+    public var metadata: [String: AnyCodable]?
 
-    public init(conversation: SearchResultConversation? = nil, facetCounts: [FacetCounts]? = nil, found: Int? = nil, foundDocs: Int? = nil, groupedHits: [SearchGroupedHit<T>]? = nil, hits: [SearchResultHit<T>]? = nil, metadata: [String: AnyCodable]? = nil, outOf: Int? = nil, page: Int? = nil, requestParams: SearchRequestParams? = nil, searchCutoff: Bool? = nil, searchTimeMs: Int? = nil, unionRequestParams: [SearchRequestParams]? = nil) {
-        self.conversation = conversation
+    public init(facetCounts: [FacetCounts]? = nil, found: Int? = nil, foundDocs: Int? = nil, searchTimeMs: Int? = nil, outOf: Int? = nil, searchCutoff: Bool? = nil, page: Int? = nil, groupedHits: [SearchGroupedHit<T>]? = nil, hits: [SearchResultHit<T>]? = nil, requestParams: SearchRequestParams? = nil, conversation: SearchResultConversation? = nil, unionRequestParams: [SearchRequestParams]? = nil, metadata: [String: AnyCodable]? = nil) {
         self.facetCounts = facetCounts
         self.found = found
         self.foundDocs = foundDocs
+        self.searchTimeMs = searchTimeMs
+        self.outOf = outOf
+        self.searchCutoff = searchCutoff
+        self.page = page
         self.groupedHits = groupedHits
         self.hits = hits
-        self.metadata = metadata
-        self.outOf = outOf
-        self.page = page
         self.requestParams = requestParams
-        self.searchCutoff = searchCutoff
-        self.searchTimeMs = searchTimeMs
+        self.conversation = conversation
         self.unionRequestParams = unionRequestParams
+        self.metadata = metadata
     }
 
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case conversation
         case facetCounts = "facet_counts"
         case found
         case foundDocs = "found_docs"
+        case searchTimeMs = "search_time_ms"
+        case outOf = "out_of"
+        case searchCutoff = "search_cutoff"
+        case page
         case groupedHits = "grouped_hits"
         case hits
-        case metadata
-        case outOf = "out_of"
-        case page
         case requestParams = "request_params"
-        case searchCutoff = "search_cutoff"
-        case searchTimeMs = "search_time_ms"
+        case conversation
         case unionRequestParams = "union_request_params"
+        case metadata
     }
 
     // Encodable protocol methods
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encodeIfPresent(conversation, forKey: .conversation)
         try container.encodeIfPresent(facetCounts, forKey: .facetCounts)
         try container.encodeIfPresent(found, forKey: .found)
         try container.encodeIfPresent(foundDocs, forKey: .foundDocs)
+        try container.encodeIfPresent(searchTimeMs, forKey: .searchTimeMs)
+        try container.encodeIfPresent(outOf, forKey: .outOf)
+        try container.encodeIfPresent(searchCutoff, forKey: .searchCutoff)
+        try container.encodeIfPresent(page, forKey: .page)
         try container.encodeIfPresent(groupedHits, forKey: .groupedHits)
         try container.encodeIfPresent(hits, forKey: .hits)
-        try container.encodeIfPresent(metadata, forKey: .metadata)
-        try container.encodeIfPresent(outOf, forKey: .outOf)
-        try container.encodeIfPresent(page, forKey: .page)
         try container.encodeIfPresent(requestParams, forKey: .requestParams)
-        try container.encodeIfPresent(searchCutoff, forKey: .searchCutoff)
-        try container.encodeIfPresent(searchTimeMs, forKey: .searchTimeMs)
+        try container.encodeIfPresent(conversation, forKey: .conversation)
         try container.encodeIfPresent(unionRequestParams, forKey: .unionRequestParams)
+        try container.encodeIfPresent(metadata, forKey: .metadata)
     }
 }

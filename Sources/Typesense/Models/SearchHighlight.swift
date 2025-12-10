@@ -13,9 +13,6 @@ import AnyCodable
 public struct SearchHighlight: Codable {
 
     public var field: String?
-    /** The indices property will be present only for string[] fields and will contain the corresponding indices of the snippets in the search field */
-    public var indices: [Int]?
-    public var matchedTokens: [AnyCodable]?
     /** Present only for (non-array) string fields */
     public var snippet: String?
     /** Present only for (array) string[] fields */
@@ -24,25 +21,28 @@ public struct SearchHighlight: Codable {
     public var value: String?
     /** Full field value with highlighting, present only for (array) string[] fields */
     public var values: [String]?
+    /** The indices property will be present only for string[] fields and will contain the corresponding indices of the snippets in the search field */
+    public var indices: [Int]?
+    public var matchedTokens: [AnyCodable]?
 
-    public init(field: String? = nil, indices: [Int]? = nil, matchedTokens: [AnyCodable]? = nil, snippet: String? = nil, snippets: [String]? = nil, value: String? = nil, values: [String]? = nil) {
+    public init(field: String? = nil, snippet: String? = nil, snippets: [String]? = nil, value: String? = nil, values: [String]? = nil, indices: [Int]? = nil, matchedTokens: [AnyCodable]? = nil) {
         self.field = field
-        self.indices = indices
-        self.matchedTokens = matchedTokens
         self.snippet = snippet
         self.snippets = snippets
         self.value = value
         self.values = values
+        self.indices = indices
+        self.matchedTokens = matchedTokens
     }
 
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case field
-        case indices
-        case matchedTokens = "matched_tokens"
         case snippet
         case snippets
         case value
         case values
+        case indices
+        case matchedTokens = "matched_tokens"
     }
 
     // Encodable protocol methods
@@ -50,11 +50,11 @@ public struct SearchHighlight: Codable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encodeIfPresent(field, forKey: .field)
-        try container.encodeIfPresent(indices, forKey: .indices)
-        try container.encodeIfPresent(matchedTokens, forKey: .matchedTokens)
         try container.encodeIfPresent(snippet, forKey: .snippet)
         try container.encodeIfPresent(snippets, forKey: .snippets)
         try container.encodeIfPresent(value, forKey: .value)
         try container.encodeIfPresent(values, forKey: .values)
+        try container.encodeIfPresent(indices, forKey: .indices)
+        try container.encodeIfPresent(matchedTokens, forKey: .matchedTokens)
     }
 }

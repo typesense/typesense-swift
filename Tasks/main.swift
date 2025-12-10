@@ -88,6 +88,22 @@ struct CodeGen: ParsableCommand {
 
         try Shell.run("mv", args: [tempModelsPath, finalDestination])
 
+        print("Deleting unused models...")
+        let unusedModels = [
+            "CreateAnalyticsRule200Response",
+            "CreateAnalyticsRule200ResponseOneOfInner",
+            "CreateAnalyticsRuleRequest",
+            "CreateAnalyticsRule200ResponseOneOfInnerOneOf"
+        ]
+
+        for model in unusedModels {
+            let modelPath = "\(finalModelsPath)/\(model).swift"
+            if fileManager.fileExists(atPath: modelPath) {
+                try fileManager.removeItem(atPath: modelPath)
+                print("  - Deleted \(model)")
+            }
+        }
+
         print("✅ Codegen and file movement finished successfully.")
     }
 }

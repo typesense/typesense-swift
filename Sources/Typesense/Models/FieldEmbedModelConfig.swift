@@ -12,56 +12,56 @@ import AnyCodable
 
 public struct FieldEmbedModelConfig: Codable {
 
-    public var accessToken: String?
+    public var modelName: String
     public var apiKey: String?
+    public var url: String?
+    public var accessToken: String?
+    public var refreshToken: String?
     public var clientId: String?
     public var clientSecret: String?
-    public var indexingPrefix: String?
-    public var modelName: String
     public var projectId: String?
+    public var indexingPrefix: String?
     public var queryPrefix: String?
-    public var refreshToken: String?
-    public var url: String?
 
-    public init(modelName: String, accessToken: String? = nil, apiKey: String? = nil, clientId: String? = nil, clientSecret: String? = nil, indexingPrefix: String? = nil, projectId: String? = nil, queryPrefix: String? = nil, refreshToken: String? = nil, url: String? = nil) {
-        self.accessToken = accessToken
+    public init(modelName: String, apiKey: String? = nil, url: String? = nil, accessToken: String? = nil, refreshToken: String? = nil, clientId: String? = nil, clientSecret: String? = nil, projectId: String? = nil, indexingPrefix: String? = nil, queryPrefix: String? = nil) {
+        self.modelName = modelName
         self.apiKey = apiKey
+        self.url = url
+        self.accessToken = accessToken
+        self.refreshToken = refreshToken
         self.clientId = clientId
         self.clientSecret = clientSecret
-        self.indexingPrefix = indexingPrefix
-        self.modelName = modelName
         self.projectId = projectId
+        self.indexingPrefix = indexingPrefix
         self.queryPrefix = queryPrefix
-        self.refreshToken = refreshToken
-        self.url = url
     }
 
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case accessToken = "access_token"
+        case modelName = "model_name"
         case apiKey = "api_key"
+        case url
+        case accessToken = "access_token"
+        case refreshToken = "refresh_token"
         case clientId = "client_id"
         case clientSecret = "client_secret"
-        case indexingPrefix = "indexing_prefix"
-        case modelName = "model_name"
         case projectId = "project_id"
+        case indexingPrefix = "indexing_prefix"
         case queryPrefix = "query_prefix"
-        case refreshToken = "refresh_token"
-        case url
     }
 
     // Encodable protocol methods
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encodeIfPresent(accessToken, forKey: .accessToken)
+        try container.encode(modelName, forKey: .modelName)
         try container.encodeIfPresent(apiKey, forKey: .apiKey)
+        try container.encodeIfPresent(url, forKey: .url)
+        try container.encodeIfPresent(accessToken, forKey: .accessToken)
+        try container.encodeIfPresent(refreshToken, forKey: .refreshToken)
         try container.encodeIfPresent(clientId, forKey: .clientId)
         try container.encodeIfPresent(clientSecret, forKey: .clientSecret)
-        try container.encodeIfPresent(indexingPrefix, forKey: .indexingPrefix)
-        try container.encode(modelName, forKey: .modelName)
         try container.encodeIfPresent(projectId, forKey: .projectId)
+        try container.encodeIfPresent(indexingPrefix, forKey: .indexingPrefix)
         try container.encodeIfPresent(queryPrefix, forKey: .queryPrefix)
-        try container.encodeIfPresent(refreshToken, forKey: .refreshToken)
-        try container.encodeIfPresent(url, forKey: .url)
     }
 }

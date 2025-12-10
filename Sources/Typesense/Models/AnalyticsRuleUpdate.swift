@@ -14,19 +14,19 @@ import AnyCodable
 public struct AnalyticsRuleUpdate: Codable {
 
     public var name: String?
-    public var params: AnalyticsRuleCreateParams?
     public var ruleTag: String?
+    public var params: AnalyticsRuleCreateParams?
 
-    public init(name: String? = nil, params: AnalyticsRuleCreateParams? = nil, ruleTag: String? = nil) {
+    public init(name: String? = nil, ruleTag: String? = nil, params: AnalyticsRuleCreateParams? = nil) {
         self.name = name
-        self.params = params
         self.ruleTag = ruleTag
+        self.params = params
     }
 
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case name
-        case params
         case ruleTag = "rule_tag"
+        case params
     }
 
     // Encodable protocol methods
@@ -34,7 +34,7 @@ public struct AnalyticsRuleUpdate: Codable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encodeIfPresent(name, forKey: .name)
-        try container.encodeIfPresent(params, forKey: .params)
         try container.encodeIfPresent(ruleTag, forKey: .ruleTag)
+        try container.encodeIfPresent(params, forKey: .params)
     }
 }

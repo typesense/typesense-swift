@@ -12,30 +12,30 @@ import AnyCodable
 
 public struct ApiKey: Codable {
 
+    public var value: String?
+    public var description: String
     public var actions: [String]
     public var collections: [String]
-    public var description: String
     public var expiresAt: Int64?
-    public var value: String?
     public var id: Int64?
     public var valuePrefix: String?
 
-    public init(actions: [String], collections: [String], description: String, expiresAt: Int64? = nil, value: String? = nil, id: Int64? = nil, valuePrefix: String? = nil) {
+    public init(description: String, actions: [String], collections: [String], value: String? = nil, expiresAt: Int64? = nil, id: Int64? = nil, valuePrefix: String? = nil) {
+        self.value = value
+        self.description = description
         self.actions = actions
         self.collections = collections
-        self.description = description
         self.expiresAt = expiresAt
-        self.value = value
         self.id = id
         self.valuePrefix = valuePrefix
     }
 
     public enum CodingKeys: String, CodingKey, CaseIterable {
+        case value
+        case description
         case actions
         case collections
-        case description
         case expiresAt = "expires_at"
-        case value
         case id
         case valuePrefix = "value_prefix"
     }
@@ -44,11 +44,11 @@ public struct ApiKey: Codable {
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encodeIfPresent(value, forKey: .value)
+        try container.encode(description, forKey: .description)
         try container.encode(actions, forKey: .actions)
         try container.encode(collections, forKey: .collections)
-        try container.encode(description, forKey: .description)
         try container.encodeIfPresent(expiresAt, forKey: .expiresAt)
-        try container.encodeIfPresent(value, forKey: .value)
         try container.encodeIfPresent(id, forKey: .id)
         try container.encodeIfPresent(valuePrefix, forKey: .valuePrefix)
     }

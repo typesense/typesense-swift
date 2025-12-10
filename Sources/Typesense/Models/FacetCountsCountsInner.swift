@@ -14,21 +14,21 @@ public struct FacetCountsCountsInner: Codable {
 
     public var count: Int?
     public var highlighted: String?
-    public var parent: AnyCodable?
     public var value: String?
+    public var parent: AnyCodable?
 
-    public init(count: Int? = nil, highlighted: String? = nil, parent: AnyCodable? = nil, value: String? = nil) {
+    public init(count: Int? = nil, highlighted: String? = nil, value: String? = nil, parent: AnyCodable? = nil) {
         self.count = count
         self.highlighted = highlighted
-        self.parent = parent
         self.value = value
+        self.parent = parent
     }
 
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case count
         case highlighted
-        case parent
         case value
+        case parent
     }
 
     // Encodable protocol methods
@@ -37,7 +37,7 @@ public struct FacetCountsCountsInner: Codable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encodeIfPresent(count, forKey: .count)
         try container.encodeIfPresent(highlighted, forKey: .highlighted)
-        try container.encodeIfPresent(parent, forKey: .parent)
         try container.encodeIfPresent(value, forKey: .value)
+        try container.encodeIfPresent(parent, forKey: .parent)
     }
 }

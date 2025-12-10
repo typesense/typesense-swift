@@ -12,86 +12,86 @@ import AnyCodable
 
 public struct NLSearchModelSchema: Codable {
 
-    /** Access token for GCP Vertex AI */
-    public var accessToken: String?
-    /** Account ID for Cloudflare-specific models */
-    public var accountId: String?
+    /** Name of the NL model to use */
+    public var modelName: String?
     /** API key for the NL model service */
     public var apiKey: String?
     /** Custom API URL for the NL model service */
     public var apiUrl: String?
+    /** Maximum number of bytes to process */
+    public var maxBytes: Int?
+    /** Temperature parameter for the NL model */
+    public var temperature: Double?
+    /** System prompt for the NL model */
+    public var systemPrompt: String?
+    /** Top-p parameter for the NL model (Google-specific) */
+    public var topP: Double?
+    /** Top-k parameter for the NL model (Google-specific) */
+    public var topK: Int?
+    /** Stop sequences for the NL model (Google-specific) */
+    public var stopSequences: [String]?
     /** API version for the NL model service */
     public var apiVersion: String?
+    /** Project ID for GCP Vertex AI */
+    public var projectId: String?
+    /** Access token for GCP Vertex AI */
+    public var accessToken: String?
+    /** Refresh token for GCP Vertex AI */
+    public var refreshToken: String?
     /** Client ID for GCP Vertex AI */
     public var clientId: String?
     /** Client secret for GCP Vertex AI */
     public var clientSecret: String?
-    /** Maximum number of bytes to process */
-    public var maxBytes: Int?
-    /** Maximum output tokens for GCP Vertex AI */
-    public var maxOutputTokens: Int?
-    /** Name of the NL model to use */
-    public var modelName: String?
-    /** Project ID for GCP Vertex AI */
-    public var projectId: String?
-    /** Refresh token for GCP Vertex AI */
-    public var refreshToken: String?
     /** Region for GCP Vertex AI */
     public var region: String?
-    /** Stop sequences for the NL model (Google-specific) */
-    public var stopSequences: [String]?
-    /** System prompt for the NL model */
-    public var systemPrompt: String?
-    /** Temperature parameter for the NL model */
-    public var temperature: Double?
-    /** Top-k parameter for the NL model (Google-specific) */
-    public var topK: Int?
-    /** Top-p parameter for the NL model (Google-specific) */
-    public var topP: Double?
+    /** Maximum output tokens for GCP Vertex AI */
+    public var maxOutputTokens: Int?
+    /** Account ID for Cloudflare-specific models */
+    public var accountId: String?
     /** ID of the NL search model */
     public var id: String
 
-    public init(id: String, accessToken: String? = nil, accountId: String? = nil, apiKey: String? = nil, apiUrl: String? = nil, apiVersion: String? = nil, clientId: String? = nil, clientSecret: String? = nil, maxBytes: Int? = nil, maxOutputTokens: Int? = nil, modelName: String? = nil, projectId: String? = nil, refreshToken: String? = nil, region: String? = nil, stopSequences: [String]? = nil, systemPrompt: String? = nil, temperature: Double? = nil, topK: Int? = nil, topP: Double? = nil) {
-        self.accessToken = accessToken
-        self.accountId = accountId
+    public init(id: String, modelName: String? = nil, apiKey: String? = nil, apiUrl: String? = nil, maxBytes: Int? = nil, temperature: Double? = nil, systemPrompt: String? = nil, topP: Double? = nil, topK: Int? = nil, stopSequences: [String]? = nil, apiVersion: String? = nil, projectId: String? = nil, accessToken: String? = nil, refreshToken: String? = nil, clientId: String? = nil, clientSecret: String? = nil, region: String? = nil, maxOutputTokens: Int? = nil, accountId: String? = nil) {
+        self.modelName = modelName
         self.apiKey = apiKey
         self.apiUrl = apiUrl
+        self.maxBytes = maxBytes
+        self.temperature = temperature
+        self.systemPrompt = systemPrompt
+        self.topP = topP
+        self.topK = topK
+        self.stopSequences = stopSequences
         self.apiVersion = apiVersion
+        self.projectId = projectId
+        self.accessToken = accessToken
+        self.refreshToken = refreshToken
         self.clientId = clientId
         self.clientSecret = clientSecret
-        self.maxBytes = maxBytes
-        self.maxOutputTokens = maxOutputTokens
-        self.modelName = modelName
-        self.projectId = projectId
-        self.refreshToken = refreshToken
         self.region = region
-        self.stopSequences = stopSequences
-        self.systemPrompt = systemPrompt
-        self.temperature = temperature
-        self.topK = topK
-        self.topP = topP
+        self.maxOutputTokens = maxOutputTokens
+        self.accountId = accountId
         self.id = id
     }
 
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case accessToken = "access_token"
-        case accountId = "account_id"
+        case modelName = "model_name"
         case apiKey = "api_key"
         case apiUrl = "api_url"
+        case maxBytes = "max_bytes"
+        case temperature
+        case systemPrompt = "system_prompt"
+        case topP = "top_p"
+        case topK = "top_k"
+        case stopSequences = "stop_sequences"
         case apiVersion = "api_version"
+        case projectId = "project_id"
+        case accessToken = "access_token"
+        case refreshToken = "refresh_token"
         case clientId = "client_id"
         case clientSecret = "client_secret"
-        case maxBytes = "max_bytes"
-        case maxOutputTokens = "max_output_tokens"
-        case modelName = "model_name"
-        case projectId = "project_id"
-        case refreshToken = "refresh_token"
         case region
-        case stopSequences = "stop_sequences"
-        case systemPrompt = "system_prompt"
-        case temperature
-        case topK = "top_k"
-        case topP = "top_p"
+        case maxOutputTokens = "max_output_tokens"
+        case accountId = "account_id"
         case id
     }
 
@@ -99,24 +99,24 @@ public struct NLSearchModelSchema: Codable {
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encodeIfPresent(accessToken, forKey: .accessToken)
-        try container.encodeIfPresent(accountId, forKey: .accountId)
+        try container.encodeIfPresent(modelName, forKey: .modelName)
         try container.encodeIfPresent(apiKey, forKey: .apiKey)
         try container.encodeIfPresent(apiUrl, forKey: .apiUrl)
+        try container.encodeIfPresent(maxBytes, forKey: .maxBytes)
+        try container.encodeIfPresent(temperature, forKey: .temperature)
+        try container.encodeIfPresent(systemPrompt, forKey: .systemPrompt)
+        try container.encodeIfPresent(topP, forKey: .topP)
+        try container.encodeIfPresent(topK, forKey: .topK)
+        try container.encodeIfPresent(stopSequences, forKey: .stopSequences)
         try container.encodeIfPresent(apiVersion, forKey: .apiVersion)
+        try container.encodeIfPresent(projectId, forKey: .projectId)
+        try container.encodeIfPresent(accessToken, forKey: .accessToken)
+        try container.encodeIfPresent(refreshToken, forKey: .refreshToken)
         try container.encodeIfPresent(clientId, forKey: .clientId)
         try container.encodeIfPresent(clientSecret, forKey: .clientSecret)
-        try container.encodeIfPresent(maxBytes, forKey: .maxBytes)
-        try container.encodeIfPresent(maxOutputTokens, forKey: .maxOutputTokens)
-        try container.encodeIfPresent(modelName, forKey: .modelName)
-        try container.encodeIfPresent(projectId, forKey: .projectId)
-        try container.encodeIfPresent(refreshToken, forKey: .refreshToken)
         try container.encodeIfPresent(region, forKey: .region)
-        try container.encodeIfPresent(stopSequences, forKey: .stopSequences)
-        try container.encodeIfPresent(systemPrompt, forKey: .systemPrompt)
-        try container.encodeIfPresent(temperature, forKey: .temperature)
-        try container.encodeIfPresent(topK, forKey: .topK)
-        try container.encodeIfPresent(topP, forKey: .topP)
+        try container.encodeIfPresent(maxOutputTokens, forKey: .maxOutputTokens)
+        try container.encodeIfPresent(accountId, forKey: .accountId)
         try container.encode(id, forKey: .id)
     }
 }

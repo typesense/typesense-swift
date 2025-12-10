@@ -12,30 +12,30 @@ import AnyCodable
 
 public struct AnalyticsEventsRetrieveParams: Codable {
 
-    /** Number of events to return (max 1000) */
-    public var n: Int
+    public var userId: String
     /** Analytics rule name */
     public var name: String
-    public var userId: String
+    /** Number of events to return (max 1000) */
+    public var n: Int
 
-    public init(n: Int, name: String, userId: String) {
-        self.n = n
-        self.name = name
+    public init(userId: String, name: String, n: Int) {
         self.userId = userId
+        self.name = name
+        self.n = n
     }
 
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case n
-        case name
         case userId = "user_id"
+        case name
+        case n
     }
 
     // Encodable protocol methods
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(n, forKey: .n)
-        try container.encode(name, forKey: .name)
         try container.encode(userId, forKey: .userId)
+        try container.encode(name, forKey: .name)
+        try container.encode(n, forKey: .n)
     }
 }

@@ -13,36 +13,36 @@ import AnyCodable
 /** Event payload */
 public struct AnalyticsEventData: Codable {
 
-    public var analyticsTag: String?
+    public var userId: String?
     public var docId: String?
     public var docIds: [String]?
     public var q: String?
-    public var userId: String?
+    public var analyticsTag: String?
 
-    public init(analyticsTag: String? = nil, docId: String? = nil, docIds: [String]? = nil, q: String? = nil, userId: String? = nil) {
-        self.analyticsTag = analyticsTag
+    public init(userId: String? = nil, docId: String? = nil, docIds: [String]? = nil, q: String? = nil, analyticsTag: String? = nil) {
+        self.userId = userId
         self.docId = docId
         self.docIds = docIds
         self.q = q
-        self.userId = userId
+        self.analyticsTag = analyticsTag
     }
 
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case analyticsTag = "analytics_tag"
+        case userId = "user_id"
         case docId = "doc_id"
         case docIds = "doc_ids"
         case q
-        case userId = "user_id"
+        case analyticsTag = "analytics_tag"
     }
 
     // Encodable protocol methods
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encodeIfPresent(analyticsTag, forKey: .analyticsTag)
+        try container.encodeIfPresent(userId, forKey: .userId)
         try container.encodeIfPresent(docId, forKey: .docId)
         try container.encodeIfPresent(docIds, forKey: .docIds)
         try container.encodeIfPresent(q, forKey: .q)
-        try container.encodeIfPresent(userId, forKey: .userId)
+        try container.encodeIfPresent(analyticsTag, forKey: .analyticsTag)
     }
 }

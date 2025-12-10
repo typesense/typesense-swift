@@ -12,36 +12,36 @@ import AnyCodable
 
 public struct ApiKeySchema: Codable {
 
+    public var value: String?
+    public var description: String
     public var actions: [String]
     public var collections: [String]
-    public var description: String
     public var expiresAt: Int64?
-    public var value: String?
 
-    public init(actions: [String], collections: [String], description: String, expiresAt: Int64? = nil, value: String? = nil) {
+    public init(description: String, actions: [String], collections: [String], value: String? = nil, expiresAt: Int64? = nil) {
+        self.value = value
+        self.description = description
         self.actions = actions
         self.collections = collections
-        self.description = description
         self.expiresAt = expiresAt
-        self.value = value
     }
 
     public enum CodingKeys: String, CodingKey, CaseIterable {
+        case value
+        case description
         case actions
         case collections
-        case description
         case expiresAt = "expires_at"
-        case value
     }
 
     // Encodable protocol methods
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encodeIfPresent(value, forKey: .value)
+        try container.encode(description, forKey: .description)
         try container.encode(actions, forKey: .actions)
         try container.encode(collections, forKey: .collections)
-        try container.encode(description, forKey: .description)
         try container.encodeIfPresent(expiresAt, forKey: .expiresAt)
-        try container.encodeIfPresent(value, forKey: .value)
     }
 }

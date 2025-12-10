@@ -12,25 +12,25 @@ import AnyCodable
 
 public struct MultiSearchSearchesParameter: Codable {
 
-    public var searches: [MultiSearchCollectionParameters]
     /** When true, merges the search results from each search query into a single ordered set of hits. */
     public var union: Bool? = false
+    public var searches: [MultiSearchCollectionParameters]
 
     public init(searches: [MultiSearchCollectionParameters], union: Bool? = false) {
-        self.searches = searches
         self.union = union
+        self.searches = searches
     }
 
     public enum CodingKeys: String, CodingKey, CaseIterable {
-        case searches
         case union
+        case searches
     }
 
     // Encodable protocol methods
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(searches, forKey: .searches)
         try container.encodeIfPresent(union, forKey: .union)
+        try container.encode(searches, forKey: .searches)
     }
 }
