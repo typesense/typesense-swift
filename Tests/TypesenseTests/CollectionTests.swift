@@ -8,12 +8,11 @@ final class CollectionTests: XCTestCase {
 
     func testCollectionCreate() async {
         let schema = CollectionSchema(
-            fields: [
+            name: "companies", fields: [
                 Field(name: "company_name", type: "string"),
                 Field(name: "num_employees", type: "int32"),
                 Field(name: "country", type: "string", facet: true)
             ],
-            name: "companies",
             defaultSortingField: "num_employees")
         do {
             let (collResp, _) = try await client.collections().create(schema: schema)

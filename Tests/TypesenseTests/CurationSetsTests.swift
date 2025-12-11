@@ -9,13 +9,12 @@ final class CurationSetsTests: XCTestCase {
     func testCurationSetsUpsert() async {
         let schema = CurationSetCreateSchema(items: [
                 CurationItemCreateSchema(
-                    rule: CurationRule( match: .exact, query: "apple"),
-                    excludes: [CurationExclude(id: "287")],
-                    id: "customize-apple",
+                    rule: CurationRule( query: "apple", match: .exact),
                     includes: [
                         CurationInclude(id: "422", position: 1),
                         CurationInclude(id: "54", position: 2),
-                    ]
+                    ], excludes: [CurationExclude(id: "287")],
+                    id: "customize-apple"
                 )
             ])
         do {

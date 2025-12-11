@@ -79,13 +79,12 @@ final class CurationSetTests: XCTestCase {
     func testCurationSetItemsUpsert() async {
         do {
             let (result, _) = try await client.curationSet("curate_products").items().upsert("customize-apple-2",  CurationItemCreateSchema(
-                rule: CurationRule( match: .exact, query: "apple"),
-                excludes: [CurationExclude(id: "287")],
-                id: "customize-apple",
+                rule: CurationRule( query: "apple", match: .exact),
                 includes: [
                     CurationInclude(id: "422", position: 1),
                     CurationInclude(id: "54", position: 2),
-                ]
+                ], excludes: [CurationExclude(id: "287")],
+                id: "customize-apple"
             ))
             guard let validData = result else {
                 throw DataError.dataNotFound

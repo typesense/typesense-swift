@@ -4,11 +4,9 @@ import XCTest
 final class ConversationModelTests: XCTestCase {
     func testConversationModelsCreate() async {
         let schema = ConversationModelCreateSchema(
-            historyCollection: "conversation_store",
+            modelName: "test/gpt-3.5-turbo", historyCollection: "conversation_store",
             maxBytes: 16384,
-            modelName: "test/gpt-3.5-turbo",
-            apiKey: "sk",
-            id: "conv-model-1",
+            id: "conv-model-1", apiKey: "sk",
             systemPrompt: "You are an assistant for question-answering.",
             ttl: 123,
         )

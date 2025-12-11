@@ -172,7 +172,7 @@ final class DocumentTests: XCTestCase {
     }
 
     func testDocumentSearch() async {
-        let searchParams = SearchParameters(groupBy: "country", groupLimit: 1, page: 0, q: "*", queryBy: "company_name")
+        let searchParams = SearchParameters(q: "*", queryBy: "company_name", page: 0, groupBy: "country", groupLimit: 1)
 
         do {
             try await createDocument()
@@ -197,7 +197,7 @@ final class DocumentTests: XCTestCase {
     }
 
     func testDocumentSearchReturnRawData() async {
-        let searchParams = SearchParameters(filterBy: "num_employees:>100", q: "stark", queryBy: "company_name", sortBy: "num_employees:desc")
+        let searchParams = SearchParameters(q: "stark", queryBy: "company_name", filterBy: "num_employees:>100", sortBy: "num_employees:desc")
 
         do {
             try await createDocument()
@@ -219,16 +219,16 @@ final class DocumentTests: XCTestCase {
     }
 
     func testDocumentSearchWithPreset() async {
-        let productSchema = CollectionSchema(fields: [
+        let productSchema = CollectionSchema(name: "products", fields: [
             Field(name: "name", type: "string"),
             Field(name: "price", type: "int32"),
             Field(name: "brand", type: "string"),
             Field(name: "desc", type: "string"),
-        ], name: "products")
+        ])
 
         let preset = PresetUpsertSchema(
             value: .typeSearchParameters(
-                SearchParameters(filterBy: "price:=[50..120]", q: "Jor", queryBy: "name")
+                SearchParameters(q: "Jor", queryBy: "name", filterBy: "price:=[50..120]")
             )
         )
 
@@ -266,7 +266,7 @@ final class DocumentTests: XCTestCase {
     }
 
     func testDocumentGroupSearch() async {
-        let searchParams = SearchParameters(groupBy: "num_employees,country,metadata", q: "*", queryBy: "company_name")
+        let searchParams = SearchParameters(q: "*", queryBy: "company_name", groupBy: "num_employees,country,metadata")
 
         do {
             try await createDocument()
@@ -341,7 +341,7 @@ final class DocumentTests: XCTestCase {
             let jsonL = Data(jsonLString.utf8)
 
             let (data, _) = try await client.collection(name: "companies").documents().importBatch(jsonL, options: ImportDocumentsParameters(
-                action: .upsert, batchSize: 10, dirtyValues: .drop, remoteEmbeddingBatchSize: 10, returnDoc: true, returnId: false
+                batchSize: 10, returnId: false, remoteEmbeddingBatchSize: 10, returnDoc: true, action: .upsert, dirtyValues: .drop
             ))
             XCTAssertNotNil(data)
             guard let validResp = data else {

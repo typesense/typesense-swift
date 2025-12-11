@@ -3,15 +3,15 @@ import XCTest
 
 final class MultiSearchTests: XCTestCase {
     override func setUp() async throws {
-        let productSchema = CollectionSchema(fields: [
+        let productSchema = CollectionSchema(name: "products", fields: [
             Field(name: "name", type: "string"),
             Field(name: "price", type: "int32"),
             Field(name: "brand", type: "string"),
             Field(name: "desc", type: "string"),
-        ], name: "products")
-        let brandSchema = CollectionSchema(fields: [
+        ])
+        let brandSchema = CollectionSchema(name: "brands", fields: [
             Field(name: "name", type: "string"),
-        ], name: "brands")
+        ])
 
 
         let _ = try await client.collections().create(schema: productSchema)
@@ -52,7 +52,7 @@ final class MultiSearchTests: XCTestCase {
 
     func testMultiSearch() async {
         let searchRequests = [
-            MultiSearchCollectionParameters(filterBy: "price:=[50..120]", q: "Jor", collection: "products"),
+            MultiSearchCollectionParameters(q: "Jor", filterBy: "price:=[50..120]", collection: "products"),
             MultiSearchCollectionParameters(q: "Nike", collection: "brands"),
         ]
 
@@ -108,7 +108,7 @@ final class MultiSearchTests: XCTestCase {
     func testMultiSearchReturnRawData() async {
 
         let searchRequests = [
-            MultiSearchCollectionParameters(filterBy: "price:=[50..120]", q: "shoe", collection: "products"),
+            MultiSearchCollectionParameters(q: "shoe", filterBy: "price:=[50..120]", collection: "products"),
             MultiSearchCollectionParameters(q: "Nike", collection: "brands"),
         ]
 
@@ -150,7 +150,7 @@ final class MultiSearchTests: XCTestCase {
         let preset = PresetUpsertSchema(
             value: .typeMultiSearchSearchesParameter(MultiSearchSearchesParameter(
                 searches:[
-                    MultiSearchCollectionParameters(filterBy: "price:=[50..120]", q: "shoe", collection: "products"),
+                    MultiSearchCollectionParameters(q: "shoe", filterBy: "price:=[50..120]", collection: "products"),
                     MultiSearchCollectionParameters(q: "Nike", collection: "brands"),
                     ]
             ))
@@ -160,7 +160,7 @@ final class MultiSearchTests: XCTestCase {
         let brand1 = Brand(name: "Nike")
         let product1 = Product(name: "Jordan", price: 70, brand: "Nike", desc: "High quality shoe")
 
-        let commonParams = MultiSearchParameters(preset: "test-multi-search", queryBy: "name")
+        let commonParams = MultiSearchParameters(queryBy: "name", preset: "test-multi-search")
 
         do {
             let _ = try await client.presets().upsert(presetName: "test-multi-search", params: preset)
@@ -198,7 +198,7 @@ final class MultiSearchTests: XCTestCase {
 
     func testMultiSearchUnionReturnRawData() async {
         let searchRequests = [
-            MultiSearchCollectionParameters(filterBy: "price:=[50..120]", q: "shoe", collection: "products"),
+            MultiSearchCollectionParameters(q: "shoe", filterBy: "price:=[50..120]", collection: "products"),
             MultiSearchCollectionParameters(q: "Nike", collection: "brands"),
         ]
 
@@ -236,7 +236,7 @@ final class MultiSearchTests: XCTestCase {
 
     func testMultiSearchUnion() async {
         let searchRequests = [
-            MultiSearchCollectionParameters(filterBy: "price:=[50..120]", q: "shoe", collection: "products"),
+            MultiSearchCollectionParameters(q: "shoe", filterBy: "price:=[50..120]", collection: "products"),
             MultiSearchCollectionParameters(q: "Nike", collection: "brands"),
         ]
 
@@ -280,7 +280,7 @@ final class MultiSearchTests: XCTestCase {
 
     func testMultiSearchPack() async {
         let searchRequests = [
-            MultiSearchCollectionParameters(filterBy: "price:=[50..120]", q: "Jor", collection: "products"),
+            MultiSearchCollectionParameters(q: "Jor", filterBy: "price:=[50..120]", collection: "products"),
             MultiSearchCollectionParameters(q: "Nike", collection: "brands"),
         ]
 

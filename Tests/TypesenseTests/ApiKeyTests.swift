@@ -8,7 +8,7 @@ final class ApiKeyTests: XCTestCase {
 
     func testKeyCreate() async {
         do {
-            let adminKey = ApiKeySchema(actions: ["*"], collections: ["*"], description: "Test key with all privileges", )
+            let adminKey = ApiKeySchema(description: "Test key with all privileges", actions: ["*"], collections: ["*"], )
             let (data, _) = try await client.keys().create(adminKey)
             XCTAssertNotNil(data)
             guard let validData = data else {
