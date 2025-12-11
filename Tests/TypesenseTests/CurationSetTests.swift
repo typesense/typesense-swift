@@ -45,7 +45,7 @@ final class CurationSetTests: XCTestCase {
             print(error)
             XCTAssertTrue(false)
         }
-        
+
         do{
             let _ = try await client.curationSet("curate_products").retrieve()
         } catch HTTPError.clientError(let code, _){
@@ -75,7 +75,7 @@ final class CurationSetTests: XCTestCase {
             XCTAssertTrue(false)
         }
     }
-    
+
     func testCurationSetItemsUpsert() async {
         do {
             let (result, _) = try await client.curationSet("curate_products").items().upsert("customize-apple-2",  CurationItemCreateSchema(
@@ -84,7 +84,6 @@ final class CurationSetTests: XCTestCase {
                     CurationInclude(id: "422", position: 1),
                     CurationInclude(id: "54", position: 2),
                 ], excludes: [CurationExclude(id: "287")],
-                id: "customize-apple"
             ))
             guard let validData = result else {
                 throw DataError.dataNotFound
@@ -100,7 +99,7 @@ final class CurationSetTests: XCTestCase {
             XCTAssertTrue(false)
         }
     }
-    
+
     func testCurationSetItemRetrieve() async {
         do {
             let (result, _) = try await client.curationSet("curate_products").item("customize-apple").retrieve()
@@ -118,8 +117,8 @@ final class CurationSetTests: XCTestCase {
             XCTAssertTrue(false)
         }
     }
-    
-    func testCurationSetItemDelere() async {
+
+    func testCurationSetItemDelete() async {
         do {
             let (result, _) = try await client.curationSet("curate_products").item("customize-apple").delete()
             guard let validData = result else {
@@ -127,7 +126,7 @@ final class CurationSetTests: XCTestCase {
             }
             print(validData)
             XCTAssertEqual("customize-apple", validData.id)
-            
+
             let (curationSet, _) = try await client.curationSet("curate_products").retrieve()
             guard let validCurationSet = curationSet else {
                 throw DataError.dataNotFound

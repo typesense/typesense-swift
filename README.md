@@ -214,42 +214,68 @@ let (data, response) = try await client.conversations().model(modelId: "conv-mod
 let (data, response) = try await client.conversations().model(modelId: "conv-model-1").delete()
 ```
 
-### Create or update an override
+### Create or update a curation set
 
 ```swift
-let schema = SearchOverrideSchema<MetadataType>(
-    rule: SearchOverrideRule(tags: ["test"], query: "apple", match: SearchOverrideRule.Match.exact, filterBy: "employees:=50"),
-    includes: [SearchOverrideInclude(_id: "include-id", position: 1)],
-    excludes: [SearchOverrideExclude(_id: "exclude-id")],
-    filterBy: "test:=true",
-    removeMatchedTokens: false,
-    metadata: MetadataType(message: "test-json"),
-    sortBy: "num_employees:desc",
-    replaceQuery: "test",
-    filterCuratedHits: false,
-    effectiveFromTs: 123,
-    effectiveToTs: 456,
-    stopProcessing: false
-)
-let (data, response) = try await client.collection(name: "books").overrides().upsert(overrideId: "test-id", params: schema)
+let schema = CurationSetCreateSchema(items: [
+        CurationItemCreateSchema(
+            rule: CurationRule( query: "apple", match: .exact),
+            includes: [
+                CurationInclude(id: "422", position: 1),
+                CurationInclude(id: "54", position: 2),
+            ], excludes: [CurationExclude(id: "287")],
+            id: "customize-apple"
+        )
+    ])
+let (data, response) = try await client.curationSets().upsert("curate_products", schema)
 ```
 
-### Retrieve all overrides
+### Retrieve all curation sets
 
 ```swift
-let (data, response) = try await client.collection(name: "books").overrides().retrieve(metadataType: Never.self)
+let (data, response) = try await client.curationSets().retrieve()
 ```
 
-### Retrieve an override
+### Retrieve a curation set
 
 ```swift
-let (data, response) = try await client.collection(name: "books").override("test-id").retrieve(metadataType: MetadataType.self)
+let (data, response) = try await client.curationSet("curate_products").retrieve()
 ```
 
-### Delete an override
+### Delete a curation set
 
 ```swift
-let (data, response) = try await client.collection(name: "books").override("test-id").delete()
+let (data, response) = try await client.curationSet("curate_products").delete()
+```
+
+### Retrieve all curation set items
+
+```swift
+let (data, response) = try await client.curationSet("curate_products").items().retrieve()
+```
+
+### Upsert a curation set item
+
+```swift
+let (data, response) = try await client.curationSet("curate_products").items().upsert("customize-apple-2",  CurationItemCreateSchema(
+    rule: CurationRule( query: "apple", match: .exact),
+    includes: [
+        CurationInclude(id: "422", position: 1),
+        CurationInclude(id: "54", position: 2),
+    ], excludes: [CurationExclude(id: "287")],
+))
+```
+
+### Retrieve a curation set item
+
+```swift
+let (data, response) = try await client.curationSet("curate_products").item("customize-apple").retrieve()
+```
+
+### Delete a curation set item
+
+```swift
+let (data, response) = try await client.curationSet("curate_products").item("customize-apple").delete()
 ```
 
 ### Create or update a preset
