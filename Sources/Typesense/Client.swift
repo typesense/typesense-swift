@@ -65,4 +65,13 @@ public struct Client {
     public func stopword(_ stopwordsSetId: String) -> Stopword {
         return Stopword(apiCall: apiCall, stopwordsSetId: stopwordsSetId)
     }
+
+    public func synonymSets() -> SynonymSets {
+        return SynonymSets(apiCall: apiCall)
+    }
+
+    public func synonymSet(_ synonymSetName: String) -> SynonymSet {
+        return SynonymSet(apiCall: apiCall, synonymSetName: synonymSetName)
+    }
+
 }

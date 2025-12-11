@@ -39,10 +39,6 @@ public struct Collection {
         return (nil, response)
     }
 
-    public func synonyms() -> Synonyms {
-        return Synonyms(apiCall: apiCall, collectionName: self.collectionName)
-    }
-
     private func endpointPath() throws -> String {
         return "\(Collections.RESOURCEPATH)/\(try collectionName.encodeURL())"
     }

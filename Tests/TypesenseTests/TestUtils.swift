@@ -74,14 +74,23 @@ func tearDownCurationSets() async throws {
     }
 }
 
+func tearDownSynonymSets() async throws {
+    let (data, _) = try await utilClient.synonymSets().retrieve()
+    guard let validData = data else {
+        throw DataError.dataNotFound
+    }
+    for item in validData {
+        let _ = try await utilClient.synonymSet(item.name).delete()
+    }
+}
+
 func createCollection() async throws {
-    let schema = CollectionSchema( fields: [
+    let schema = CollectionSchema( name: "companies", fields: [
         Field(name: "company_name", type: "string"),
         Field(name: "num_employees", type: "int32", facet: true),
         Field(name: "country", type: "string", facet: true),
-        Field(name: "metadata", type: "object", facet: true, _optional: true)
-        ],
-        name: "companies",
+        Field(name: "metadata", type: "object", _optional: true, facet: true)
+    ],
         defaultSortingField: "num_employees",
         enableNestedFields: true)
     let _ = try await utilClient.collections().create(schema: schema)
@@ -94,13 +103,12 @@ func createDocument() async throws {
 func createCurationSet() async throws {
     let schema = CurationSetCreateSchema(items: [
             CurationItemCreateSchema(
-                rule: CurationRule( match: .exact, query: "apple"),
-                excludes: [CurationExclude(id: "287")],
-                id: "customize-apple",
+                rule: CurationRule( query: "apple", match: .exact),
                 includes: [
                     CurationInclude(id: "422", position: 1),
                     CurationInclude(id: "54", position: 2),
-                ]
+                ], excludes: [CurationExclude(id: "287")],
+                id: "customize-apple"
             )
         ])
     let _ = try await client.curationSets().upsert("curate_products", schema)
@@ -135,7 +143,7 @@ func createStopwordSet() async throws {
 }
 
 func createAPIKey() async throws -> ApiKey {
-    let (data, _) =  try await utilClient.keys().create( ApiKeySchema(actions: ["*"], collections: ["*"], description: "Test key with all privileges"))
+    let (data, _) =  try await utilClient.keys().create( ApiKeySchema(description: "Test key with all privileges", actions: ["*"], collections: ["*"]))
     return data!
 }
 
@@ -144,14 +152,22 @@ func createAlias() async throws {
 }
 
 func createConversationCollection() async throws {
-    let schema = CollectionSchema(fields: [
+    let schema = CollectionSchema(name: "conversation_store", fields: [
         Field(name: "conversation_id", type: "string"),
         Field(name: "model_id", type: "string"),
         Field(name: "timestamp", type: "int32"),
         Field(name: "role", type: "string", index: false),
         Field(name: "message", type: "string", index: false)
-    ], name: "conversation_store")
+    ])
     let _ = try await utilClient.collections().create(schema: schema)
+}
+
+func createSynonymSet() async throws {
+    let synonymSchema = SynonymSetCreateSchema(items: [
+        SynonymItemSchema(synonyms: ["blazer", "coat", "jacket"], id:"coat-synonyms", root: "outerwear")
+        ]
+    )
+    let _ = try await utilClient.synonymSets().upsert("clothing-synonyms", synonymSchema)
 }
 
 struct Product: Codable, Equatable {
