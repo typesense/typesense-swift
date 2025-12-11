@@ -3,15 +3,15 @@ import XCTest
 
 final class AnalyticsTests: XCTestCase {
     override func setUp() async throws  {
-        let _ = try await utilClient.collections().create(schema: CollectionSchema(name: "product_queries", fields: [
+        let _ = try await client.collections().create(schema: CollectionSchema(name: "product_queries", fields: [
             Field(name:"q", type: "string"),
             Field(name:"count", type: "int32")
         ]))
-        let _ = try await utilClient.collections().create(schema: CollectionSchema(name: "test-products-analytics", fields: [
+        let _ = try await client.collections().create(schema: CollectionSchema(name: "test-products-analytics", fields: [
             Field(name:"name", type: "string"),
             Field(name:"in_stock", type: "int32")
         ]))
-        let _ = try await utilClient.analytics().rules().create(AnalyticsRuleCreate(
+        let _ = try await client.analytics().rules().create(AnalyticsRuleCreate(
             name: "homepage_popular_queries",
             type: .popularQueries,
             collection: "test-products-analytics",
@@ -44,7 +44,7 @@ final class AnalyticsTests: XCTestCase {
             ),
         )
         do {
-            let (rule, _) = try await utilClient.analytics().rules().create(schema)
+            let (rule, _) = try await client.analytics().rules().create(schema)
             XCTAssertNotNil(rule)
             guard let validRule = rule else {
                 throw DataError.dataNotFound
@@ -83,7 +83,7 @@ final class AnalyticsTests: XCTestCase {
             ),
         )
         do {
-            let (rules, _) = try await utilClient.analytics().rules().createMany([schema1, schema2])
+            let (rules, _) = try await client.analytics().rules().createMany([schema1, schema2])
             XCTAssertNotNil(rules)
             guard let validRule = rules else {
                 throw DataError.dataNotFound

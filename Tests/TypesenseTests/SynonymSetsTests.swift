@@ -2,18 +2,18 @@ import XCTest
 @testable import Typesense
 
 final class SynonymSetsTests: XCTestCase {
-    
+
     override func setUp() async throws  {
        try await createSynonymSet()
     }
-    
+
     override func tearDown() async throws  {
        try await tearDownSynonymSets()
     }
 
     func testSynonymRetrieveOne() async {
         do {
-            let (data,_) = try await utilClient.synonymSet("clothing-synonyms").retrieve()
+            let (data,_) = try await client.synonymSet("clothing-synonyms").retrieve()
             XCTAssertNotNil(data)
             guard let validData = data else {
                 throw DataError.dataNotFound
@@ -34,7 +34,7 @@ final class SynonymSetsTests: XCTestCase {
 
     func testSynonymRetrieveAll() async {
         do {
-            let (data,_) = try await utilClient.synonymSets().retrieve()
+            let (data,_) = try await client.synonymSets().retrieve()
             XCTAssertNotNil(data)
             guard let validData = data else {
                 throw DataError.dataNotFound
@@ -53,10 +53,10 @@ final class SynonymSetsTests: XCTestCase {
             XCTAssertTrue(false)
         }
     }
-    
+
     func testSynonymSetDelete() async {
         do {
-            let (data,_) = try await utilClient.synonymSet("clothing-synonyms").delete()
+            let (data,_) = try await client.synonymSet("clothing-synonyms").delete()
             XCTAssertNotNil(data)
             guard let validData = data else {
                 throw DataError.dataNotFound
@@ -71,7 +71,7 @@ final class SynonymSetsTests: XCTestCase {
             print(error.localizedDescription)
             XCTAssertTrue(false)
         }
-        
+
         do{
             let _ = try await client.synonymSet("clothing-synonyms").retrieve()
         } catch HTTPError.clientError(let code, _){
@@ -83,10 +83,10 @@ final class SynonymSetsTests: XCTestCase {
             XCTAssertTrue(false)
         }
     }
-    
+
     func testSynonymSetItemRetrieveOne() async {
         do {
-            let (data,_) = try await utilClient.synonymSet("clothing-synonyms").item("coat-synonyms").retrieve()
+            let (data,_) = try await client.synonymSet("clothing-synonyms").item("coat-synonyms").retrieve()
             XCTAssertNotNil(data)
             guard let validData = data else {
                 throw DataError.dataNotFound
@@ -103,10 +103,10 @@ final class SynonymSetsTests: XCTestCase {
             XCTAssertTrue(false)
         }
     }
-    
+
     func testSynonymSetItemDelete() async {
         do {
-            let (data,_) = try await utilClient.synonymSet("clothing-synonyms").item("coat-synonyms").delete()
+            let (data,_) = try await client.synonymSet("clothing-synonyms").item("coat-synonyms").delete()
             XCTAssertNotNil(data)
             guard let validData = data else {
                 throw DataError.dataNotFound
@@ -122,7 +122,7 @@ final class SynonymSetsTests: XCTestCase {
             XCTAssertTrue(false)
         }
         do{
-            let _ = try await utilClient.synonymSet("clothing-synonyms").item("coat-synonyms").retrieve()
+            let _ = try await client.synonymSet("clothing-synonyms").item("coat-synonyms").retrieve()
         } catch HTTPError.clientError(let code, _){
             if code != 404 {
                 XCTAssertTrue(false, "Synonym set item should have been deleted")
@@ -132,10 +132,10 @@ final class SynonymSetsTests: XCTestCase {
             XCTAssertTrue(false)
         }
     }
-    
+
     func testSynonymSetItemUpsert() async {
         do {
-            let (data,_) = try await utilClient.synonymSet("clothing-synonyms").items().upsert("coat-synonyms-2", SynonymItemUpsertSchema(synonyms: ["none"]))
+            let (data,_) = try await client.synonymSet("clothing-synonyms").items().upsert("coat-synonyms-2", SynonymItemUpsertSchema(synonyms: ["none"]))
             XCTAssertNotNil(data)
             guard let validData = data else {
                 throw DataError.dataNotFound
@@ -155,7 +155,7 @@ final class SynonymSetsTests: XCTestCase {
 
     func testSynonymSetItemRetrieveAll() async {
         do {
-            let (data,_) = try await utilClient.synonymSet("clothing-synonyms").items().retrieve()
+            let (data,_) = try await client.synonymSet("clothing-synonyms").items().retrieve()
             XCTAssertNotNil(data)
             guard let validData = data else {
                 throw DataError.dataNotFound
