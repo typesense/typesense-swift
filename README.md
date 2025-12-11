@@ -344,26 +344,53 @@ let (data, response) = try await client.stopword("stopword_set1").delete()
 ### Create or update a synonym
 
 ```swift
-let schema = SearchSynonymSchema(synonyms: ["blazer", "coat", "jacket"])
-let (data, response) = try await client.collection(name: "products").synonyms().upsert(id: "coat-synonyms", schema)
+let schema = SynonymSetCreateSchema(items: [
+    SynonymItemSchema(synonyms: ["blazer", "coat", "jacket"], id:"coat-synonyms", root: "outerwear")
+])
+let (data, response) = try await utilClient.synonymSets().upsert("clothing-synonyms", schema)
 ```
 
 ### Retrieve all synonyms
 
 ```swift
-let (data, response) = try await client.collection(name: "products").synonyms().retrieve()
+let (data, response) = try await client.synonymSets().retrieve()
 ```
 
 ### Retrieve a synonym
 
 ```swift
-let (data, response) = try await client.collection(name: "products").synonyms().retrieve(id: "coat-synonyms")
+let (data, response) = try await client.synonymSet("clothing-synonyms").retrieve()
 ```
 
 ### Delete a synonym
 
 ```swift
-let (data, response) = try await myClient.collection(name: "products").synonyms().delete(id: "coat-synonyms")
+let (data, response) = try await client.synonymSet("clothing-synonyms").delete()
+```
+
+### Upsert a synonym item
+
+```swift
+let schema = SynonymItemUpsertSchema(synonyms: ["blazer", "coat", "jacket"], root: "outerwear")
+let (data, response) = try await client.synonymSet("clothing-synonyms").items().upsert("coat-synonyms", schema)
+```
+
+### Retrieve all synonym items
+
+```swift
+let (data, response) = try await client.synonymSet("clothing-synonyms").items().retrieve()
+```
+
+### Retrieve a synonym item
+
+```swift
+let (data, response) = try await client.synonymSet("clothing-synonyms").item("coat-synonyms").retrieve()
+```
+
+### Delete a synonym item
+
+```swift
+let (data, response) = try await client.synonymSet("clothing-synonyms").item("coat-synonyms").delete()
 ```
 
 ### Retrieve debug information
