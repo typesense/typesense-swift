@@ -33,10 +33,12 @@ jobs:
           mkdir $(pwd)/typesense-data
           docker run -p 8108:8108 \
             -d \
-            -v$(pwd)/typesense-data:/data typesense/typesense:28.0 \
+            -v$(pwd)/typesense-data:/data typesense/typesense:30.0.rca34 \
             --data-dir /data \
             --api-key=xyz \
-            --enable-cors
+            --enable-cors \
+            --enable-search-analytics=true \
+            --analytics-dir=/analytics-data
         shell: bash
 
       - name: Set up Xcode
