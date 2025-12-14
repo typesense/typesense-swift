@@ -4,14 +4,13 @@ public struct Client {
 
     var configuration: Configuration
     var apiCall: ApiCall
+    public var collections: Collections {
+        return Collections(apiCall: apiCall)
+    }
 
     public init(config: Configuration) {
         self.configuration = config
         self.apiCall = ApiCall(config: config)
-    }
-
-    public func collections() -> Collections {
-        return Collections(apiCall: apiCall)
     }
 
     public func collection(name: String) -> Collection {

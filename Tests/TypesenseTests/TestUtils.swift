@@ -5,7 +5,7 @@ let client = Client(config: CONFIG)
 let utilClient = Client(config: Configuration(nodes: NODES, apiKey: "xyz"))
 
 func tearDownCollections() async throws {
-    let (collResp, _) = try await utilClient.collections().retrieveAll()
+    let (collResp, _) = try await utilClient.collections.retrieveAll()
     guard let validData = collResp else {
         throw DataError.dataNotFound
     }
@@ -93,7 +93,7 @@ func createCollection() async throws {
     ],
         defaultSortingField: "num_employees",
         enableNestedFields: true)
-    let _ = try await utilClient.collections().create(schema: schema)
+    let _ = try await utilClient.collections.create(schema: schema)
 }
 
 func createDocument() async throws {
@@ -159,7 +159,7 @@ func createConversationCollection() async throws {
         Field(name: "role", type: "string", index: false),
         Field(name: "message", type: "string", index: false)
     ])
-    let _ = try await utilClient.collections().create(schema: schema)
+    let _ = try await utilClient.collections.create(schema: schema)
 }
 
 func createSynonymSet() async throws {

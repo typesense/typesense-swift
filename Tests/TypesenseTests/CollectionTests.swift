@@ -15,7 +15,7 @@ final class CollectionTests: XCTestCase {
             ],
             defaultSortingField: "num_employees")
         do {
-            let (collResp, _) = try await client.collections().create(schema: schema)
+            let (collResp, _) = try await client.collections.create(schema: schema)
             XCTAssertNotNil(collResp)
             guard let validData = collResp else {
                 throw DataError.dataNotFound
@@ -50,7 +50,7 @@ final class CollectionTests: XCTestCase {
     func testCollectionRetrieveAll() async {
         do {
             try await createCollection()
-            let (collResp, _) = try await client.collections().retrieveAll()
+            let (collResp, _) = try await client.collections.retrieveAll()
             XCTAssertNotNil(collResp)
             guard let validData = collResp else {
                 throw DataError.dataNotFound

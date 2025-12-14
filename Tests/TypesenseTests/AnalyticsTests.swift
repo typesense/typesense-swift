@@ -3,11 +3,11 @@ import XCTest
 
 final class AnalyticsTests: XCTestCase {
     override func setUp() async throws  {
-        let _ = try await client.collections().create(schema: CollectionSchema(name: "product_queries", fields: [
+        let _ = try await client.collections.create(schema: CollectionSchema(name: "product_queries", fields: [
             Field(name:"q", type: "string"),
             Field(name:"count", type: "int32")
         ]))
-        let _ = try await client.collections().create(schema: CollectionSchema(name: "test-products-analytics", fields: [
+        let _ = try await client.collections.create(schema: CollectionSchema(name: "test-products-analytics", fields: [
             Field(name:"name", type: "string"),
             Field(name:"in_stock", type: "int32")
         ]))

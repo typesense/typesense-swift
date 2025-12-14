@@ -238,7 +238,7 @@ final class DocumentTests: XCTestCase {
         do {
             let _ = try await client.presets().upsert(presetName: "single-collection-search-preset", params: preset)
             do {
-                let _ = try await client.collections().create(schema: productSchema)
+                let _ = try await client.collections.create(schema: productSchema)
             } catch (let error) {
                 print(error.localizedDescription)
                 XCTAssertTrue(false)

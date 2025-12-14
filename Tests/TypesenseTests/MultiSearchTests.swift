@@ -14,8 +14,8 @@ final class MultiSearchTests: XCTestCase {
         ])
 
 
-        let _ = try await client.collections().create(schema: productSchema)
-        let _ = try await client.collections().create(schema: brandSchema)
+        let _ = try await client.collections.create(schema: productSchema)
+        let _ = try await client.collections.create(schema: brandSchema)
     }
 
     override func tearDown() async throws {
