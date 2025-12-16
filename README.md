@@ -458,7 +458,7 @@ swift run Tasks code-gen
 This will:
 
 - Download the latest API spec.
-- Write it to our local [`openapi.yml`](./openapi.yml).
+- Write it to our local `openapi.yml`.
 - Preprocess it into [`preprocessed_openapi.yml`](./preprocessed_openapi.yml).
 - Generate and replace the `Sources/Typesense/Models` folder.
 
