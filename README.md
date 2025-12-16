@@ -91,12 +91,12 @@ This returns a `SearchResult` object as the data, which can be further parsed as
 ```swift
 let jsonL = Data("{}".utf8)
 let (data, response) = try await client.collection(name: "companies").documents().importBatch(jsonL, options: ImportDocumentsParameters(
-    action: .upsert,
-    batchSize: 10,
-    dirtyValues: .drop,
-    remoteEmbeddingBatchSize: 10,
-    returnDoc: true,
-    returnId: false
+        batchSize: 10,
+        returnId: false,
+        remoteEmbeddingBatchSize: 10,
+        returnDoc: true,
+        action: .upsert,
+        dirtyValues: .drop
 ))
 ```
 
@@ -105,7 +105,7 @@ let (data, response) = try await client.collection(name: "companies").documents(
 ```swift
 let (data, response) = try await client.collection(name: "companies").documents().update(
     document: ["company_size": "large"],
-    options: UpdateDocumentsByFilterParameters(filterBy: "num_employees:>1000")
+    options: UpdateDocumentsParameters(filterBy: "num_employees:>1000")
 )
 ```
 
@@ -151,7 +151,7 @@ let (data, response) = try await client.aliases().delete(name: "companies")
 ### Create an API key
 
 ```swift
-let adminKey = ApiKeySchema(_description: "Test key with all privileges", actions: ["*"], collections: ["*"])
+let adminKey = ApiKeySchema(description: "Test key with all privileges", actions: ["*"], collections: ["*"])
 let (data, response) = try await client.keys().create(adminKey)
 ```
 
@@ -177,13 +177,13 @@ let (data, response) = try await client.keys().delete(id: 1)
 
 ```swift
 let schema = ConversationModelCreateSchema(
-    _id: "conv-model-1",
     modelName: "openai/gpt-3.5-turbo",
-    apiKey: "OPENAI_API_KEY",
     historyCollection: "conversation_store",
+    maxBytes: 16384,
+    id: "conv-model-1",
+    apiKey: "OPENAI_API_KEY",
     systemPrompt: "You are an assistant for question-answering...",
     ttl: 10000,
-    maxBytes: 16384
 )
 let (data, response) = try await client.conversations().models().create(params: schema)
 ```
@@ -214,50 +214,76 @@ let (data, response) = try await client.conversations().model(modelId: "conv-mod
 let (data, response) = try await client.conversations().model(modelId: "conv-model-1").delete()
 ```
 
-### Create or update an override
+### Create or update a curation set
 
 ```swift
-let schema = SearchOverrideSchema<MetadataType>(
-    rule: SearchOverrideRule(tags: ["test"], query: "apple", match: SearchOverrideRule.Match.exact, filterBy: "employees:=50"),
-    includes: [SearchOverrideInclude(_id: "include-id", position: 1)],
-    excludes: [SearchOverrideExclude(_id: "exclude-id")],
-    filterBy: "test:=true",
-    removeMatchedTokens: false,
-    metadata: MetadataType(message: "test-json"),
-    sortBy: "num_employees:desc",
-    replaceQuery: "test",
-    filterCuratedHits: false,
-    effectiveFromTs: 123,
-    effectiveToTs: 456,
-    stopProcessing: false
-)
-let (data, response) = try await client.collection(name: "books").overrides().upsert(overrideId: "test-id", params: schema)
+let schema = CurationSetCreateSchema(items: [
+        CurationItemCreateSchema(
+            rule: CurationRule( query: "apple", match: .exact),
+            includes: [
+                CurationInclude(id: "422", position: 1),
+                CurationInclude(id: "54", position: 2),
+            ], excludes: [CurationExclude(id: "287")],
+            id: "customize-apple"
+        )
+    ])
+let (data, response) = try await client.curationSets().upsert("curate_products", schema)
 ```
 
-### Retrieve all overrides
+### Retrieve all curation sets
 
 ```swift
-let (data, response) = try await client.collection(name: "books").overrides().retrieve(metadataType: Never.self)
+let (data, response) = try await client.curationSets().retrieve()
 ```
 
-### Retrieve an override
+### Retrieve a curation set
 
 ```swift
-let (data, response) = try await client.collection(name: "books").override("test-id").retrieve(metadataType: MetadataType.self)
+let (data, response) = try await client.curationSet("curate_products").retrieve()
 ```
 
-### Delete an override
+### Delete a curation set
 
 ```swift
-let (data, response) = try await client.collection(name: "books").override("test-id").delete()
+let (data, response) = try await client.curationSet("curate_products").delete()
+```
+
+### Retrieve all curation set items
+
+```swift
+let (data, response) = try await client.curationSet("curate_products").items().retrieve()
+```
+
+### Upsert a curation set item
+
+```swift
+let (data, response) = try await client.curationSet("curate_products").items().upsert("customize-apple-2",  CurationItemCreateSchema(
+    rule: CurationRule( query: "apple", match: .exact),
+    includes: [
+        CurationInclude(id: "422", position: 1),
+        CurationInclude(id: "54", position: 2),
+    ], excludes: [CurationExclude(id: "287")],
+))
+```
+
+### Retrieve a curation set item
+
+```swift
+let (data, response) = try await client.curationSet("curate_products").item("customize-apple").retrieve()
+```
+
+### Delete a curation set item
+
+```swift
+let (data, response) = try await client.curationSet("curate_products").item("customize-apple").delete()
 ```
 
 ### Create or update a preset
 
 ```swift
 let schema = PresetUpsertSchema(
-    value: PresetValue.singleCollectionSearch(SearchParameters(q: "apple"))
-    // or: value: PresetValue.multiSearch(MultiSearchSearchesParameter(searches: [MultiSearchCollectionParameters(q: "apple")]))
+    value: PresetUpsertSchemaValue.typeSearchParameters(SearchParameters(q: "apple"))
+    // or: value: PresetUpsertSchemaValue.typeMultiSearchSearchesParameter(MultiSearchSearchesParameter(searches: [MultiSearchCollectionParameters(q: "apple")]))
 )
 let (data, response) = try await client.presets().upsert(presetName: "listing_view", params: schema)
 ```
@@ -274,9 +300,9 @@ let (data, response) = try await client.presets().retrieve()
 let (data, response) = try await client.preset("listing_view").retrieve()
 
 switch data?.value {
-    case .singleCollectionSearch(let value):
+    case .typeSearchParameters(let value):
         print(value)
-    case .multiSearch(let value):
+    case .typeMultiSearchSearchesParameter(let value):
         print(value)
 }
 ```
@@ -318,26 +344,53 @@ let (data, response) = try await client.stopword("stopword_set1").delete()
 ### Create or update a synonym
 
 ```swift
-let schema = SearchSynonymSchema(synonyms: ["blazer", "coat", "jacket"])
-let (data, response) = try await client.collection(name: "products").synonyms().upsert(id: "coat-synonyms", schema)
+let schema = SynonymSetCreateSchema(items: [
+    SynonymItemSchema(synonyms: ["blazer", "coat", "jacket"], id:"coat-synonyms", root: "outerwear")
+])
+let (data, response) = try await utilClient.synonymSets().upsert("clothing-synonyms", schema)
 ```
 
 ### Retrieve all synonyms
 
 ```swift
-let (data, response) = try await client.collection(name: "products").synonyms().retrieve()
+let (data, response) = try await client.synonymSets().retrieve()
 ```
 
 ### Retrieve a synonym
 
 ```swift
-let (data, response) = try await client.collection(name: "products").synonyms().retrieve(id: "coat-synonyms")
+let (data, response) = try await client.synonymSet("clothing-synonyms").retrieve()
 ```
 
 ### Delete a synonym
 
 ```swift
-let (data, response) = try await myClient.collection(name: "products").synonyms().delete(id: "coat-synonyms")
+let (data, response) = try await client.synonymSet("clothing-synonyms").delete()
+```
+
+### Upsert a synonym item
+
+```swift
+let schema = SynonymItemUpsertSchema(synonyms: ["blazer", "coat", "jacket"], root: "outerwear")
+let (data, response) = try await client.synonymSet("clothing-synonyms").items().upsert("coat-synonyms", schema)
+```
+
+### Retrieve all synonym items
+
+```swift
+let (data, response) = try await client.synonymSet("clothing-synonyms").items().retrieve()
+```
+
+### Retrieve a synonym item
+
+```swift
+let (data, response) = try await client.synonymSet("clothing-synonyms").item("coat-synonyms").retrieve()
+```
+
+### Delete a synonym item
+
+```swift
+let (data, response) = try await client.synonymSet("clothing-synonyms").item("coat-synonyms").delete()
 ```
 
 ### Retrieve debug information
@@ -390,13 +443,29 @@ let (data, response) = try await client.operations().snapshot(path: "/tmp/typese
 
 ## Contributing
 
-Issues and pull requests are welcome on GitHub at [Typesense Swift](https://github.com/typesense/typesense-swift). Do note that the Models used in the Swift client are generated by [Swagger-Codegen](https://github.com/swagger-api/swagger-codegen) and are automated to be modified in order to prevent major errors. So please do use the shell script that is provided in the repo to generate the models:
+Issues and pull requests are welcome on GitHub at [Typesense Swift](https://github.com/typesense/typesense-swift). Do note that the Models used in the Swift client are generated by [OpenAPI Generator](https://github.com/OpenAPITools/openapi-generator).
 
-```shell
-sh get-models.sh
+When updating or adding new parameters and endpoints, make changes directly in the [Typesense API spec repository](https://github.com/typesense/typesense-api-spec).
+
+Once your changes are merged, you can update this project as follows:
+
+```bash
+swift run Tasks fetch
+swift run Tasks preprocess
+swift run Tasks code-gen
 ```
 
-The generated Models (inside the Models directory) are to be used inside the Models directory of the source code as well. Models need to be generated as and when the [Typesense-Api-Spec](https://github.com/typesense/typesense-api-spec) is updated.
+This will:
+
+- Download the latest API spec.
+- Write it to our local `openapi.yml`.
+- Preprocess it into [`preprocessed_openapi.yml`](./preprocessed_openapi.yml).
+- Generate and replace the `Sources/Typesense/Models` folder.
+
+The preprocessing step does two things:
+
+- Flatten the URL params defined as objects into individual URL parameters (in [`PreprocessOpenAPI.swift`](Tasks/PreprocessOpenAPI.swift))
+- Inject OpenAPI vendor attributes `x-swift-*` (e.g., generic parameters, schema builders) into the spec before code generation (in [`AddVendorAttributes.swift`](Tasks/AddVendorAttributes.swift))
 
 ## TODO: Features
 

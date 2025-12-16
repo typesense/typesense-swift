@@ -28,7 +28,7 @@ public struct ApiKeys {
         return (nil, nil)
     }
 
-    public func retrieve(id: Int) async throws -> (ApiKey?, URLResponse?) {
+    public func retrieve(id: Int64) async throws -> (ApiKey?, URLResponse?) {
 
         let (data, response) = try await apiCall.get(endPoint: "\(RESOURCEPATH)/\(id)")
         if let result = data {
@@ -50,7 +50,7 @@ public struct ApiKeys {
         return (nil, nil)
     }
 
-    public func delete(id: Int) async throws -> (Data?, URLResponse?) {
+    public func delete(id: Int64) async throws -> (Data?, URLResponse?) {
 
         let (data, response) = try await apiCall.delete(endPoint: "\(RESOURCEPATH)/\(id)")
         return (data, response)

@@ -4,12 +4,13 @@ public struct Client {
 
     var configuration: Configuration
     var apiCall: ApiCall
-    public var collections: Collections
+    public var collections: Collections {
+        return Collections(apiCall: apiCall)
+    }
 
     public init(config: Configuration) {
         self.configuration = config
         self.apiCall = ApiCall(config: config)
-        self.collections = Collections(apiCall: apiCall)
     }
 
     public func collection(name: String) -> Collection {
@@ -18,6 +19,14 @@ public struct Client {
 
     public func conversations() -> Conversations {
         return Conversations(apiCall: apiCall)
+    }
+
+    public func curationSets() -> CurationSets {
+        return CurationSets(apiCall: apiCall)
+    }
+
+    public func curationSet(_ name: String) -> CurationSet {
+        return CurationSet(apiCall: apiCall, curationSetName: name)
     }
 
     public func keys() -> ApiKeys {
@@ -55,4 +64,13 @@ public struct Client {
     public func stopword(_ stopwordsSetId: String) -> Stopword {
         return Stopword(apiCall: apiCall, stopwordsSetId: stopwordsSetId)
     }
+
+    public func synonymSets() -> SynonymSets {
+        return SynonymSets(apiCall: apiCall)
+    }
+
+    public func synonymSet(_ synonymSetName: String) -> SynonymSet {
+        return SynonymSet(apiCall: apiCall, synonymSetName: synonymSetName)
+    }
+
 }

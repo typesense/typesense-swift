@@ -12,21 +12,49 @@ public struct AnalyticsRules {
         self.apiCall = apiCall
     }
 
-    public func upsert(params: AnalyticsRuleSchema) async throws -> (AnalyticsRuleSchema?, URLResponse?) {
+    public func update(_ params: AnalyticsRuleUpdate) async throws -> (AnalyticsRule?, URLResponse?) {
         let ruleData = try encoder.encode(params)
         let (data, response) = try await self.apiCall.put(endPoint: endpointPath(params.name), body: ruleData)
         if let result = data {
-            let ruleResult = try decoder.decode(AnalyticsRuleSchema.self, from: result)
+            let ruleResult = try decoder.decode(AnalyticsRule.self, from: result)
             return (ruleResult, response)
         }
 
         return (nil, response)
     }
 
-    public func retrieveAll() async throws -> (AnalyticsRulesRetrieveSchema?, URLResponse?) {
-        let (data, response) = try await self.apiCall.get(endPoint: endpointPath())
+    public func create(_ params: AnalyticsRuleCreate) async throws -> (AnalyticsRule?, URLResponse?) {
+        let ruleData = try encoder.encode(params)
+        let (data, response) = try await self.apiCall.post(endPoint: endpointPath(), body: ruleData)
         if let result = data {
-            let rules = try decoder.decode(AnalyticsRulesRetrieveSchema.self, from: result)
+            let ruleResult = try decoder.decode(AnalyticsRule.self, from: result)
+            return (ruleResult, response)
+        }
+
+        return (nil, response)
+    }
+
+    public func createMany(_ params: [AnalyticsRuleCreate]) async throws -> ([AnalyticsRuleCreateManyResponseItem]?, URLResponse?) {
+        let ruleData = try encoder.encode(params)
+        let (data, response) = try await self.apiCall.post(endPoint: endpointPath(), body: ruleData)
+        if let result = data {
+            let ruleResult = try decoder.decode([AnalyticsRuleCreateManyResponseItem].self, from: result)
+            return (ruleResult, response)
+        }
+
+        return (nil, response)
+    }
+
+    public func retrieveAll(ruleTag: String? = nil) async throws -> ([AnalyticsRule]?, URLResponse?) {
+        var urlParams: [URLQueryItem] = []
+
+        if let rule_tag = ruleTag{
+            urlParams.append(URLQueryItem(name: "rule_tag", value: rule_tag))
+        }
+
+        let (data, response) = try await self.apiCall.get(endPoint: endpointPath(), queryParameters: urlParams)
+        if let result = data {
+            let rules = try decoder.decode([AnalyticsRule].self, from: result)
             return (rules, response)
         }
 

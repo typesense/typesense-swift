@@ -85,7 +85,7 @@ final class DocumentTests: XCTestCase {
             try await createDocument()
             let (data, _) = try await client.collection(name: "companies").documents().update(
                 document: ["country": "Spain"],
-                options: UpdateDocumentsByFilterParameters(filterBy: "num_employees:>1000")
+                options: UpdateDocumentsParameters(filterBy: "num_employees:>1000")
             )
             guard let validData = data else {
                 throw DataError.dataNotFound
@@ -227,7 +227,7 @@ final class DocumentTests: XCTestCase {
         ])
 
         let preset = PresetUpsertSchema(
-            value: .singleCollectionSearch(
+            value: .typeSearchParameters(
                 SearchParameters(q: "Jor", queryBy: "name", filterBy: "price:=[50..120]")
             )
         )
@@ -341,7 +341,7 @@ final class DocumentTests: XCTestCase {
             let jsonL = Data(jsonLString.utf8)
 
             let (data, _) = try await client.collection(name: "companies").documents().importBatch(jsonL, options: ImportDocumentsParameters(
-                action: .upsert, batchSize: 10, dirtyValues: .drop, remoteEmbeddingBatchSize: 10, returnDoc: true, returnId: false
+                batchSize: 10, returnId: false, remoteEmbeddingBatchSize: 10, returnDoc: true, action: .upsert, dirtyValues: .drop
             ))
             XCTAssertNotNil(data)
             guard let validResp = data else {

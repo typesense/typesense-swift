@@ -8,14 +8,14 @@ final class ApiKeyTests: XCTestCase {
 
     func testKeyCreate() async {
         do {
-            let adminKey = ApiKeySchema(_description: "Test key with all privileges", actions: ["*"], collections: ["*"])
+            let adminKey = ApiKeySchema(description: "Test key with all privileges", actions: ["*"], collections: ["*"], )
             let (data, _) = try await client.keys().create(adminKey)
             XCTAssertNotNil(data)
             guard let validData = data else {
                 throw DataError.dataNotFound
             }
             print(validData)
-            XCTAssertEqual(validData._description, "Test key with all privileges")
+            XCTAssertEqual(validData.description, "Test key with all privileges")
             XCTAssertEqual(validData.actions, ["*"])
             XCTAssertEqual(validData.collections, ["*"])
         } catch (let error) {
@@ -27,13 +27,13 @@ final class ApiKeyTests: XCTestCase {
     func testKeyRetrieve() async {
         do {
             let key = try await createAPIKey()
-            let (data, _) = try await client.keys().retrieve(id: key._id)
+            let (data, _) = try await client.keys().retrieve(id: key.id!)
             XCTAssertNotNil(data)
             guard let validData = data else {
                 throw DataError.dataNotFound
             }
             print(validData)
-            XCTAssertEqual(validData._description, "Test key with all privileges")
+            XCTAssertEqual(validData.description, "Test key with all privileges")
             XCTAssertEqual(validData.actions, ["*"])
             XCTAssertEqual(validData.collections, ["*"])
         } catch (let error) {
@@ -51,7 +51,7 @@ final class ApiKeyTests: XCTestCase {
                 throw DataError.dataNotFound
             }
             print(validData)
-            XCTAssertEqual(validData[0]._id, key._id)
+            XCTAssertEqual(validData[0].id, key.id)
         } catch (let error) {
             print(error.localizedDescription)
             XCTAssertTrue(false) //To prevent this, check availability of Typesense Server and retry
@@ -61,7 +61,7 @@ final class ApiKeyTests: XCTestCase {
     func testKeyDelete() async {
         do {
             let key = try await createAPIKey()
-            let (data, _) = try await client.keys().delete(id: key._id)
+            let (data, _) = try await client.keys().delete(id: key.id!)
             XCTAssertNotNil(data)
             guard let validData = data else {
                 throw DataError.dataNotFound

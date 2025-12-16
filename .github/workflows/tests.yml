@@ -16,27 +16,28 @@ concurrency:
 
 jobs:
   test:
-    runs-on: macos-latest
+    runs-on: macos-15-intel
     steps:
       - uses: actions/checkout@v4
-      - name: Install and start dependencies
-        run: |
-          brew install docker
-          brew install qemu
-          brew install colima
-          # https://github.com/abiosoft/colima/issues/424#issuecomment-1335912905
-          colima delete
-          colima start --arch x86_64
+      - name: Setup Docker on macOS
+        id: setup-docker
+        uses: douglascamata/setup-docker-macos-action@v1.0.2
+        with:
+          lima: v1.2.1
+          colima: v0.9.1
+          colima-network-address: false
 
       - name: Run Typesense
         run: |
           mkdir $(pwd)/typesense-data
           docker run -p 8108:8108 \
             -d \
-            -v$(pwd)/typesense-data:/data typesense/typesense:28.0 \
+            -v$(pwd)/typesense-data:/data typesense/typesense:30.0.rca34 \
             --data-dir /data \
             --api-key=xyz \
-            --enable-cors
+            --enable-cors \
+            --enable-search-analytics=true \
+            --analytics-dir=/analytics-data
         shell: bash
 
       - name: Set up Xcode

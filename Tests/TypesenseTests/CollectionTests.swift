@@ -7,7 +7,13 @@ final class CollectionTests: XCTestCase {
     }
 
     func testCollectionCreate() async {
-        let schema = CollectionSchema(name: "companies", fields: [Field(name: "company_name", type: "string"), Field(name: "num_employees", type: "int32"), Field(name: "country", type: "string", facet: true)], defaultSortingField: "num_employees")
+        let schema = CollectionSchema(
+            name: "companies", fields: [
+                Field(name: "company_name", type: "string"),
+                Field(name: "num_employees", type: "int32"),
+                Field(name: "country", type: "string", facet: true)
+            ],
+            defaultSortingField: "num_employees")
         do {
             let (collResp, _) = try await client.collections.create(schema: schema)
             XCTAssertNotNil(collResp)

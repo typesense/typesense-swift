@@ -39,18 +39,6 @@ public struct Collection {
         return (nil, response)
     }
 
-    public func synonyms() -> Synonyms {
-        return Synonyms(apiCall: apiCall, collectionName: self.collectionName)
-    }
-
-    public func overrides() -> Overrides{
-        return Overrides(apiCall: self.apiCall, collectionName: self.collectionName)
-    }
-
-    public func override(_ overrideId: String) -> Override{
-        return Override(apiCall: self.apiCall, collectionName: self.collectionName, overrideId: overrideId)
-    }
-
     private func endpointPath() throws -> String {
         return "\(Collections.RESOURCEPATH)/\(try collectionName.encodeURL())"
     }

@@ -1,16 +1,20 @@
+#!/bin/bash
+
+set -e
+
+echo "Pulling openapi.yml"
+
 curl https://raw.githubusercontent.com/typesense/typesense-api-spec/master/openapi.yml > openapi.yml
-swagger-codegen generate -i openapi.yml -l swift5 -o output
+
+docker run --rm -v "$(pwd):/local" openapitools/openapi-generator-cli generate -i "/local/openapi.yml" -g swift5 -o "/local/output" --additional-properties useJsonEncodable=false --additional-properties hashableModels=false --additional-properties identifiableModels=false
+
 rm -rf Models
-cd output/SwaggerClient/Classes/Swaggers
+cd output/OpenAPIClient/Classes/OpenAPIs
 mv ./Models ../../../../
 cd ../../../../
 rm -rf output
 
 cd Models
-
-# Delete useless structs generated as a mistake by the code-gen
-rm OneOfSearchParametersMaxHits.swift
-rm OneOfMultisearchParametersMaxHits.swift
 
 # Fix the maxHits type by defining it as a String Optional
 find . -name "SearchParameters.swift" -exec sed -i '' 's/maxHits: OneOfSearchParametersMaxHits\?/maxHits: String\?/g' {} \;
@@ -19,7 +23,7 @@ find . -name "MultiSearchCollectionParameters.swift" -exec sed -i '' 's/maxHits:
 
 # Add Generics to SearchResult
 find . -name "SearchResult.swift" -exec sed -i '' 's/SearchResult:/SearchResult<T: Decodable>:/g' {} \;
-find . -name "SearchResult.swift" -exec sed -i '' 's/groupedHits: \[SearchGroupedHit\]\?/groupedHits: \[SearchGroupedHit<T>\]\?/g' {} \; 
+find . -name "SearchResult.swift" -exec sed -i '' 's/groupedHits: \[SearchGroupedHit\]\?/groupedHits: \[SearchGroupedHit<T>\]\?/g' {} \;
 find . -name "SearchResult.swift" -exec sed -i '' 's/hits: \[SearchResultHit\]\?/hits: \[SearchResultHit<T>\]\?/g' {} \;
 
 # Add Generics to MultiSearchResult
@@ -39,8 +43,6 @@ find . -name "SearchGroupedHit.swift" -exec sed -i '' 's/hits: \[SearchResultHit
 # Convert matchedTokens to custom defined StringQuantum
 find . -name "SearchHighlight.swift" -exec sed -i '' 's/matchedTokens: \[Any\]\?/matchedTokens: StringQuantum\?/g' {} \;
 
-
-
-
-
-
+cd ..
+rm -rf Sources/Typesense/Models
+mv ./Models ./Sources/Typesense

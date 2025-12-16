@@ -31,10 +31,10 @@ public struct Operations {
         return (data, response)
     }
 
-    public func getDebug() async throws -> (DebugRetrieveSchema?, URLResponse?) {
+    public func getDebug() async throws -> (Debug200Response?, URLResponse?) {
         let (data, response) = try await apiCall.get(endPoint: "debug")
         if let result = data {
-            let decodedData = try decoder.decode(DebugRetrieveSchema.self, from: result)
+            let decodedData = try decoder.decode(Debug200Response.self, from: result)
             return (decodedData, response)
         }
         return (nil, response)

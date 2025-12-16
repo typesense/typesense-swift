@@ -8,7 +8,7 @@ final class PresetsTests: XCTestCase {
 
     func testPresetsUpsertSearchParameters() async {
         let schema = PresetUpsertSchema(
-            value: PresetValue.singleCollectionSearch(SearchParameters(q: "apple"))
+            value: PresetUpsertSchemaValue.typeSearchParameters(SearchParameters(q: "apple"))
         )
         do {
             let (result, _) = try await client.presets().upsert(presetName: "test-id", params: schema)
@@ -19,7 +19,7 @@ final class PresetsTests: XCTestCase {
             print(validResult)
             XCTAssertEqual("test-id", validResult.name)
             switch validResult.value {
-            case .singleCollectionSearch(let value):
+            case .typeSearchParameters(let value):
                 XCTAssertEqual("apple", value.q)
             default:
                 XCTAssertTrue(false)
@@ -32,7 +32,7 @@ final class PresetsTests: XCTestCase {
 
     func testPresetsUpsertMultiSearchSearchesParameter() async {
         let schema = PresetUpsertSchema(
-            value: PresetValue.multiSearch(MultiSearchSearchesParameter(searches: [MultiSearchCollectionParameters(q: "apple")]))
+            value: PresetUpsertSchemaValue.typeMultiSearchSearchesParameter(MultiSearchSearchesParameter(searches: [MultiSearchCollectionParameters(q: "apple")]))
         )
         do {
             let (result, _) = try await client.presets().upsert(presetName: "test-id", params: schema)
@@ -43,7 +43,7 @@ final class PresetsTests: XCTestCase {
             print(validResult)
             XCTAssertEqual("test-id", validResult.name)
             switch validResult.value {
-            case .multiSearch(let value):
+            case .typeMultiSearchSearchesParameter(let value):
                 XCTAssertEqual("apple", value.searches[0].q)
             default:
                 XCTAssertTrue(false)
@@ -66,10 +66,10 @@ final class PresetsTests: XCTestCase {
             XCTAssertEqual(2, validResult.presets.count)
             for preset in validResult.presets{
                 switch preset.value {
-                case .singleCollectionSearch(let value):
+                case .typeSearchParameters(let value):
                     XCTAssertEqual("test-id", preset.name)
                     XCTAssertEqual("apple", value.q)
-                case .multiSearch(let value):
+                case .typeMultiSearchSearchesParameter(let value):
                     XCTAssertEqual("test-id-preset-multi-search", preset.name)
                     XCTAssertEqual("banana", value.searches[0].q)
                 }

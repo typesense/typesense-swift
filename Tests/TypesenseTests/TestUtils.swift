@@ -30,17 +30,17 @@ func tearDownStopwords() async throws {
         throw DataError.dataNotFound
     }
     for item in validData {
-        let _ = try await utilClient.stopword(item._id).delete()
+        let _ = try await utilClient.stopword(item.id).delete()
     }
 }
 
 func tearDownAnalyticsRules() async throws {
     let (data, _) = try await utilClient.analytics().rules().retrieveAll()
-    guard let validData = data?.rules else {
+    guard let validData = data else {
         throw DataError.dataNotFound
     }
     for item in validData {
-        let _ = try await utilClient.analytics().rule(id: item.name).delete()
+        let _ = try await utilClient.analytics().rule( item.name).delete()
     }
 }
 
@@ -50,7 +50,7 @@ func tearDownAPIKeys() async throws {
         throw DataError.dataNotFound
     }
     for item in validData {
-        let _ = try await utilClient.keys().delete(id: item._id)
+        let _ = try await utilClient.keys().delete(id: item.id!)
     }
 }
 
@@ -64,13 +64,35 @@ func tearDownAliases() async throws {
     }
 }
 
+func tearDownCurationSets() async throws {
+    let (data, _) = try await utilClient.curationSets().retrieve()
+    guard let validData = data else {
+        throw DataError.dataNotFound
+    }
+    for item in validData {
+        let _ = try await utilClient.curationSet(item.name).delete()
+    }
+}
+
+func tearDownSynonymSets() async throws {
+    let (data, _) = try await utilClient.synonymSets().retrieve()
+    guard let validData = data else {
+        throw DataError.dataNotFound
+    }
+    for item in validData {
+        let _ = try await utilClient.synonymSet(item.name).delete()
+    }
+}
+
 func createCollection() async throws {
-    let schema = CollectionSchema(name: "companies", fields: [
+    let schema = CollectionSchema( name: "companies", fields: [
         Field(name: "company_name", type: "string"),
         Field(name: "num_employees", type: "int32", facet: true),
         Field(name: "country", type: "string", facet: true),
         Field(name: "metadata", type: "object", _optional: true, facet: true)
-    ], defaultSortingField: "num_employees", enableNestedFields: true)
+    ],
+        defaultSortingField: "num_employees",
+        enableNestedFields: true)
     let _ = try await utilClient.collections.create(schema: schema)
 }
 
@@ -78,19 +100,25 @@ func createDocument() async throws {
     let data = try encoder.encode(Company(id: "test-id", company_name: "Stark Industries", num_employees: 5215, country: "USA", metadata: ["open":false]))
     let _ = try await utilClient.collection(name: "companies").documents().create(document: data)
 }
-
-func createAnOverride() async throws {
-    let _ = try await utilClient.collection(name: "companies").overrides().upsert(
-        overrideId: "test-id",
-        params: SearchOverrideSchema<SearchOverrideExclude>(rule: SearchOverrideRule(filterBy: "test"), filterBy: "test:=true", metadata: SearchOverrideExclude(_id: "exclude-id"))
-    )
+func createCurationSet() async throws {
+    let schema = CurationSetCreateSchema(items: [
+            CurationItemCreateSchema(
+                rule: CurationRule( query: "apple", match: .exact),
+                includes: [
+                    CurationInclude(id: "422", position: 1),
+                    CurationInclude(id: "54", position: 2),
+                ], excludes: [CurationExclude(id: "287")],
+                id: "customize-apple"
+            )
+        ])
+    let _ = try await client.curationSets().upsert("curate_products", schema)
 }
 
 func createSingleCollectionSearchPreset() async throws {
     let _ = try await utilClient.presets().upsert(
         presetName: "test-id",
         params: PresetUpsertSchema(
-            value: .singleCollectionSearch(SearchParameters(q: "apple"))
+            value: PresetUpsertSchemaValue.typeSearchParameters(SearchParameters(q: "apple"))
         )
     )
 }
@@ -99,7 +127,7 @@ func createMultiSearchPreset() async throws {
     let _ = try await utilClient.presets().upsert(
         presetName: "test-id-preset-multi-search",
         params: PresetUpsertSchema(
-            value: .multiSearch(MultiSearchSearchesParameter(searches: [MultiSearchCollectionParameters(q: "banana")]))
+            value: PresetUpsertSchemaValue.typeMultiSearchSearchesParameter(MultiSearchSearchesParameter(searches: [MultiSearchCollectionParameters(q: "banana")]))
         )
     )
 }
@@ -114,21 +142,8 @@ func createStopwordSet() async throws {
     )
 }
 
-func createAnalyticRule() async throws {
-    let _ = try await utilClient.analytics().rules().upsert(params: AnalyticsRuleSchema(
-        name: "product_queries_aggregation",
-        type: .counter,
-        params: AnalyticsRuleParameters(
-            source: AnalyticsRuleParametersSource(collections: ["products"], events: [AnalyticsRuleParametersSourceEvents(type: "click", weight: 1, name: "products_click_event")]),
-            destination: AnalyticsRuleParametersDestination(collection: "companies", counterField: "num_employees"),
-            limit: 1000
-            )
-        )
-    )
-}
-
 func createAPIKey() async throws -> ApiKey {
-    let (data, _) =  try await utilClient.keys().create( ApiKeySchema(_description: "Test key with all privileges", actions: ["*"], collections: ["*"]))
+    let (data, _) =  try await utilClient.keys().create( ApiKeySchema(description: "Test key with all privileges", actions: ["*"], collections: ["*"]))
     return data!
 }
 
@@ -147,9 +162,17 @@ func createConversationCollection() async throws {
     let _ = try await utilClient.collections.create(schema: schema)
 }
 
+func createSynonymSet() async throws {
+    let synonymSchema = SynonymSetCreateSchema(items: [
+        SynonymItemSchema(synonyms: ["blazer", "coat", "jacket"], id:"coat-synonyms", root: "outerwear")
+        ]
+    )
+    let _ = try await utilClient.synonymSets().upsert("clothing-synonyms", synonymSchema)
+}
+
 struct Product: Codable, Equatable {
     var name: String?
-    var price: Int?
+    var price: Int
     var brand: String?
     var desc: String?
 

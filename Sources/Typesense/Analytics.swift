@@ -1,7 +1,7 @@
 import Foundation
 
 public struct Analytics {
-    static let resourcePath: String = "/analytics"
+    static let resourcePath: String = "analytics"
 
     private var analyticsRules: AnalyticsRules
     var apiCall: ApiCall
@@ -11,12 +11,12 @@ public struct Analytics {
         self.analyticsRules = AnalyticsRules(apiCall: apiCall)
     }
 
-    public func events() -> AnalyticsEvents {
-        return AnalyticsEvents(apiCall: self.apiCall)
+    public func events() -> AnalyticsEventsAPI {
+        return AnalyticsEventsAPI(apiCall: self.apiCall)
     }
 
-    public func rule(id: String) -> AnalyticsRule {
-        return AnalyticsRule(name: id, apiCall: self.apiCall)
+    public func rule(_ name: String) -> AnalyticsRuleAPI {
+        return AnalyticsRuleAPI(name: name, apiCall: self.apiCall)
     }
 
     public func rules() -> AnalyticsRules {
