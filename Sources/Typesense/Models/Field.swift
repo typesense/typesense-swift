@@ -22,6 +22,8 @@ public struct Field: Codable {
     public var _infix: Bool? = false
     /** Name of a field in another collection that should be linked to this collection so that it can be joined during query.  */
     public var reference: String?
+    /** Allow documents to be indexed successfully even when the referenced document doesn't exist yet.  */
+    public var asyncReference: Bool?
     public var numDim: Int?
     public var drop: Bool?
     /** When set to false, the field value will not be stored on disk. Default: true.  */
@@ -40,7 +42,7 @@ public struct Field: Codable {
     public var symbolsToIndex: [String]?
     public var embed: FieldEmbed?
 
-    public init(name: String, type: String, _optional: Bool? = nil, facet: Bool? = nil, index: Bool? = true, locale: String? = nil, sort: Bool? = nil, _infix: Bool? = false, reference: String? = nil, numDim: Int? = nil, drop: Bool? = nil, store: Bool? = nil, vecDist: String? = nil, rangeIndex: Bool? = nil, stem: Bool? = nil, stemDictionary: String? = nil, tokenSeparators: [String]? = nil, symbolsToIndex: [String]? = nil, embed: FieldEmbed? = nil) {
+    public init(name: String, type: String, _optional: Bool? = nil, facet: Bool? = nil, index: Bool? = true, locale: String? = nil, sort: Bool? = nil, _infix: Bool? = false, reference: String? = nil, asyncReference: Bool? = nil, numDim: Int? = nil, drop: Bool? = nil, store: Bool? = nil, vecDist: String? = nil, rangeIndex: Bool? = nil, stem: Bool? = nil, stemDictionary: String? = nil, tokenSeparators: [String]? = nil, symbolsToIndex: [String]? = nil, embed: FieldEmbed? = nil) {
         self.name = name
         self.type = type
         self._optional = _optional
@@ -50,6 +52,7 @@ public struct Field: Codable {
         self.sort = sort
         self._infix = _infix
         self.reference = reference
+        self.asyncReference = asyncReference
         self.numDim = numDim
         self.drop = drop
         self.store = store
@@ -72,6 +75,7 @@ public struct Field: Codable {
         case sort
         case _infix = "infix"
         case reference
+        case asyncReference = "async_reference"
         case numDim = "num_dim"
         case drop
         case store
@@ -97,6 +101,7 @@ public struct Field: Codable {
         try container.encodeIfPresent(sort, forKey: .sort)
         try container.encodeIfPresent(_infix, forKey: ._infix)
         try container.encodeIfPresent(reference, forKey: .reference)
+        try container.encodeIfPresent(asyncReference, forKey: .asyncReference)
         try container.encodeIfPresent(numDim, forKey: .numDim)
         try container.encodeIfPresent(drop, forKey: .drop)
         try container.encodeIfPresent(store, forKey: .store)

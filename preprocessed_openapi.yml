@@ -3503,6 +3503,11 @@ components:
           description: >
             Name of a field in another collection that should be linked to this collection
             so that it can be joined during query.
+        async_reference:
+          type: boolean
+          description: >
+            Allow documents to be indexed successfully even when the referenced document
+            doesn't exist yet.
         num_dim:
           type: integer
           example: 256

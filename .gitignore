@@ -7,3 +7,5 @@ DerivedData/
 .swiftpm
 
 /typesense-data
+
+openapi.yml
