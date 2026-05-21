@@ -4,6 +4,8 @@ A great new way to implement your searches on iOS using [Typesense](https://gith
 
 ## Installation
 
+### Swift Package Manager
+
 Add `Typesense Swift` Swift Package to your project. You can refer [Apple's Documentation](https://developer.apple.com/documentation/swift_packages/adding_package_dependencies_to_your_app) to add Typesense Swift as a dependency to your iOS Project. You can also import Typesense into your own Swift Package by adding this line to dependencies array of `Package.swift`:
 
 ```swift
@@ -12,6 +14,20 @@ dependencies: [
            .package(url: "https://github.com/typesense/typesense-swift", .upToNextMajor(from: "1.0.0"),
 ],
 ...
+```
+
+### CocoaPods
+
+To integrate `Typesense` into your Xcode project using CocoaPods, specify it in your `Podfile`:
+
+```ruby
+pod 'Typesense', '~> 2.0'
+```
+
+Then, run the following command:
+
+```bash
+pod install
 ```
 
 ## Usage
