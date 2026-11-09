@@ -39,6 +39,16 @@ public struct Collection {
         return (nil, response)
     }
 
+    public func update(schema: CollectionUpdateSchema) async throws -> (CollectionUpdateSchema?, URLResponse?) {
+        let schemaData = try encoder.encode(schema)
+        let (data, response) = try await apiCall.patch(endPoint: endpointPath(), body: schemaData)
+        if let result = data {
+            let updatedSchema = try decoder.decode(CollectionUpdateSchema.self, from: result)
+            return (updatedSchema, response)
+        }
+        return (nil, response)
+    }
+
     private func endpointPath() throws -> String {
         return "\(Collections.RESOURCEPATH)/\(try collectionName.encodeURL())"
     }
