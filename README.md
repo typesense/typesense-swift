@@ -117,6 +117,34 @@ let (data, response) = try await client.collection(name: "companies").documents(
 )
 ```
 
+### Delete all documents in a collection
+
+`truncate` deletes every document and keeps the collection and its schema. The server ignores `filterBy` when `truncate` is set.
+
+```swift
+let (data, response) = try await client.collection(name: "companies").documents().delete(
+    options: DeleteDocumentsParameters(filterBy: "", truncate: true)
+)
+```
+
+### Update a collection
+
+```swift
+let schema = CollectionUpdateSchema(fields: [
+    Field(name: "country", type: "string", drop: true),
+    Field(name: "company_category", type: "string")
+])
+let (updatedSchema, response) = try await client.collection(name: "companies").update(schema: schema)
+```
+
+To change only `metadata` or `synonym_sets`, leave out `fields`:
+
+```swift
+let (updatedSchema, response) = try await client.collection(name: "companies").update(
+    schema: CollectionUpdateSchema(metadata: ["owner": "search"])
+)
+```
+
 ### Export documents
 
 ```swift
