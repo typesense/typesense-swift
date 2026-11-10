@@ -398,5 +398,16 @@ final class DocumentTests: XCTestCase {
         }
     }
 
+    func testDocumentsTruncate() async throws {
+        try await createDocument()
+        let (data, _) = try await client.collection(name: "companies").documents().delete(
+            options: DeleteDocumentsParameters(filterBy: "", truncate: true)
+        )
+        XCTAssertEqual(data?.numDeleted, 1)
+
+        let (collection, _) = try await client.collection(name: "companies").retrieve()
+        XCTAssertEqual(collection?.numDocuments, 0)
+    }
+
 
 }

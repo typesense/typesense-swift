@@ -80,4 +80,30 @@ final class CollectionTests: XCTestCase {
         }
     }
 
+    func testCollectionUpdate() async throws {
+        try await createCollection()
+        let schema = CollectionUpdateSchema(fields: [
+            Field(name: "country", type: "string", drop: true),
+            Field(name: "company_category", type: "string")
+        ])
+        let (updatedSchema, _) = try await client.collection(name: "companies").update(schema: schema)
+        XCTAssertEqual(updatedSchema?.fields?.map(\.name), ["country", "company_category"])
+
+        let (collection, _) = try await client.collection(name: "companies").retrieve()
+        let fieldNames = try XCTUnwrap(collection).fields.map(\.name)
+        XCTAssertTrue(fieldNames.contains("company_category"))
+        XCTAssertFalse(fieldNames.contains("country"))
+    }
+
+    func testCollectionUpdateMetadataOnly() async throws {
+        try await createCollection()
+        let (updatedSchema, _) = try await client.collection(name: "companies").update(schema: CollectionUpdateSchema(metadata: ["owner": "search"]))
+        XCTAssertNil(updatedSchema?.fields)
+        XCTAssertEqual(updatedSchema?.metadata, ["owner": "search"])
+
+        let (collection, _) = try await client.collection(name: "companies").retrieve()
+        XCTAssertEqual(collection?.metadata, ["owner": "search"])
+        XCTAssertEqual(collection?.fields.count, 4)
+    }
+
 }
